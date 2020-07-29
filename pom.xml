@@ -5,17 +5,17 @@
     <modelVersion>4.0.0</modelVersion>
 
     <!--统一版本修改 versions:set -DnewVersion=0.0.1-SNAPSHOT-->
-    <artifactId>clever-hinny-graaljs</artifactId>
+    <artifactId>clever-hinny-graaljs-wrap</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
 
     <description>clever框架数据库操作模块</description>
-    <url>https://github.com/Lzw2016/clever-hinny-graaljs.git</url>
+    <url>https://github.com/Lzw2016/clever-hinny-graaljs-wrap.git</url>
 
     <licenses>
         <license>
             <name>MIT License</name>
-            <url>https://github.com/Lzw2016/clever-hinny-graaljs/raw/master/LICENSE</url>
+            <url>https://github.com/Lzw2016/clever-hinny-graaljs-wrap/raw/master/LICENSE</url>
         </license>
     </licenses>
 
@@ -187,11 +187,11 @@
     </dependencyManagement>
 
     <dependencies>
-<!--        <dependency>-->
-<!--            <groupId>org.clever</groupId>-->
-<!--            <artifactId>clever-hinny-graaljs</artifactId>-->
-<!--            <version>${clever-hinny.version}</version>-->
-<!--        </dependency>-->
+       <dependency>
+           <groupId>org.clever</groupId>
+           <artifactId>clever-hinny-graaljs</artifactId>
+           <version>${clever-hinny.version}</version>
+       </dependency>
     </dependencies>
 
     <build>

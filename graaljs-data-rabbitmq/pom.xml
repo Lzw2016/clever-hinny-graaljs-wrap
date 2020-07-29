@@ -9,7 +9,7 @@
 
     <parent>
         <groupId>org.clever</groupId>
-        <artifactId>clever-hinny-graaljs</artifactId>
+        <artifactId>clever-hinny-graaljs-wrap</artifactId>
         <version>${revision}</version>
     </parent>
 
