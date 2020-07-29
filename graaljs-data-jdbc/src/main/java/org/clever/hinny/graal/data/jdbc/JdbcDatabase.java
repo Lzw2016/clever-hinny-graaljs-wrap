@@ -4,6 +4,8 @@ package org.clever.hinny.graal.data.jdbc;
 import lombok.SneakyThrows;
 import org.springframework.util.Assert;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -88,6 +90,17 @@ public class JdbcDatabase {
     }
 
     /**
+     * 添加数据源
+     *
+     * @param name       数据源名称
+     * @param jdbcConfig 数据源配置
+     */
+    public JdbcDataSource add(String name, JdbcConfig jdbcConfig) {
+        // TODO 添加数据源
+        return null;
+    }
+
+    /**
      * 删除数据源
      *
      * @param name 数据源名称
@@ -102,5 +115,28 @@ public class JdbcDatabase {
         return jdbcDataSource != null;
     }
 
-    // list add(config) listInfo
+    /**
+     * 获取所有数据源名称
+     */
+    public Set<String> allNames() {
+        return DATASOURCE_MAP.keySet();
+    }
+
+    /**
+     * 获取数据源信息
+     *
+     * @param name 数据源名称
+     */
+    public JdbcInfo getInfo(String name) {
+        // TODO 获取数据源信息
+        return null;
+    }
+
+    /**
+     * 获取所有数据源信息
+     */
+    public Map<String, JdbcInfo> allInfos() {
+        // TODO 获取所有数据库信息
+        return null;
+    }
 }
