@@ -60,7 +60,6 @@
 
     <properties>
         <revision>1.0.0-SNAPSHOT</revision>
-
         <java.version>11</java.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
@@ -137,16 +136,6 @@
                 <artifactId>clever-hinny-graaljs</artifactId>
                 <version>${clever-hinny.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.clever</groupId>
-                <artifactId>clever-hinny-j2v8</artifactId>
-                <version>${clever-hinny.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.clever</groupId>
-                <artifactId>clever-hinny-nashorn</artifactId>
-                <version>${clever-hinny.version}</version>
-            </dependency>
             <!--clever hinny java-->
             <dependency>
                 <groupId>org.clever</groupId>
@@ -187,11 +176,11 @@
     </dependencyManagement>
 
     <dependencies>
-       <dependency>
-           <groupId>org.clever</groupId>
-           <artifactId>clever-hinny-graaljs</artifactId>
-           <version>${clever-hinny.version}</version>
-       </dependency>
+        <dependency>
+            <groupId>org.clever</groupId>
+            <artifactId>clever-hinny-graaljs</artifactId>
+            <version>${clever-hinny.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
