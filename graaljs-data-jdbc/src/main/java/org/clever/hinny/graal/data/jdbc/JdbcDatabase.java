@@ -4,6 +4,7 @@ package org.clever.hinny.graal.data.jdbc;
 import lombok.SneakyThrows;
 import org.springframework.util.Assert;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,7 +19,7 @@ public class JdbcDatabase {
 
     private static final ConcurrentMap<String, JdbcDataSource> DATASOURCE_MAP = new ConcurrentHashMap<>();
 
-    public String defaultName;
+    private String defaultName;
 
     protected JdbcDatabase() {
     }
@@ -113,6 +114,19 @@ public class JdbcDatabase {
             DATASOURCE_MAP.remove(name);
         }
         return jdbcDataSource != null;
+    }
+
+    /**
+     * 删除所有数据源
+     */
+    @SneakyThrows
+    public void delAll() {
+        Iterator<Map.Entry<String, JdbcDataSource>> iterator = DATASOURCE_MAP.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, JdbcDataSource> entry = iterator.next();
+            entry.getValue().close();
+            iterator.remove();
+        }
     }
 
     /**

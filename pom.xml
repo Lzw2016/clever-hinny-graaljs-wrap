@@ -9,7 +9,7 @@
     <version>${revision}</version>
     <packaging>pom</packaging>
 
-    <description>clever框架数据库操作模块</description>
+    <description>clever-hinny项目GraalJS引擎适配层(对应Java生态封装层)</description>
     <url>https://github.com/Lzw2016/clever-hinny-graaljs-wrap.git</url>
 
     <licenses>
@@ -56,6 +56,7 @@
         <module>graaljs-data-elasticsearch</module>
         <module>graaljs-data-rabbitmq</module>
         <module>graaljs-data-kafka</module>
+        <module>graaljs-test</module>
     </modules>
 
     <properties>
