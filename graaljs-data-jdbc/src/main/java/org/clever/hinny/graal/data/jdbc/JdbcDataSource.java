@@ -14,6 +14,16 @@ public class JdbcDataSource {
         this.delegate = delegate;
     }
 
+    /**
+     * 当前数据源是否关闭
+     */
+    public boolean isClosed() {
+        return delegate.isClosed();
+    }
+
+    /**
+     * 关闭当前数据源
+     */
     public void close() throws Exception {
         delegate.close();
     }
@@ -23,6 +33,17 @@ public class JdbcDataSource {
     // --------------------------------------------------------------------------------------------
 
     /**
+     * 查询一条数据，返回一个Map
+     *
+     * @param sql      sql脚本，参数格式[:param]
+     * @param paramMap 参数(可选)，参数格式[:param]
+     */
+    public Map<String, Object> queryMap(String sql, Map<String, Object> paramMap) {
+        //
+        return delegate.queryMap(sql, paramMap);
+    }
+
+    /**
      * 查询多条数据，返回一个Map数组
      *
      * @param sql sql脚本，参数格式[:param]
@@ -30,4 +51,6 @@ public class JdbcDataSource {
     public List<Map<String, Object>> queryList(String sql) {
         return delegate.queryList(sql);
     }
+
+
 }
