@@ -6,10 +6,7 @@ import org.clever.hinny.api.ScriptEngineInstance;
 import org.clever.hinny.api.ScriptObject;
 import org.clever.hinny.api.folder.FileSystemFolder;
 import org.clever.hinny.api.folder.Folder;
-import org.clever.hinny.graal.data.jdbc.JdbcConfig;
-import org.clever.hinny.graal.data.jdbc.JdbcDataSource;
 import org.clever.hinny.graal.data.jdbc.JdbcDatabase;
-import org.clever.hinny.graal.data.jdbc.JdbcInfo;
 import org.clever.hinny.graaljs.GraalScriptEngineInstance;
 import org.graalvm.polyglot.Engine;
 import org.junit.After;
@@ -57,11 +54,6 @@ public class DataJdbcTest {
                 .useSystemProperties(true)
                 .build();
         engineInstance = GraalScriptEngineInstance.Builder.create(engine, rootFolder)
-                .addAllowAccessClass(JdbcConfig.class)
-                .addAllowAccessClass(JdbcDatabase.class)
-                .addAllowAccessClass(org.clever.hinny.data.jdbc.JdbcDataSource.class)
-                .addAllowAccessClass(JdbcDataSource.class)
-                .addAllowAccessClass(JdbcInfo.class)
                 .putContextMap("jdbcDatabase", JdbcDatabase.Instance)
                 .build();
     }
