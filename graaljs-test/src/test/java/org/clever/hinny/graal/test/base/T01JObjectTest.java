@@ -1,4 +1,4 @@
-package org.clever.hinny.graal.test;
+package org.clever.hinny.graal.test.base;
 
 import lombok.extern.slf4j.Slf4j;
 import org.clever.hinny.api.ScriptEngineInstance;
@@ -40,7 +40,7 @@ public class T01JObjectTest {
 
     @Test
     public void t01() throws Exception {
-        ScriptObject<?> scriptObject = engineInstance.require("/test/dist/01jobject");
+        ScriptObject<?> scriptObject = engineInstance.require("/test/dist/base/01jobject");
         scriptObject.callMember("t01");
         log.info("--------------------------------------------------------------------------------------------");
         scriptObject.callMember("t02");

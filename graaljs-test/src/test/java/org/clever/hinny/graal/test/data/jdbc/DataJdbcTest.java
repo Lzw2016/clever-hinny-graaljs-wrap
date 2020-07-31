@@ -1,4 +1,4 @@
-package org.clever.hinny.graal.test;
+package org.clever.hinny.graal.test.data.jdbc;
 
 import com.zaxxer.hikari.HikariConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +66,7 @@ public class DataJdbcTest {
 
     @Test
     public void t01() throws Exception {
-        ScriptObject<?> scriptObject = engineInstance.require("/test/dist/data-jdbc-test");
+        ScriptObject<?> scriptObject = engineInstance.require("/test/dist/data-jdbc/data-jdbc-test");
         scriptObject.callMember("t01");
         log.info("### ---> END");
     }
