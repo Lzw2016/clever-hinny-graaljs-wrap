@@ -1,5 +1,7 @@
 package org.clever.hinny.graal.data.jdbc;
 
+import com.baomidou.mybatisplus.annotation.DbType;
+
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +14,13 @@ public class JdbcDataSource {
 
     public JdbcDataSource(org.clever.hinny.data.jdbc.JdbcDataSource delegate) {
         this.delegate = delegate;
+    }
+
+    /**
+     * 获取数据库类型
+     */
+    public DbType getDbType() {
+        return delegate.getDbType();
     }
 
     /**
