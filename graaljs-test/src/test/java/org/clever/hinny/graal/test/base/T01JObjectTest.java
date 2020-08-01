@@ -23,28 +23,45 @@ public class T01JObjectTest {
     private final Folder rootFolder = FileSystemFolder.createRootPath(new File("D:\\SourceCode\\clever\\clever-hinny-js").getAbsolutePath());
 
     private ScriptEngineInstance<?, ?> engineInstance;
+    private ScriptObject<?> scriptObject;
 
     @Before
-    public void before1() {
+    public void before1() throws Exception {
         log.info("### rootFolder -> {}", rootFolder);
         Engine engine = Engine.newBuilder()
                 .useSystemProperties(true)
                 .build();
         engineInstance = GraalScriptEngineInstance.Builder.create(engine, rootFolder).build();
+        scriptObject = engineInstance.require("/test/dist/base/01jobject");
     }
 
     @After
     public void after() throws IOException {
         engineInstance.close();
+        log.info("### ---> END");
     }
 
     @Test
-    public void t01() throws Exception {
-        ScriptObject<?> scriptObject = engineInstance.require("/test/dist/base/01jobject");
+    public void t01() {
         scriptObject.callMember("t01");
         log.info("--------------------------------------------------------------------------------------------");
+    }
+
+    @Test
+    public void t02() {
         scriptObject.callMember("t02");
         log.info("--------------------------------------------------------------------------------------------");
-        log.info("### ---> END");
+    }
+
+    @Test
+    public void t03() {
+        scriptObject.callMember("t03");
+        log.info("--------------------------------------------------------------------------------------------");
+    }
+
+    @Test
+    public void t04() {
+        scriptObject.callMember("t04");
+        log.info("--------------------------------------------------------------------------------------------");
     }
 }
