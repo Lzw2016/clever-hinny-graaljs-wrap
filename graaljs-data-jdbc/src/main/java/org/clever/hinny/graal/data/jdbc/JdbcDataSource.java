@@ -1,9 +1,8 @@
 package org.clever.hinny.graal.data.jdbc;
 
 import com.baomidou.mybatisplus.annotation.DbType;
-import org.clever.hinny.graaljs.utils.JavaInteropUtils;
-import org.graalvm.polyglot.Value;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,9 +47,9 @@ public class JdbcDataSource {
      * @param sql      sql脚本，参数格式[:param]
      * @param paramMap 参数(可选)，参数格式[:param]
      */
-    public Value queryMap(String sql, Map<String, Object> paramMap) {
-        Map<String, Object> map = delegate.queryMap(sql, paramMap);
-        return JavaInteropUtils.Instance.toScriptObject(map);
+    public Map<String, Object> queryMap(String sql, Map<String, Object> paramMap) {
+        // JavaInteropUtils.Instance.
+        return delegate.queryMap(sql, paramMap);
     }
 
     /**
@@ -58,8 +57,8 @@ public class JdbcDataSource {
      *
      * @param sql sql脚本，参数格式[:param]
      */
-    public Value queryList(String sql) {
-        return JavaInteropUtils.Instance.toScriptArray(delegate.queryList(sql));
+    public List<Map<String, Object>> queryList(String sql) {
+        return delegate.queryList(sql);
     }
 
 }
