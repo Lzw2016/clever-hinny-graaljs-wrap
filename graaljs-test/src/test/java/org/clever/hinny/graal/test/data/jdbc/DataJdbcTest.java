@@ -22,13 +22,12 @@ import java.io.IOException;
  */
 @Slf4j
 public class DataJdbcTest {
-
     private final Folder rootFolder = FileSystemFolder.createRootPath(new File("D:\\SourceCode\\clever\\clever-hinny-js").getAbsolutePath());
-
     private ScriptEngineInstance<?, ?> engineInstance;
+    private ScriptObject<?> scriptObject;
 
     @Before
-    public void before1() {
+    public void before1() throws Exception {
         // clever-hinny-graaljs
         log.info("### rootFolder -> {}", rootFolder);
 
@@ -56,6 +55,7 @@ public class DataJdbcTest {
         engineInstance = GraalScriptEngineInstance.Builder.create(engine, rootFolder)
                 .putContextMap("jdbcDatabase", JdbcDatabase.Instance)
                 .build();
+        scriptObject = engineInstance.require("/test/dist/data-jdbc/data-jdbc-test");
     }
 
     @After
@@ -65,9 +65,14 @@ public class DataJdbcTest {
     }
 
     @Test
-    public void t01() throws Exception {
-        ScriptObject<?> scriptObject = engineInstance.require("/test/dist/data-jdbc/data-jdbc-test");
+    public void t01() {
         scriptObject.callMember("t01");
-        log.info("### ---> END");
+        log.info("### ---------------------------------------------------------------------------> END");
+    }
+
+    @Test
+    public void t02() throws Exception {
+        scriptObject.callMember("t02");
+        log.info("### ---------------------------------------------------------------------------> END");
     }
 }

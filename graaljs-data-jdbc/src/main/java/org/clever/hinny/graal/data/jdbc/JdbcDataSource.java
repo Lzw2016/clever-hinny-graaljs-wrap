@@ -1,6 +1,7 @@
 package org.clever.hinny.graal.data.jdbc;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import org.clever.hinny.graaljs.utils.InteropScriptToJavaUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -48,8 +49,19 @@ public class JdbcDataSource {
      * @param paramMap 参数(可选)，参数格式[:param]
      */
     public Map<String, Object> queryMap(String sql, Map<String, Object> paramMap) {
-        // JavaInteropUtils.Instance.
+        paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
         return delegate.queryMap(sql, paramMap);
+    }
+
+    /**
+     * 查询多条数据，返回一个Map数组
+     *
+     * @param sql      sql脚本，参数格式[:param]
+     * @param paramMap 参数(可选)，参数格式[:param]
+     */
+    public List<Map<String, Object>> queryList(String sql, Map<String, Object> paramMap) {
+        paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
+        return delegate.queryList(sql, paramMap);
     }
 
     /**
@@ -60,5 +72,4 @@ public class JdbcDataSource {
     public List<Map<String, Object>> queryList(String sql) {
         return delegate.queryList(sql);
     }
-
 }
