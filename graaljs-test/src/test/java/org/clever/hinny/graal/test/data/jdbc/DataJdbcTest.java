@@ -75,4 +75,10 @@ public class DataJdbcTest {
         scriptObject.callMember("t02");
         log.info("### ---------------------------------------------------------------------------> END");
     }
+
+    @Test
+    public void t03() throws Exception {
+        scriptObject.callMember("t03");
+        log.info("### ---------------------------------------------------------------------------> END");
+    }
 }
