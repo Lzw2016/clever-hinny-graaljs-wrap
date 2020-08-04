@@ -10,7 +10,10 @@ import org.graalvm.polyglot.Value;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 作者：lizw <br/>
@@ -418,8 +421,8 @@ public class JdbcDataSource {
      * @param sql          sql脚本，参数格式[:param]
      * @param paramMapList 参数数组，参数格式[:param]
      */
-    public int[] batchUpdate(String sql, Collection<Map<String, Object>> paramMapList) {
-        paramMapList = InteropScriptToJavaUtils.Instance.convertCollectionMap(paramMapList);
+    public int[] batchUpdate(String sql, List<Map<String, Object>> paramMapList) {
+        paramMapList = InteropScriptToJavaUtils.Instance.convertMapList(paramMapList);
         return delegate.batchUpdate(sql, paramMapList);
     }
 
@@ -477,8 +480,8 @@ public class JdbcDataSource {
      * @param fieldsList        字段名集合
      * @param camelToUnderscore 字段驼峰转下划线(可选)
      */
-    public List<InsertResult> insertTables(String tableName, Collection<Map<String, Object>> fieldsList, boolean camelToUnderscore) {
-        fieldsList = InteropScriptToJavaUtils.Instance.convertCollectionMap(fieldsList);
+    public List<InsertResult> insertTables(String tableName, List<Map<String, Object>> fieldsList, boolean camelToUnderscore) {
+        fieldsList = InteropScriptToJavaUtils.Instance.convertMapList(fieldsList);
         return delegate.insertTables(tableName, fieldsList, camelToUnderscore);
     }
 
@@ -488,8 +491,8 @@ public class JdbcDataSource {
      * @param tableName  表名称
      * @param fieldsList 字段名集合
      */
-    public List<InsertResult> insertTables(String tableName, Collection<Map<String, Object>> fieldsList) {
-        fieldsList = InteropScriptToJavaUtils.Instance.convertCollectionMap(fieldsList);
+    public List<InsertResult> insertTables(String tableName, List<Map<String, Object>> fieldsList) {
+        fieldsList = InteropScriptToJavaUtils.Instance.convertMapList(fieldsList);
         return delegate.insertTables(tableName, fieldsList);
     }
 

@@ -105,4 +105,10 @@ public class DataJdbcTest {
         scriptObject.callMember("t07");
         log.info("### ---------------------------------------------------------------------------> END");
     }
+
+    @Test
+    public void t08() {
+        scriptObject.callMember("t08");
+        log.info("### ---------------------------------------------------------------------------> END");
+    }
 }
