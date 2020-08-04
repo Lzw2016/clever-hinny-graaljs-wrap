@@ -71,20 +71,38 @@ public class DataJdbcTest {
     }
 
     @Test
-    public void t02() throws Exception {
+    public void t02() {
         scriptObject.callMember("t02");
         log.info("### ---------------------------------------------------------------------------> END");
     }
 
     @Test
-    public void t03() throws Exception {
+    public void t03() {
         scriptObject.callMember("t03");
         log.info("### ---------------------------------------------------------------------------> END");
     }
 
     @Test
-    public void t04() throws Exception {
+    public void t04() {
         scriptObject.callMember("t04");
+        log.info("### ---------------------------------------------------------------------------> END");
+    }
+
+    @Test
+    public void t05() {
+        scriptObject.callMember("t05");
+        log.info("### ---------------------------------------------------------------------------> END");
+    }
+
+    @Test
+    public void t06() {
+        scriptObject.callMember("t06");
+        log.info("### ---------------------------------------------------------------------------> END");
+    }
+
+    @Test
+    public void t07() {
+        scriptObject.callMember("t07");
         log.info("### ---------------------------------------------------------------------------> END");
     }
 }

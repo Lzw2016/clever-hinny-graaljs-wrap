@@ -4,15 +4,13 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.clever.common.model.request.QueryByPage;
 import org.clever.common.model.request.QueryBySort;
+import org.clever.hinny.data.jdbc.support.InsertResult;
 import org.clever.hinny.graaljs.utils.InteropScriptToJavaUtils;
 import org.graalvm.polyglot.Value;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 作者：lizw <br/>
@@ -244,6 +242,7 @@ public class JdbcDataSource {
      * @param consumer  游标批次读取数据消费者
      */
     public void query(String sql, int batchSize, Value consumer) {
+        Assert.isTrue(consumer != null && consumer.canExecute(), "参数consumer必须是回调函数");
         delegate.query(sql, batchSize, consumer::executeVoid);
     }
 
@@ -337,13 +336,285 @@ public class JdbcDataSource {
         return delegate.queryByPage(sql, pagination);
     }
 
-
-
-
     // --------------------------------------------------------------------------------------------
     // Update 操作
     // --------------------------------------------------------------------------------------------
 
+    /**
+     * 执行更新SQL，返回更新影响数据量
+     *
+     * @param sql      sql脚本，参数格式[:param]
+     * @param paramMap 参数(可选)，参数格式[:param]
+     */
+    public int update(String sql, Map<String, Object> paramMap) {
+        paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
+        return delegate.update(sql, paramMap);
+    }
+
+    /**
+     * 执行更新SQL，返回更新影响数据量
+     *
+     * @param sql sql脚本，参数格式[:param]
+     */
+    public int update(String sql) {
+        return delegate.update(sql);
+    }
+
+    /**
+     * 更新数据库表数据
+     *
+     * @param tableName         表名称
+     * @param fields            更新字段值
+     * @param whereMap          更新条件字段(只支持=，and条件)
+     * @param camelToUnderscore 字段驼峰转下划线(可选)
+     */
+    public int updateTable(String tableName, Map<String, Object> fields, Map<String, Object> whereMap, boolean camelToUnderscore) {
+        fields = InteropScriptToJavaUtils.Instance.convertMap(fields);
+        whereMap = InteropScriptToJavaUtils.Instance.convertMap(whereMap);
+        return delegate.updateTable(tableName, fields, whereMap, camelToUnderscore);
+    }
+
+    /**
+     * 更新数据库表数据
+     *
+     * @param tableName 表名称
+     * @param fields    更新字段值
+     * @param whereMap  更新条件字段(只支持=，and条件)
+     */
+    public int updateTable(String tableName, Map<String, Object> fields, Map<String, Object> whereMap) {
+        fields = InteropScriptToJavaUtils.Instance.convertMap(fields);
+        whereMap = InteropScriptToJavaUtils.Instance.convertMap(whereMap);
+        return delegate.updateTable(tableName, fields, whereMap);
+    }
+
+    /**
+     * 更新数据库表数据
+     *
+     * @param tableName         表名称
+     * @param fields            更新字段值
+     * @param where             自定义where条件(不用写where关键字)
+     * @param camelToUnderscore 字段驼峰转下划线(可选)
+     */
+    public int updateTable(String tableName, Map<String, Object> fields, String where, boolean camelToUnderscore) {
+        fields = InteropScriptToJavaUtils.Instance.convertMap(fields);
+        return delegate.updateTable(tableName, fields, where, camelToUnderscore);
+    }
+
+    /**
+     * 更新数据库表数据
+     *
+     * @param tableName 表名称
+     * @param fields    更新字段值
+     * @param where     自定义where条件(不用写where关键字)
+     */
+    public int updateTable(String tableName, Map<String, Object> fields, String where) {
+        fields = InteropScriptToJavaUtils.Instance.convertMap(fields);
+        return delegate.updateTable(tableName, fields, where);
+    }
+
+    /**
+     * 批量执行更新SQL，返回更新影响数据量
+     *
+     * @param sql          sql脚本，参数格式[:param]
+     * @param paramMapList 参数数组，参数格式[:param]
+     */
+    public int[] batchUpdate(String sql, Collection<Map<String, Object>> paramMapList) {
+        paramMapList = InteropScriptToJavaUtils.Instance.convertCollectionMap(paramMapList);
+        return delegate.batchUpdate(sql, paramMapList);
+    }
+
+    // --------------------------------------------------------------------------------------------
+    // Insert 操作
+    // --------------------------------------------------------------------------------------------
+
+    /**
+     * 执行insert SQL，返回数据库自增主键值和新增数据量
+     *
+     * @param sql      sql脚本，参数格式[:param]
+     * @param paramMap 参数(可选)，参数格式[:param]
+     */
+    public InsertResult insert(String sql, Map<String, Object> paramMap) {
+        paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
+        return delegate.insert(sql, paramMap);
+    }
+
+    /**
+     * 执行insert SQL，返回数据库自增主键值和新增数据量
+     *
+     * @param sql sql脚本，参数格式[:param]
+     */
+    public InsertResult insert(String sql) {
+        return delegate.insert(sql);
+    }
+
+    /**
+     * 数据插入到表
+     *
+     * @param tableName         表名称
+     * @param fields            字段名
+     * @param camelToUnderscore 字段驼峰转下划线(可选)
+     */
+    public InsertResult insertTable(String tableName, Map<String, Object> fields, boolean camelToUnderscore) {
+        fields = InteropScriptToJavaUtils.Instance.convertMap(fields);
+        return delegate.insertTable(tableName, fields, camelToUnderscore);
+    }
+
+    /**
+     * 数据插入到表
+     *
+     * @param tableName 表名称
+     * @param fields    字段名
+     */
+    public InsertResult insertTable(String tableName, Map<String, Object> fields) {
+        fields = InteropScriptToJavaUtils.Instance.convertMap(fields);
+        return delegate.insertTable(tableName, fields);
+    }
+
+    /**
+     * 数据插入到表
+     *
+     * @param tableName         表名称
+     * @param fieldsList        字段名集合
+     * @param camelToUnderscore 字段驼峰转下划线(可选)
+     */
+    public List<InsertResult> insertTables(String tableName, Collection<Map<String, Object>> fieldsList, boolean camelToUnderscore) {
+        fieldsList = InteropScriptToJavaUtils.Instance.convertCollectionMap(fieldsList);
+        return delegate.insertTables(tableName, fieldsList, camelToUnderscore);
+    }
+
+    /**
+     * 数据插入到表
+     *
+     * @param tableName  表名称
+     * @param fieldsList 字段名集合
+     */
+    public List<InsertResult> insertTables(String tableName, Collection<Map<String, Object>> fieldsList) {
+        fieldsList = InteropScriptToJavaUtils.Instance.convertCollectionMap(fieldsList);
+        return delegate.insertTables(tableName, fieldsList);
+    }
+
+    // --------------------------------------------------------------------------------------------
+    //  事务操作
+    // --------------------------------------------------------------------------------------------
+
+    /**
+     * 在事务内支持操作
+     *
+     * @param action              事务内数据库操作
+     * @param propagationBehavior 设置事务传递性 {@link org.springframework.transaction.TransactionDefinition#PROPAGATION_REQUIRED}
+     * @param timeout             设置事务超时时间，-1表示不超时(单位：秒)
+     * @param isolationLevel      设置事务隔离级别 {@link org.springframework.transaction.TransactionDefinition#ISOLATION_DEFAULT}
+     * @param readOnly            设置事务是否只读
+     * @see org.springframework.transaction.TransactionDefinition
+     */
+    public Value beginTX(Value action, int propagationBehavior, int timeout, int isolationLevel, boolean readOnly) {
+        Assert.isTrue(action != null && action.canExecute(), "参数action必须是回调函数");
+        return delegate.beginTX(action::execute, propagationBehavior, timeout, isolationLevel, readOnly);
+    }
+
+    /**
+     * 在事务内支持操作
+     *
+     * @param action              事务内数据库操作
+     * @param propagationBehavior 设置事务传递性 {@link org.springframework.transaction.TransactionDefinition#PROPAGATION_REQUIRED}
+     * @param timeout             设置事务超时时间(单位：秒)
+     * @param isolationLevel      设置事务隔离级别 {@link org.springframework.transaction.TransactionDefinition#ISOLATION_DEFAULT}
+     * @see org.springframework.transaction.TransactionDefinition
+     */
+    public Value beginTX(Value action, int propagationBehavior, int timeout, int isolationLevel) {
+        Assert.isTrue(action != null && action.canExecute(), "参数action必须是回调函数");
+        return delegate.beginTX(action::execute, propagationBehavior, timeout, isolationLevel);
+    }
+
+    /**
+     * 在事务内支持操作
+     *
+     * @param action              事务内数据库操作
+     * @param propagationBehavior 设置事务传递性 {@link org.springframework.transaction.TransactionDefinition#PROPAGATION_REQUIRED}
+     * @param timeout             设置事务超时时间(单位：秒)
+     * @see org.springframework.transaction.TransactionDefinition
+     */
+    public Value beginTX(Value action, int propagationBehavior, int timeout) {
+        Assert.isTrue(action != null && action.canExecute(), "参数action必须是回调函数");
+        return delegate.beginTX(action::execute, propagationBehavior, timeout);
+    }
+
+    /**
+     * 在事务内支持操作
+     *
+     * @param action              事务内数据库操作
+     * @param propagationBehavior 设置事务传递性 {@link org.springframework.transaction.TransactionDefinition#PROPAGATION_REQUIRED}
+     * @see org.springframework.transaction.TransactionDefinition
+     */
+    public Value beginTX(Value action, int propagationBehavior) {
+        Assert.isTrue(action != null && action.canExecute(), "参数action必须是回调函数");
+        return delegate.beginTX(action::execute, propagationBehavior);
+    }
+
+    /**
+     * 在事务内支持操作
+     *
+     * @param action 事务内数据库操作
+     * @see org.springframework.transaction.TransactionDefinition
+     */
+    public Value beginTX(Value action) {
+        Assert.isTrue(action != null && action.canExecute(), "参数action必须是回调函数");
+        return delegate.beginTX(action::execute);
+    }
+
+    /**
+     * 在事务内支持操作
+     *
+     * @param action              事务内数据库操作
+     * @param propagationBehavior 设置事务传递性 {@link org.springframework.transaction.TransactionDefinition#PROPAGATION_REQUIRED}
+     * @param timeout             设置事务超时时间，-1表示不超时(单位：秒)
+     * @param isolationLevel      设置事务隔离级别 {@link org.springframework.transaction.TransactionDefinition#ISOLATION_DEFAULT}
+     * @see org.springframework.transaction.TransactionDefinition
+     */
+    public Value beginReadOnlyTX(Value action, int propagationBehavior, int timeout, int isolationLevel) {
+        Assert.isTrue(action != null && action.canExecute(), "参数action必须是回调函数");
+        return delegate.beginReadOnlyTX(action::execute, propagationBehavior, timeout, isolationLevel);
+    }
+
+    /**
+     * 在事务内支持操作
+     *
+     * @param action              事务内数据库操作
+     * @param propagationBehavior 设置事务传递性 {@link org.springframework.transaction.TransactionDefinition#PROPAGATION_REQUIRED}
+     * @param timeout             设置事务超时时间，-1表示不超时(单位：秒)
+     * @see org.springframework.transaction.TransactionDefinition
+     */
+    public Value beginReadOnlyTX(Value action, int propagationBehavior, int timeout) {
+        Assert.isTrue(action != null && action.canExecute(), "参数action必须是回调函数");
+        return delegate.beginReadOnlyTX(action::execute, propagationBehavior, timeout);
+    }
+
+    /**
+     * 在事务内支持操作
+     *
+     * @param action              事务内数据库操作
+     * @param propagationBehavior 设置事务传递性 {@link org.springframework.transaction.TransactionDefinition#PROPAGATION_REQUIRED}
+     * @see org.springframework.transaction.TransactionDefinition
+     */
+    public Value beginReadOnlyTX(Value action, int propagationBehavior) {
+        Assert.isTrue(action != null && action.canExecute(), "参数action必须是回调函数");
+        return delegate.beginReadOnlyTX(action::execute, propagationBehavior);
+    }
+
+    /**
+     * 在事务内支持操作
+     *
+     * @param action 事务内数据库操作
+     * @see org.springframework.transaction.TransactionDefinition
+     */
+    public Value beginReadOnlyTX(Value action) {
+        Assert.isTrue(action != null && action.canExecute(), "参数action必须是回调函数");
+        return delegate.beginReadOnlyTX(action::execute);
+    }
+
+    // --------------------------------------------------------------------------------------------
+    //  其它 操作
+    // --------------------------------------------------------------------------------------------
 
     private QueryByPage getQueryByPage(Map<String, Object> paginationMap) {
         QueryByPage queryByPage = new QueryByPage();
@@ -367,10 +638,6 @@ public class JdbcDataSource {
     }
 
     private QueryBySort getQueryBySort(Map<String, Object> sortMap, QueryBySort queryBySort) {
-        for (Map.Entry<String, Object> entry : sortMap.entrySet()) {
-            Object object = entry.getValue();
-            entry.setValue(InteropScriptToJavaUtils.Instance.toJavaObject(object));
-        }
         Object orderField = sortMap.get(Order_Field_Name);
         Object sort = sortMap.get(Sort_Name);
         Object orderFields = sortMap.get(Order_Fields_Name);
@@ -378,8 +645,8 @@ public class JdbcDataSource {
         Object fieldsMapping = sortMap.get(Fields_Mapping_Name);
         Assert.isTrue(orderField == null || orderField instanceof String, "参数orderField必须是一个字符串");
         Assert.isTrue(sort == null || sort instanceof String, "参数sort必须是一个字符串");
-        Assert.isTrue(orderFields == null || orderFields instanceof String[], "参数orderFields必须是一个字符串数组");
-        Assert.isTrue(sorts == null || sorts instanceof String[], "参数sorts必须是一个字符串数组");
+        Assert.isTrue(orderFields == null || orderFields instanceof Object[], "参数orderFields必须是一个字符串数组");
+        Assert.isTrue(sorts == null || sorts instanceof Object[], "参数sorts必须是一个字符串数组");
         Assert.isTrue(fieldsMapping == null || fieldsMapping instanceof Map, "参数sorts必须是一个字符串数组");
         // 排序参数转换
         if (queryBySort == null) {
@@ -387,11 +654,40 @@ public class JdbcDataSource {
         }
         queryBySort.setOrderField((String) orderField);
         queryBySort.setSort((String) sort);
-        queryBySort.setOrderFields(orderFields == null ? null : Arrays.asList((String[]) orderFields));
-        queryBySort.setSorts(sorts == null ? null : Arrays.asList((String[]) sorts));
+        if (orderFields != null) {
+            String[] orderFieldsArr = new String[((Object[]) orderFields).length];
+            for (int i = 0; i < orderFieldsArr.length; i++) {
+                Object item = ((Object[]) orderFields)[i];
+                if (item == null) {
+                    orderFieldsArr[i] = null;
+                } else if (item instanceof String) {
+                    orderFieldsArr[i] = (String) item;
+                } else {
+                    throw new IllegalArgumentException("参数orderFields必须是一个字符串数组");
+                }
+            }
+            queryBySort.setOrderFields(Arrays.asList(orderFieldsArr));
+        }
+        if (sorts != null) {
+            String[] sortsArr = new String[((Object[]) sorts).length];
+            for (int i = 0; i < sortsArr.length; i++) {
+                Object item = ((Object[]) sorts)[i];
+                if (item == null) {
+                    sortsArr[i] = null;
+                } else if (item instanceof String) {
+                    sortsArr[i] = (String) item;
+                } else {
+                    throw new IllegalArgumentException("参数sorts必须是一个字符串数组");
+                }
+            }
+            queryBySort.setSorts(Arrays.asList(sortsArr));
+        }
         if (fieldsMapping != null) {
             Map<?, ?> map = (Map<?, ?>) fieldsMapping;
             for (Map.Entry<?, ?> entry : map.entrySet()) {
+                Object key = entry.getKey();
+                Object value = entry.getValue();
+
                 queryBySort.addOrderFieldMapping(String.valueOf(entry.getKey()), String.valueOf(entry.getValue()));
             }
         }
