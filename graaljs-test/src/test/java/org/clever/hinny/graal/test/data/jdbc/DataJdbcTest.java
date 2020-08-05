@@ -22,7 +22,7 @@ import java.io.IOException;
  */
 @Slf4j
 public class DataJdbcTest {
-    private final Folder rootFolder = FileSystemFolder.createRootPath(new File("C:\\Users\\ymx\\Desktop\\clever-hinny-js").getAbsolutePath());
+    private final Folder rootFolder = FileSystemFolder.createRootPath(new File("C:\\Users\\mlrs\\Desktop\\clever-hinny-js").getAbsolutePath());
     private ScriptEngineInstance<?, ?> engineInstance;
     private ScriptObject<?> scriptObject;
 
@@ -115,6 +115,36 @@ public class DataJdbcTest {
     @Test
     public void t09() {
         scriptObject.callMember("t09");
+        log.info("### ---------------------------------------------------------------------------> END");
+    }
+
+    @Test
+    public void t10() {
+        scriptObject.callMember("t10");
+        log.info("### ---------------------------------------------------------------------------> END");
+    }
+
+    @Test
+    public void t11() {
+        scriptObject.callMember("t11");
+        log.info("### ---------------------------------------------------------------------------> END");
+    }
+
+    @Test
+    public void t12() {
+        scriptObject.callMember("t12");
+        log.info("### ---------------------------------------------------------------------------> END");
+    }
+
+    @Test
+    public void t13() {
+        scriptObject.callMember("t13");
+        log.info("### ---------------------------------------------------------------------------> END");
+    }
+
+    @Test
+    public void t14() {
+        scriptObject.callMember("t14");
         log.info("### ---------------------------------------------------------------------------> END");
     }
 }
