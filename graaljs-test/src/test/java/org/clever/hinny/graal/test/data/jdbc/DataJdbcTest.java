@@ -22,7 +22,8 @@ import java.io.IOException;
  */
 @Slf4j
 public class DataJdbcTest {
-    private final Folder rootFolder = FileSystemFolder.createRootPath(new File("C:\\Users\\mlrs\\Desktop\\clever-hinny-js").getAbsolutePath());
+    //private final Folder rootFolder = FileSystemFolder.createRootPath(new File("C:\\Users\\mlrs\\Desktop\\clever-hinny-js").getAbsolutePath());
+    private final Folder rootFolder = FileSystemFolder.createRootPath(new File("D:\\SourceCode\\clever\\clever-hinny-js").getAbsolutePath());
     private ScriptEngineInstance<?, ?> engineInstance;
     private ScriptObject<?> scriptObject;
 
