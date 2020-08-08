@@ -31,7 +31,8 @@ public abstract class AbstractJdbcDataSourceTest {
 
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        hikariConfig.setJdbcUrl("jdbc:mysql://mysql.msvc.top:3306/clever-template");
+        //hikariConfig.setJdbcUrl("jdbc:mysql://mysql.msvc.top:3306/clever-template");
+        hikariConfig.setJdbcUrl("jdbc:mysql://192.168.31.40:3306/clever-template");
         hikariConfig.setUsername("clever-template");
         hikariConfig.setPassword("lizhiwei1993");
         hikariConfig.setAutoCommit(false);

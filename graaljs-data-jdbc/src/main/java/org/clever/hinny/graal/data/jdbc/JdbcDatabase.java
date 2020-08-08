@@ -2,11 +2,12 @@ package org.clever.hinny.graal.data.jdbc;
 
 
 import lombok.SneakyThrows;
+import org.clever.hinny.data.jdbc.support.JdbcDataSourceStatus;
+import org.clever.hinny.data.jdbc.support.JdbcInfo;
+import org.clever.hinny.graaljs.utils.InteropScriptToJavaUtils;
 import org.springframework.util.Assert;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -31,6 +32,8 @@ public class JdbcDatabase {
      * @return 默认数据源对象
      */
     public JdbcDataSource setDefault(String defaultName) {
+        Assert.hasText(defaultName, "参数defaultName不能为空");
+        Assert.isTrue(DATASOURCE_MAP.containsKey(defaultName) && !DATASOURCE_MAP.get(defaultName).isClosed(), "默认数据源已经关闭(isClosed)");
         this.defaultName = defaultName;
         return getDefault();
     }
@@ -42,6 +45,8 @@ public class JdbcDatabase {
      * @param jdbcDataSource 默认数据源对象
      */
     public void setDefault(String defaultName, org.clever.hinny.data.jdbc.JdbcDataSource jdbcDataSource) {
+        Assert.hasText(defaultName, "参数defaultName不能为空");
+        Assert.isTrue(!jdbcDataSource.isClosed(), "默认数据源已经关闭(isClosed)");
         this.defaultName = defaultName;
         add(defaultName, jdbcDataSource);
     }
@@ -96,9 +101,27 @@ public class JdbcDatabase {
      * @param name       数据源名称
      * @param jdbcConfig 数据源配置
      */
-    public JdbcDataSource add(String name, JdbcConfig jdbcConfig) {
-        // TODO 添加数据源
-        return null;
+    @SuppressWarnings("unchecked")
+    public JdbcDataSource add(String name, Map<String, Object> jdbcConfig) {
+        Assert.isTrue(!DATASOURCE_MAP.containsKey(name), "数据源已经存在");
+        jdbcConfig = InteropScriptToJavaUtils.Instance.convertMap(jdbcConfig);
+        JdbcConfig config = new JdbcConfig();
+        config.setDriverClassName((String) jdbcConfig.get("driverClassName"));
+        config.setJdbcUrl((String) jdbcConfig.get("jdbcUrl"));
+        config.setUsername((String) jdbcConfig.get("username"));
+        config.setPassword((String) jdbcConfig.get("password"));
+        config.setIsAutoCommit((Boolean) jdbcConfig.get("isAutoCommit"));
+        config.setIsReadOnly((Boolean) jdbcConfig.get("isReadOnly"));
+        config.setMaxPoolSize((Integer) jdbcConfig.get("maxPoolSize"));
+        config.setMinIdle((Integer) jdbcConfig.get("minIdle"));
+        config.setMaxLifetimeMs((Long) jdbcConfig.get("maxLifetimeMs"));
+        config.setConnectionTimeoutMs((Long) jdbcConfig.get("connectionTimeoutMs"));
+        config.setIdleTimeoutMs((Long) jdbcConfig.get("idleTimeoutMs"));
+        config.setConnectionTestQuery((String) jdbcConfig.get("connectionTestQuery"));
+        config.setDataSourceProperties((Map<String, Object>) jdbcConfig.get("dataSourceProperties"));
+        org.clever.hinny.data.jdbc.JdbcDataSource jdbcDataSource = new org.clever.hinny.data.jdbc.JdbcDataSource(config.getHikariConfig());
+        add(name, jdbcDataSource);
+        return DATASOURCE_MAP.get(name);
     }
 
     /**
@@ -108,6 +131,7 @@ public class JdbcDatabase {
      */
     @SneakyThrows
     public boolean del(String name) {
+        Assert.isTrue(!Objects.equals(name, defaultName), "不能删除默认数据源");
         JdbcDataSource jdbcDataSource = DATASOURCE_MAP.get(name);
         if (jdbcDataSource != null) {
             jdbcDataSource.close();
@@ -127,6 +151,7 @@ public class JdbcDatabase {
             entry.getValue().close();
             iterator.remove();
         }
+        defaultName = null;
     }
 
     /**
@@ -142,15 +167,41 @@ public class JdbcDatabase {
      * @param name 数据源名称
      */
     public JdbcInfo getInfo(String name) {
-        // TODO 获取数据源信息
-        return null;
+        JdbcDataSource jdbcDataSource = getDataSource(name);
+        return jdbcDataSource == null ? null : jdbcDataSource.getInfo();
     }
 
     /**
      * 获取所有数据源信息
      */
     public Map<String, JdbcInfo> allInfos() {
-        // TODO 获取所有数据库信息
-        return null;
+        Map<String, JdbcInfo> map = new HashMap<>(DATASOURCE_MAP.size());
+        for (Map.Entry<String, JdbcDataSource> entry : DATASOURCE_MAP.entrySet()) {
+            String name = entry.getKey();
+            map.put(name, getInfo(name));
+        }
+        return map;
+    }
+
+    /**
+     * 获取数据源状态
+     *
+     * @param name 数据源名称
+     */
+    public JdbcDataSourceStatus getStatus(String name) {
+        JdbcDataSource jdbcDataSource = getDataSource(name);
+        return jdbcDataSource == null ? null : jdbcDataSource.getStatus();
+    }
+
+    /**
+     * 获取数据源状态
+     */
+    public Map<String, JdbcDataSourceStatus> allStatus() {
+        Map<String, JdbcDataSourceStatus> map = new HashMap<>(DATASOURCE_MAP.size());
+        for (Map.Entry<String, JdbcDataSource> entry : DATASOURCE_MAP.entrySet()) {
+            String name = entry.getKey();
+            map.put(name, getStatus(name));
+        }
+        return map;
     }
 }

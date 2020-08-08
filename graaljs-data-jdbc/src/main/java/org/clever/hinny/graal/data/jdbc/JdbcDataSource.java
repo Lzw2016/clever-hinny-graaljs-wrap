@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.clever.common.model.request.QueryByPage;
 import org.clever.common.model.request.QueryBySort;
 import org.clever.hinny.data.jdbc.support.InsertResult;
+import org.clever.hinny.data.jdbc.support.JdbcDataSourceStatus;
+import org.clever.hinny.data.jdbc.support.JdbcInfo;
 import org.clever.hinny.graaljs.utils.InteropScriptToJavaUtils;
 import org.graalvm.polyglot.Value;
 import org.springframework.util.Assert;
@@ -618,6 +620,20 @@ public class JdbcDataSource {
     // --------------------------------------------------------------------------------------------
     //  其它 操作
     // --------------------------------------------------------------------------------------------
+
+    /**
+     * 获取数据源信息
+     */
+    public JdbcInfo getInfo() {
+        return delegate.getInfo();
+    }
+
+    /**
+     * 获取数据源状态
+     */
+    public JdbcDataSourceStatus getStatus() {
+        return delegate.getStatus();
+    }
 
     private QueryByPage getQueryByPage(Map<String, Object> paginationMap) {
         QueryByPage queryByPage = new QueryByPage();
