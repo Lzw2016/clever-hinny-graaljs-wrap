@@ -35,4 +35,10 @@ public class T02InteropTest extends AbstractJdbcDataSourceTest {
         scriptObject.callMember("t04");
         log.info("--------------------------------------------------------------------------------------------");
     }
+
+    @Test
+    public void t05() {
+        scriptObject.callMember("t05");
+        log.info("--------------------------------------------------------------------------------------------");
+    }
 }
