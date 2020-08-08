@@ -37,7 +37,7 @@ public abstract class AbstractJdbcDataSourceTest {
         hikariConfig.setPassword("lizhiwei1993");
         hikariConfig.setAutoCommit(false);
         hikariConfig.setMaximumPoolSize(10);
-        hikariConfig.setMinimumIdle(5);
+        hikariConfig.setMinimumIdle(1);
         hikariConfig.setMaxLifetime(1800_000);
         hikariConfig.setConnectionTestQuery("SELECT 1");
         hikariConfig.getDataSourceProperties().put("serverTimezone", "GMT+8");
