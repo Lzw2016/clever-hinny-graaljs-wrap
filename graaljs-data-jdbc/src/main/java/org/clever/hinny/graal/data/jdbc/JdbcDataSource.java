@@ -12,10 +12,7 @@ import org.graalvm.polyglot.Value;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 作者：lizw <br/>
@@ -321,6 +318,20 @@ public class JdbcDataSource {
      *
      * @param sql           sql脚本，参数格式[:param]
      * @param paginationMap 分页配置(支持排序)
+     * @param paramMap      参数，参数格式[:param]
+     */
+    public IPage<Map<String, Object>> queryByPage(String sql, Map<String, Object> paginationMap, Map<String, Object> paramMap) {
+        paginationMap = InteropScriptToJavaUtils.Instance.convertMap(paginationMap);
+        QueryByPage pagination = getQueryByPage(paginationMap);
+        paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
+        return delegate.queryByPage(sql, pagination, paramMap);
+    }
+
+    /**
+     * 分页查询(支持排序)，返回分页对象
+     *
+     * @param sql           sql脚本，参数格式[:param]
+     * @param paginationMap 分页配置(支持排序)
      * @param countQuery    是否要执行count查询(可选)
      */
     public IPage<Map<String, Object>> queryByPage(String sql, Map<String, Object> paginationMap, boolean countQuery) {
@@ -333,12 +344,21 @@ public class JdbcDataSource {
      * 分页查询(支持排序)，返回分页对象
      *
      * @param sql           sql脚本，参数格式[:param]
-     * @param paginationMap 分页配置(支持排序)
+     * @param paginationMap 分页配置(支持排序) - 支持加入查询参数
      */
     public IPage<Map<String, Object>> queryByPage(String sql, Map<String, Object> paginationMap) {
         paginationMap = InteropScriptToJavaUtils.Instance.convertMap(paginationMap);
         QueryByPage pagination = getQueryByPage(paginationMap);
-        return delegate.queryByPage(sql, pagination);
+        Map<String, Object> paramMap = new HashMap<>(paginationMap);
+        paramMap.remove(Order_Field_Name);
+        paramMap.remove(Sort_Name);
+        paramMap.remove(Order_Fields_Name);
+        paramMap.remove(Sorts_Name);
+        paramMap.remove(Fields_Mapping_Name);
+        paramMap.remove(Page_Size_Name);
+        paramMap.remove(Page_No_Name);
+        paramMap.remove(Is_Search_Count_Name);
+        return delegate.queryByPage(sql, pagination, paramMap);
     }
 
     // --------------------------------------------------------------------------------------------
