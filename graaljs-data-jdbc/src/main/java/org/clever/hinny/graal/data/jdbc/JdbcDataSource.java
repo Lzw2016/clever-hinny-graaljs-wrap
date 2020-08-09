@@ -71,6 +71,15 @@ public class JdbcDataSource {
     }
 
     /**
+     * 查询一条数据，返回一个Map
+     *
+     * @param sql sql脚本，参数格式[:param]
+     */
+    public Map<String, Object> queryMap(String sql) {
+        return delegate.queryMap(sql);
+    }
+
+    /**
      * 查询多条数据，返回一个Map数组
      *
      * @param sql      sql脚本，参数格式[:param]
