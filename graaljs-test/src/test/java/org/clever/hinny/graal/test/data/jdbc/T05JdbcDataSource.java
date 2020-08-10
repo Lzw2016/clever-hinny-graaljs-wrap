@@ -21,4 +21,10 @@ public class T05JdbcDataSource extends AbstractJdbcDataSourceTest {
         scriptObject.callMember("t01");
         log.info("### ---------------------------------------------------------------------------> END");
     }
+
+    @Test
+    public void t02() {
+        scriptObject.callMember("t02");
+        log.info("### ---------------------------------------------------------------------------> END");
+    }
 }
