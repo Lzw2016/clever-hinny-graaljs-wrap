@@ -18,9 +18,9 @@ public class JdbcConfig implements Serializable {
 
     private String password;
 
-    private Boolean isAutoCommit;
+    private Boolean autoCommit;
 
-    private Boolean isReadOnly;
+    private Boolean readOnly;
 
     private Integer maxPoolSize;
 
@@ -46,11 +46,11 @@ public class JdbcConfig implements Serializable {
         hikariConfig.setJdbcUrl(jdbcUrl);
         hikariConfig.setUsername(username);
         hikariConfig.setPassword(password);
-        if (isAutoCommit != null) {
-            hikariConfig.setAutoCommit(isAutoCommit);
+        if (autoCommit != null) {
+            hikariConfig.setAutoCommit(autoCommit);
         }
-        if (isReadOnly != null) {
-            hikariConfig.setReadOnly(isReadOnly);
+        if (readOnly != null) {
+            hikariConfig.setReadOnly(readOnly);
         }
         if (maxPoolSize != null) {
             hikariConfig.setMaximumPoolSize(maxPoolSize);

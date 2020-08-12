@@ -110,8 +110,8 @@ public class JdbcDatabase {
         config.setJdbcUrl((String) jdbcConfig.get("jdbcUrl"));
         config.setUsername((String) jdbcConfig.get("username"));
         config.setPassword((String) jdbcConfig.get("password"));
-        config.setIsAutoCommit((Boolean) jdbcConfig.get("isAutoCommit"));
-        config.setIsReadOnly((Boolean) jdbcConfig.get("isReadOnly"));
+        config.setAutoCommit((Boolean) jdbcConfig.get("autoCommit"));
+        config.setReadOnly((Boolean) jdbcConfig.get("readOnly"));
         config.setMaxPoolSize((Integer) jdbcConfig.get("maxPoolSize"));
         config.setMinIdle((Integer) jdbcConfig.get("minIdle"));
         config.setMaxLifetimeMs((Long) jdbcConfig.get("maxLifetimeMs"));
