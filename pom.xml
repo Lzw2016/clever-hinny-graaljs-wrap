@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.clever</groupId>
         <artifactId>clever-parent</artifactId>
-        <version>2.1.16.0.RELEASE</version>
+        <version>2.1.16.1.RELEASE</version>
         <relativePath/>
     </parent>
 
@@ -66,7 +66,7 @@
         <maven.compiler.target>11</maven.compiler.target>
         <JAVA_HOME>C:/Program Files/Java/jdk-11.0.5</JAVA_HOME>
         <compiler.dir>${project.build.directory}/compiler</compiler.dir>
-        <clever-common.version>2.0.0-SNAPSHOT</clever-common.version>
+        <!--<clever-common.version>2.0.1-SNAPSHOT</clever-common.version>-->
         <clever-hinny.version>1.0.0-SNAPSHOT</clever-hinny.version>
         <clever-hinny-java.version>1.0.0-SNAPSHOT</clever-hinny-java.version>
         <graalvm.version>20.1.0</graalvm.version>
@@ -106,26 +106,11 @@
                 <version>${revision}</version>
             </dependency>
             <!--clever common-->
-            <dependency>
-                <groupId>org.clever</groupId>
-                <artifactId>clever-common-utils</artifactId>
-                <version>${clever-common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.clever</groupId>
-                <artifactId>clever-common-model</artifactId>
-                <version>${clever-common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.clever</groupId>
-                <artifactId>clever-common-server</artifactId>
-                <version>${clever-common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.clever</groupId>
-                <artifactId>clever-common-client</artifactId>
-                <version>${clever-common.version}</version>
-            </dependency>
+            <!--            <dependency>-->
+            <!--                <groupId>org.clever</groupId>-->
+            <!--                <artifactId>clever-common-server</artifactId>-->
+            <!--                <version>${clever-common.version}</version>-->
+            <!--            </dependency>-->
             <!--clever hinny-->
             <dependency>
                 <groupId>org.clever</groupId>

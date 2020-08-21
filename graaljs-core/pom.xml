@@ -18,5 +18,11 @@
             <groupId>org.clever</groupId>
             <artifactId>hinny-core</artifactId>
         </dependency>
+        <!--other-->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>
