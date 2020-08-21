@@ -39,4 +39,16 @@ public class ExcelUtils {
     public void write(org.clever.hinny.core.ExcelUtils.ExcelDataWriterConfig config, List<Map> listData) {
 
     }
+
+    private static org.clever.hinny.core.ExcelUtils.ExcelDataReaderConfig toExcelDataReaderConfig(Map<String, Object> configMap) {
+        org.clever.hinny.core.ExcelUtils.ExcelDataReaderConfig config = new org.clever.hinny.core.ExcelUtils.ExcelDataReaderConfig();
+
+        return config;
+    }
+
+    private static org.clever.hinny.core.ExcelUtils.ExcelDataWriterConfig toExcelDataWriterConfig(Map<String, Object> configMap) {
+        org.clever.hinny.core.ExcelUtils.ExcelDataWriterConfig config = new org.clever.hinny.core.ExcelUtils.ExcelDataWriterConfig();
+
+        return config;
+    }
 }
