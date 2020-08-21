@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -112,6 +113,31 @@ public class ExcelUtils {
                     public void readEnd(AnalysisContext context) {
                         if (readEndExe) {
                             readEnd.executeVoid(context);
+                        }
+                    }
+                });
+            }
+        } else if (excelRowReader instanceof Map) {
+            Map<String, Object> callBack = (Map<String, Object>) excelRowReader;
+            Object readRow = callBack.get("readRow");
+            Object readEnd = callBack.get("readEnd");
+            boolean readRowExe = readRow instanceof Function;
+            boolean readEndExe = readEnd instanceof Function;
+            if (readRowExe || readEndExe) {
+                config.setExcelRowReader(new ExcelRowReader<>() {
+                    @SuppressWarnings("rawtypes")
+                    @Override
+                    public void readRow(Map data, ExcelRow<Map> excelRow, AnalysisContext context) {
+                        if (readRowExe) {
+                            ((Function) readRow).apply(new Object[]{data, excelRow, context});
+                        }
+                    }
+
+                    @SuppressWarnings("rawtypes")
+                    @Override
+                    public void readEnd(AnalysisContext context) {
+                        if (readEndExe) {
+                            ((Function) readEnd).apply(new Object[]{context});
                         }
                     }
                 });
