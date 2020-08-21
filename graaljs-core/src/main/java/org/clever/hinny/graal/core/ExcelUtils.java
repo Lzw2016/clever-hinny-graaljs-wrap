@@ -1,13 +1,20 @@
 package org.clever.hinny.graal.core;
 
+import com.alibaba.excel.context.AnalysisContext;
+import com.alibaba.excel.enums.CellExtraTypeEnum;
+import org.apache.commons.lang3.StringUtils;
 import org.clever.common.utils.excel.ExcelDataReader;
 import org.clever.common.utils.excel.ExcelDataWriter;
+import org.clever.common.utils.excel.ExcelRowReader;
 import org.clever.common.utils.excel.dto.ExcelData;
+import org.clever.common.utils.excel.dto.ExcelRow;
 import org.graalvm.polyglot.Value;
 
 import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 作者：lizw <br/>
@@ -33,7 +40,19 @@ public class ExcelUtils {
     }
 
     @SuppressWarnings("rawtypes")
-    public Map<String, ExcelData<Map>> read(org.clever.hinny.core.ExcelUtils.ExcelDataReaderConfig config) {
+    public Map<String, ExcelData<Map>> read(Map<String, Object> configMap) {
+        org.clever.hinny.core.ExcelUtils.ExcelDataReaderConfig config = toExcelDataReaderConfig(configMap);
+        ExcelDataReader<Map> excelDataReader = delegate.createReader(config);
+        if (config.getSheetNo() != null) {
+            excelDataReader.read().sheet(config.getSheetNo()).doRead();
+        } else if (config.getSheetName() != null) {
+            excelDataReader.read().sheet(config.getSheetName()).doRead();
+        } else {
+            excelDataReader.read().doReadAll();
+        }
+        if (excelDataReader.isEnableExcelData()) {
+            return excelDataReader.getExcelSheetMap();
+        }
         return null;
     }
 
@@ -42,6 +61,7 @@ public class ExcelUtils {
 
     }
 
+    @SuppressWarnings("unchecked")
     private static org.clever.hinny.core.ExcelUtils.ExcelDataReaderConfig toExcelDataReaderConfig(Map<String, Object> configMap) {
         org.clever.hinny.core.ExcelUtils.ExcelDataReaderConfig config = new org.clever.hinny.core.ExcelUtils.ExcelDataReaderConfig();
         Object filename = configMap.get("filename");
@@ -65,14 +85,37 @@ public class ExcelUtils {
             config.setEnableValidation((Boolean) enableValidation);
         }
         Object excelReaderExceptionHand = configMap.get("excelReaderExceptionHand");
-        if (excelReaderExceptionHand instanceof Value && ((Value) excelReaderExceptionHand).isException()) {
-            // TODO ????
-            // config.setExcelReaderExceptionHand((Value) excelReaderExceptionHand);
+        if (excelReaderExceptionHand instanceof Value) {
+            Value callBack = (Value) excelReaderExceptionHand;
+            Value exceptionHand = callBack.getMember("exceptionHand");
+            if (exceptionHand != null && exceptionHand.canExecute()) {
+                config.setExcelReaderExceptionHand((throwable, context) -> exceptionHand.executeVoid(throwable, context));
+            }
         }
         Object excelRowReader = configMap.get("excelRowReader");
-        if (excelRowReader instanceof Value && ((Value) excelRowReader).isException()) {
-            // TODO ????
-            // config.setExcelRowReader((Value) excelRowReader);
+        if (excelRowReader instanceof Value) {
+            Value callBack = (Value) excelRowReader;
+            Value readRow = callBack.getMember("readRow");
+            Value readEnd = callBack.getMember("readEnd");
+            boolean readRowExe = readRow != null && readRow.canExecute();
+            boolean readEndExe = readEnd != null && readEnd.canExecute();
+            if (readRowExe || readEndExe) {
+                config.setExcelRowReader(new ExcelRowReader<>() {
+                    @Override
+                    public void readRow(Map data, ExcelRow<Map> excelRow, AnalysisContext context) {
+                        if (readRowExe) {
+                            readRow.executeVoid(data, excelRow, context);
+                        }
+                    }
+
+                    @Override
+                    public void readEnd(AnalysisContext context) {
+                        if (readEndExe) {
+                            readEnd.executeVoid(context);
+                        }
+                    }
+                });
+            }
         }
         Object autoCloseStream = configMap.get("autoCloseStream");
         if (autoCloseStream instanceof Boolean) {
@@ -81,13 +124,15 @@ public class ExcelUtils {
         Object extraRead = configMap.get("extraRead");
         if (extraRead instanceof Value && ((Value) extraRead).hasArrayElements()) {
             Value arrayTmp = (Value) extraRead;
+            List<CellExtraTypeEnum> extraReadList = new ArrayList<>();
             for (int i = 0; i < arrayTmp.getArraySize(); i++) {
                 Value item = arrayTmp.getArrayElement(i);
                 if (item.isString()) {
-                    // TODO ???
+                    extraReadList.add(toCellExtraTypeEnum(item.asString()));
                 }
             }
-            // config.setExtraRead((InputStream) extraRead);
+            extraReadList = extraReadList.stream().filter(Objects::nonNull).collect(Collectors.toList());
+            config.setExtraRead(extraReadList.toArray(new CellExtraTypeEnum[0]));
         }
         Object ignoreEmptyRow = configMap.get("ignoreEmptyRow");
         if (ignoreEmptyRow instanceof Boolean) {
@@ -123,8 +168,7 @@ public class ExcelUtils {
         }
         Object locale = configMap.get("locale");
         if (locale instanceof String) {
-            // TODO ???
-            // config.setLocale((String) locale);
+            config.setLocale(toLocale((String) locale));
         }
         Object autoTrim = configMap.get("autoTrim");
         if (autoTrim instanceof Boolean) {
@@ -136,9 +180,24 @@ public class ExcelUtils {
         }
         Object columns = configMap.get("columns");
         if (columns instanceof Value) {
-            // TODO ???
             Value columnsValue = (Value) columns;
-            config.getColumns().put("", null);
+            for (String memberKey : columnsValue.getMemberKeys()) {
+                Value column = columnsValue.getMember(memberKey);
+                if (column == null) {
+                    continue;
+                }
+                config.getColumns().put(memberKey, toExcelReaderHeadConfig(column));
+            }
+        } else if (columns instanceof Map) {
+            Map<String, Object> columnsMap = (Map<String, Object>) columns;
+            for (Map.Entry<String, Object> entry : columnsMap.entrySet()) {
+                String columnName = entry.getKey();
+                Object columnConfig = entry.getValue();
+                if (StringUtils.isBlank(columnName) || !(columnConfig instanceof Map)) {
+                    continue;
+                }
+                config.getColumns().put(columnName, toExcelReaderHeadConfig((Map<String, Object>) columnConfig));
+            }
         }
         return config;
     }
@@ -147,5 +206,183 @@ public class ExcelUtils {
         org.clever.hinny.core.ExcelUtils.ExcelDataWriterConfig config = new org.clever.hinny.core.ExcelUtils.ExcelDataWriterConfig();
 
         return config;
+    }
+
+    private static Class<?> getClass(String dataType) {
+        if (StringUtils.isBlank(dataType)) {
+            return null;
+        }
+        switch (dataType) {
+            case "JString":
+                return String.class;
+            case "JBigDecimal":
+                return BigDecimal.class;
+            case "JBoolean":
+                return Boolean.class;
+            case "JDate":
+                break;
+            case "JInteger":
+                return Integer.class;
+            case "JDouble":
+                return Double.class;
+            case "JLong":
+                return Long.class;
+            case "JFloat":
+                return Float.class;
+            case "JShort":
+                return Short.class;
+            case "JByte":
+                return Byte.class;
+            case "JByte[]":
+                return Byte[].class;
+        }
+        return null;
+    }
+
+    private static CellExtraTypeEnum toCellExtraTypeEnum(String extraRead) {
+        if (StringUtils.isBlank(extraRead)) {
+            return null;
+        }
+        switch (extraRead) {
+            case "COMMENT":
+                return CellExtraTypeEnum.COMMENT;
+            case "HYPERLINK":
+                return CellExtraTypeEnum.HYPERLINK;
+            case "MERGE":
+                return CellExtraTypeEnum.MERGE;
+            default:
+                return CellExtraTypeEnum.valueOf(extraRead);
+        }
+    }
+
+    public static Locale toLocale(String locale) {
+        if (StringUtils.isBlank(locale)) {
+            return null;
+        }
+        switch (locale) {
+            case "ENGLISH":
+                return Locale.ENGLISH;
+            case "CHINESE":
+                return Locale.CHINESE;
+            case "SIMPLIFIED_CHINESE":
+                return Locale.SIMPLIFIED_CHINESE;
+            case "TRADITIONAL_CHINESE":
+                return Locale.TRADITIONAL_CHINESE;
+        }
+        return Locale.SIMPLIFIED_CHINESE;
+    }
+
+    private static org.clever.hinny.core.ExcelUtils.ExcelReaderHeadConfig toExcelReaderHeadConfig(Value column) {
+        org.clever.hinny.core.ExcelUtils.ExcelReaderHeadConfig headConfig = new org.clever.hinny.core.ExcelUtils.ExcelReaderHeadConfig();
+        Value dataType = column.getMember("dataType");
+        if (dataType != null && dataType.isString()) {
+            headConfig.setDataType(getClass(dataType.asString()));
+        }
+        toExcelProperty(column, headConfig.getExcelProperty());
+        toDateTimeFormat(column, headConfig.getDateTimeFormat());
+        toNumberFormat(column, headConfig.getNumberFormat());
+        return headConfig;
+    }
+
+    private static void toExcelProperty(Value column, org.clever.hinny.core.ExcelUtils.ExcelProperty excelProperty) {
+        Value columnV = column.getMember("column");
+        if (columnV != null && columnV.isString()) {
+            excelProperty.getColumn().add(columnV.asString());
+        } else if (columnV != null && columnV.hasArrayElements()) {
+            for (int i = 0; i < columnV.getArraySize(); i++) {
+                Value item = columnV.getArrayElement(i);
+                if (item.isString()) {
+                    excelProperty.getColumn().add(item.asString());
+                }
+            }
+        }
+        Value ignore = column.getMember("ignore");
+        if (ignore != null && ignore.isBoolean()) {
+            excelProperty.setIgnore(ignore.asBoolean());
+        }
+        Value index = column.getMember("index");
+        if (index != null && index.isNumber()) {
+            excelProperty.setIndex(index.asInt());
+        }
+    }
+
+    private static void toDateTimeFormat(Value column, org.clever.hinny.core.ExcelUtils.DateTimeFormat dateTimeFormat) {
+        Value dateFormat = column.getMember("dateFormat");
+        if (dateFormat != null && dateFormat.isString()) {
+            dateTimeFormat.setDateFormat(dateFormat.asString());
+        }
+        Value use1904windowing = column.getMember("use1904windowing");
+        if (use1904windowing != null && use1904windowing.isBoolean()) {
+            dateTimeFormat.setUse1904windowing(use1904windowing.asBoolean());
+        }
+    }
+
+    private static void toNumberFormat(Value column, org.clever.hinny.core.ExcelUtils.NumberFormat numberFormat) {
+        Value numberFormatV = column.getMember("numberFormat");
+        if (numberFormatV != null && numberFormatV.isString()) {
+            numberFormat.setNumberFormat(numberFormatV.asString());
+        }
+        Value roundingMode = column.getMember("roundingMode");
+        if (roundingMode != null && roundingMode.isNumber()) {
+            numberFormat.setRoundingMode(RoundingMode.valueOf(roundingMode.asInt()));
+        }
+    }
+
+    private static org.clever.hinny.core.ExcelUtils.ExcelReaderHeadConfig toExcelReaderHeadConfig(Map<String, Object> column) {
+        org.clever.hinny.core.ExcelUtils.ExcelReaderHeadConfig headConfig = new org.clever.hinny.core.ExcelUtils.ExcelReaderHeadConfig();
+        Object dataType = column.get("dataType");
+        if (dataType instanceof String) {
+            headConfig.setDataType(getClass((String) dataType));
+        }
+        toExcelProperty(column, headConfig.getExcelProperty());
+        toDateTimeFormat(column, headConfig.getDateTimeFormat());
+        toNumberFormat(column, headConfig.getNumberFormat());
+        return headConfig;
+    }
+
+    private static void toExcelProperty(Map<String, Object> column, org.clever.hinny.core.ExcelUtils.ExcelProperty excelProperty) {
+        Object columnV = column.get("column");
+        if (columnV instanceof String) {
+            excelProperty.getColumn().add((String) columnV);
+        }
+//        TODO ???
+//        else if (columnV != null && columnV.hasArrayElements()) {
+//            for (int i = 0; i < columnV.getArraySize(); i++) {
+//                Value item = columnV.getArrayElement(i);
+//                if (item.isString()) {
+//                    excelProperty.getColumn().add(item.asString());
+//                }
+//            }
+//        }
+        Object ignore = column.get("ignore");
+        if (ignore instanceof Boolean) {
+            excelProperty.setIgnore((Boolean) ignore);
+        }
+        Object index = column.get("index");
+        if (index instanceof Integer) {
+            excelProperty.setIndex((Integer) index);
+        }
+    }
+
+    private static void toDateTimeFormat(Map<String, Object> column, org.clever.hinny.core.ExcelUtils.DateTimeFormat dateTimeFormat) {
+        Object dateFormat = column.get("dateFormat");
+        if (dateFormat instanceof String) {
+            dateTimeFormat.setDateFormat((String) dateFormat);
+        }
+        Object use1904windowing = column.get("use1904windowing");
+        if (use1904windowing instanceof Boolean) {
+            dateTimeFormat.setUse1904windowing((Boolean) use1904windowing);
+        }
+    }
+
+    private static void toNumberFormat(Map<String, Object> column, org.clever.hinny.core.ExcelUtils.NumberFormat numberFormat) {
+        Object numberFormatV = column.get("numberFormat");
+        if (numberFormatV instanceof String) {
+            numberFormat.setNumberFormat((String) numberFormatV);
+        }
+        Object roundingMode = column.get("roundingMode");
+        if (roundingMode instanceof Integer) {
+            numberFormat.setRoundingMode(RoundingMode.valueOf((Integer) roundingMode));
+        }
     }
 }
