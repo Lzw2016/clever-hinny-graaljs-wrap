@@ -11,6 +11,7 @@ import org.clever.common.utils.excel.dto.ExcelRow;
 import org.graalvm.polyglot.Value;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -32,8 +33,9 @@ public class ExcelUtils {
     }
 
     @SuppressWarnings("rawtypes")
-    public ExcelDataReader<Map> createReader(org.clever.hinny.core.ExcelUtils.ExcelDataReaderConfig config) {
-        return null;
+    public ExcelDataReader<Map> createReader(Map<String, Object> configMap) {
+        org.clever.hinny.core.ExcelUtils.ExcelDataReaderConfig config = toExcelDataReaderConfig(configMap);
+        return delegate.createReader(config);
     }
 
     public ExcelDataWriter createWriter(org.clever.hinny.core.ExcelUtils.ExcelDataWriterConfig config) {
@@ -41,7 +43,7 @@ public class ExcelUtils {
     }
 
     @SuppressWarnings({"rawtypes"})
-    public Map<String, ExcelData<Map>> read(Map<String, Object> configMap) {
+    public ExcelDataMap read(Map<String, Object> configMap) {
         org.clever.hinny.core.ExcelUtils.ExcelDataReaderConfig config = toExcelDataReaderConfig(configMap);
         ExcelDataReader<Map> excelDataReader = delegate.createReader(config);
         if (config.getSheetNo() != null) {
@@ -52,7 +54,7 @@ public class ExcelUtils {
             excelDataReader.read().doReadAll();
         }
         if (excelDataReader.isEnableExcelData()) {
-            return excelDataReader.getExcelSheetMap();
+            return new ExcelDataMap(excelDataReader);
         }
         return null;
     }
@@ -60,6 +62,43 @@ public class ExcelUtils {
     @SuppressWarnings("rawtypes")
     public void write(org.clever.hinny.core.ExcelUtils.ExcelDataWriterConfig config, List<Map> listData) {
 
+    }
+
+    @SuppressWarnings("rawtypes")
+    public static class ExcelDataMap implements Serializable {
+        private final ExcelDataReader<Map> excelDataReader;
+
+        public ExcelDataMap(ExcelDataReader<Map> excelDataReader) {
+            this.excelDataReader = excelDataReader;
+        }
+
+        /**
+         * 返回第一个页签数据
+         */
+        public ExcelData<Map> getFirstExcelData() {
+            return excelDataReader.getFirstExcelData();
+        }
+
+        /**
+         * 根据页签编号返回页签数据
+         */
+        public ExcelData<Map> getExcelData(int sheetNo) {
+            return excelDataReader.getExcelData(sheetNo);
+        }
+
+        /**
+         * 根据页签名称返回页签数据
+         */
+        public ExcelData<Map> getExcelData(String sheetName) {
+            return excelDataReader.getExcelData(sheetName);
+        }
+
+        /**
+         * Excel读取结果
+         */
+        public Map<String, ExcelData<Map>> getExcelSheetMap() {
+            return excelDataReader.getExcelSheetMap();
+        }
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
