@@ -40,7 +40,7 @@ public class ExcelUtils {
         return null;
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes"})
     public Map<String, ExcelData<Map>> read(Map<String, Object> configMap) {
         org.clever.hinny.core.ExcelUtils.ExcelDataReaderConfig config = toExcelDataReaderConfig(configMap);
         ExcelDataReader<Map> excelDataReader = delegate.createReader(config);
@@ -62,7 +62,7 @@ public class ExcelUtils {
 
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private static org.clever.hinny.core.ExcelUtils.ExcelDataReaderConfig toExcelDataReaderConfig(Map<String, Object> configMap) {
         org.clever.hinny.core.ExcelUtils.ExcelDataReaderConfig config = new org.clever.hinny.core.ExcelUtils.ExcelDataReaderConfig();
         Object filename = configMap.get("filename");
@@ -86,38 +86,15 @@ public class ExcelUtils {
             config.setEnableValidation((Boolean) enableValidation);
         }
         Object excelReaderExceptionHand = configMap.get("excelReaderExceptionHand");
-        if (excelReaderExceptionHand instanceof Value) {
-            Value callBack = (Value) excelReaderExceptionHand;
-            Value exceptionHand = callBack.getMember("exceptionHand");
-            if (exceptionHand != null && exceptionHand.canExecute()) {
-                config.setExcelReaderExceptionHand((throwable, context) -> exceptionHand.executeVoid(throwable, context));
+        if (excelReaderExceptionHand instanceof Map) {
+            Map<String, Object> callBack = (Map<String, Object>) excelReaderExceptionHand;
+            Object exceptionHand = callBack.get("exceptionHand");
+            if (exceptionHand instanceof Function) {
+                config.setExcelReaderExceptionHand((throwable, context) -> ((Function) exceptionHand).apply(new Object[]{throwable, context}));
             }
         }
         Object excelRowReader = configMap.get("excelRowReader");
-        if (excelRowReader instanceof Value) {
-            Value callBack = (Value) excelRowReader;
-            Value readRow = callBack.getMember("readRow");
-            Value readEnd = callBack.getMember("readEnd");
-            boolean readRowExe = readRow != null && readRow.canExecute();
-            boolean readEndExe = readEnd != null && readEnd.canExecute();
-            if (readRowExe || readEndExe) {
-                config.setExcelRowReader(new ExcelRowReader<>() {
-                    @Override
-                    public void readRow(Map data, ExcelRow<Map> excelRow, AnalysisContext context) {
-                        if (readRowExe) {
-                            readRow.executeVoid(data, excelRow, context);
-                        }
-                    }
-
-                    @Override
-                    public void readEnd(AnalysisContext context) {
-                        if (readEndExe) {
-                            readEnd.executeVoid(context);
-                        }
-                    }
-                });
-            }
-        } else if (excelRowReader instanceof Map) {
+        if (excelRowReader instanceof Map) {
             Map<String, Object> callBack = (Map<String, Object>) excelRowReader;
             Object readRow = callBack.get("readRow");
             Object readEnd = callBack.get("readEnd");
@@ -148,17 +125,19 @@ public class ExcelUtils {
             config.setAutoCloseStream((Boolean) autoCloseStream);
         }
         Object extraRead = configMap.get("extraRead");
-        if (extraRead instanceof Value && ((Value) extraRead).hasArrayElements()) {
-            Value arrayTmp = (Value) extraRead;
-            List<CellExtraTypeEnum> extraReadList = new ArrayList<>();
-            for (int i = 0; i < arrayTmp.getArraySize(); i++) {
-                Value item = arrayTmp.getArrayElement(i);
-                if (item.isString()) {
-                    extraReadList.add(toCellExtraTypeEnum(item.asString()));
+        if (extraRead instanceof Map) {
+            Value arrayTmp = Value.asValue(extraRead);
+            if (arrayTmp.hasArrayElements()) {
+                List<CellExtraTypeEnum> extraReadList = new ArrayList<>();
+                for (int i = 0; i < arrayTmp.getArraySize(); i++) {
+                    Value item = arrayTmp.getArrayElement(i);
+                    if (item.isString()) {
+                        extraReadList.add(toCellExtraTypeEnum(item.asString()));
+                    }
                 }
+                extraReadList = extraReadList.stream().filter(Objects::nonNull).collect(Collectors.toList());
+                config.setExtraRead(extraReadList.toArray(new CellExtraTypeEnum[0]));
             }
-            extraReadList = extraReadList.stream().filter(Objects::nonNull).collect(Collectors.toList());
-            config.setExtraRead(extraReadList.toArray(new CellExtraTypeEnum[0]));
         }
         Object ignoreEmptyRow = configMap.get("ignoreEmptyRow");
         if (ignoreEmptyRow instanceof Boolean) {
@@ -205,16 +184,7 @@ public class ExcelUtils {
             config.setCustomObject(customObject);
         }
         Object columns = configMap.get("columns");
-        if (columns instanceof Value) {
-            Value columnsValue = (Value) columns;
-            for (String memberKey : columnsValue.getMemberKeys()) {
-                Value column = columnsValue.getMember(memberKey);
-                if (column == null) {
-                    continue;
-                }
-                config.getColumns().put(memberKey, toExcelReaderHeadConfig(column));
-            }
-        } else if (columns instanceof Map) {
+        if (columns instanceof Map) {
             Map<String, Object> columnsMap = (Map<String, Object>) columns;
             for (Map.Entry<String, Object> entry : columnsMap.entrySet()) {
                 String columnName = entry.getKey();
@@ -298,62 +268,6 @@ public class ExcelUtils {
         return Locale.SIMPLIFIED_CHINESE;
     }
 
-    private static org.clever.hinny.core.ExcelUtils.ExcelReaderHeadConfig toExcelReaderHeadConfig(Value column) {
-        org.clever.hinny.core.ExcelUtils.ExcelReaderHeadConfig headConfig = new org.clever.hinny.core.ExcelUtils.ExcelReaderHeadConfig();
-        Value dataType = column.getMember("dataType");
-        if (dataType != null && dataType.isString()) {
-            headConfig.setDataType(getClass(dataType.asString()));
-        }
-        toExcelProperty(column, headConfig.getExcelProperty());
-        toDateTimeFormat(column, headConfig.getDateTimeFormat());
-        toNumberFormat(column, headConfig.getNumberFormat());
-        return headConfig;
-    }
-
-    private static void toExcelProperty(Value column, org.clever.hinny.core.ExcelUtils.ExcelProperty excelProperty) {
-        Value columnV = column.getMember("column");
-        if (columnV != null && columnV.isString()) {
-            excelProperty.getColumn().add(columnV.asString());
-        } else if (columnV != null && columnV.hasArrayElements()) {
-            for (int i = 0; i < columnV.getArraySize(); i++) {
-                Value item = columnV.getArrayElement(i);
-                if (item.isString()) {
-                    excelProperty.getColumn().add(item.asString());
-                }
-            }
-        }
-        Value ignore = column.getMember("ignore");
-        if (ignore != null && ignore.isBoolean()) {
-            excelProperty.setIgnore(ignore.asBoolean());
-        }
-        Value index = column.getMember("index");
-        if (index != null && index.isNumber()) {
-            excelProperty.setIndex(index.asInt());
-        }
-    }
-
-    private static void toDateTimeFormat(Value column, org.clever.hinny.core.ExcelUtils.DateTimeFormat dateTimeFormat) {
-        Value dateFormat = column.getMember("dateFormat");
-        if (dateFormat != null && dateFormat.isString()) {
-            dateTimeFormat.setDateFormat(dateFormat.asString());
-        }
-        Value use1904windowing = column.getMember("use1904windowing");
-        if (use1904windowing != null && use1904windowing.isBoolean()) {
-            dateTimeFormat.setUse1904windowing(use1904windowing.asBoolean());
-        }
-    }
-
-    private static void toNumberFormat(Value column, org.clever.hinny.core.ExcelUtils.NumberFormat numberFormat) {
-        Value numberFormatV = column.getMember("numberFormat");
-        if (numberFormatV != null && numberFormatV.isString()) {
-            numberFormat.setNumberFormat(numberFormatV.asString());
-        }
-        Value roundingMode = column.getMember("roundingMode");
-        if (roundingMode != null && roundingMode.isNumber()) {
-            numberFormat.setRoundingMode(RoundingMode.valueOf(roundingMode.asInt()));
-        }
-    }
-
     private static org.clever.hinny.core.ExcelUtils.ExcelReaderHeadConfig toExcelReaderHeadConfig(Map<String, Object> column) {
         org.clever.hinny.core.ExcelUtils.ExcelReaderHeadConfig headConfig = new org.clever.hinny.core.ExcelUtils.ExcelReaderHeadConfig();
         Object dataType = column.get("dataType");
@@ -370,16 +284,17 @@ public class ExcelUtils {
         Object columnV = column.get("column");
         if (columnV instanceof String) {
             excelProperty.getColumn().add((String) columnV);
+        } else if (columnV instanceof Map) {
+            Value arrayTmp = Value.asValue(columnV);
+            if (arrayTmp.hasArrayElements()) {
+                for (int i = 0; i < arrayTmp.getArraySize(); i++) {
+                    Value item = arrayTmp.getArrayElement(i);
+                    if (item.isString()) {
+                        excelProperty.getColumn().add(item.asString());
+                    }
+                }
+            }
         }
-//        TODO ???
-//        else if (columnV != null && columnV.hasArrayElements()) {
-//            for (int i = 0; i < columnV.getArraySize(); i++) {
-//                Value item = columnV.getArrayElement(i);
-//                if (item.isString()) {
-//                    excelProperty.getColumn().add(item.asString());
-//                }
-//            }
-//        }
         Object ignore = column.get("ignore");
         if (ignore instanceof Boolean) {
             excelProperty.setIgnore((Boolean) ignore);

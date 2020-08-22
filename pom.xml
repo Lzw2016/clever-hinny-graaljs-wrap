@@ -69,7 +69,7 @@
         <!--<clever-common.version>2.0.1-SNAPSHOT</clever-common.version>-->
         <clever-hinny.version>1.0.0-SNAPSHOT</clever-hinny.version>
         <clever-hinny-java.version>1.0.0-SNAPSHOT</clever-hinny-java.version>
-        <graalvm.version>20.1.0</graalvm.version>
+        <graalvm.version>20.2.0</graalvm.version>
     </properties>
 
     <dependencyManagement>
