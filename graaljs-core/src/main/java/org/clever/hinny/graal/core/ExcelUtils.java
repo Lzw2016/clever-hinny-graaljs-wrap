@@ -5,6 +5,8 @@ import com.alibaba.excel.enums.CellExtraTypeEnum;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.excel.write.builder.ExcelWriterBuilder;
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
+import com.alibaba.excel.write.metadata.WriteSheet;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -51,8 +53,19 @@ public class ExcelUtils {
         return delegate.createReader(config);
     }
 
-    public ExcelDataWriter createWriter(org.clever.hinny.core.ExcelUtils.ExcelDataWriterConfig config) {
-        return null;
+    public ExcelWriter createWriter(Map<String, Object> configMap) {
+        org.clever.hinny.core.ExcelUtils.ExcelDataWriterConfig config = toExcelDataWriterConfig(configMap);
+        ExcelDataWriter excelDataWriter = delegate.createWriter(config);
+        ExcelWriterBuilder writerBuilder = excelDataWriter.write();
+        ExcelWriterSheetBuilder sheetBuilder = null;
+        if (config.getSheetNo() != null) {
+            sheetBuilder = writerBuilder.sheet(config.getSheetNo());
+        }
+        if (StringUtils.isNotBlank(config.getSheetName())) {
+            sheetBuilder = writerBuilder.sheet(config.getSheetName());
+        }
+        Assert.notNull(sheetBuilder, "参数sheetNo、sheetName不能都为空");
+        return new ExcelWriter(config, excelDataWriter, sheetBuilder);
     }
 
     @SuppressWarnings({"rawtypes"})
@@ -74,22 +87,60 @@ public class ExcelUtils {
 
     @SuppressWarnings("rawtypes")
     public void write(Map<String, Object> configMap, List<Map> listData) {
-        org.clever.hinny.core.ExcelUtils.ExcelDataWriterConfig config = toExcelDataWriterConfig(configMap);
-        ExcelDataWriter excelDataWriter = delegate.createWriter(config);
-        ExcelWriterBuilder writerBuilder = excelDataWriter.write();
-        ExcelWriterSheetBuilder sheetBuilder = null;
-        if (config.getSheetNo() != null) {
-            sheetBuilder = writerBuilder.sheet(config.getSheetNo());
-        }
-        if (StringUtils.isNotBlank(config.getSheetName())) {
-            sheetBuilder = writerBuilder.sheet(config.getSheetName());
-        }
-        Assert.notNull(sheetBuilder, "参数sheetNo、sheetName不能都为空");
+        ExcelWriter excelWriter = createWriter(configMap);
         // 处理List<Map> listData
-        List<List<Object>> lists = getListData(listData, config);
-        sheetBuilder.doWrite(lists);
+        List<List<Object>> lists = getListData(listData, excelWriter.config);
+        excelWriter.sheetBuilder.doWrite(lists);
     }
 
+    @Getter
+    public static class ExcelWriter {
+        private final org.clever.hinny.core.ExcelUtils.ExcelDataWriterConfig config;
+        private final ExcelDataWriter excelDataWriter;
+
+        private final ExcelWriterBuilder excelWriterBuilder;
+        private final com.alibaba.excel.ExcelWriter excelWriter;
+
+        private final ExcelWriterSheetBuilder sheetBuilder;
+        private final WriteSheet writeSheet;
+
+        public ExcelWriter(org.clever.hinny.core.ExcelUtils.ExcelDataWriterConfig config, ExcelDataWriter excelDataWriter, ExcelWriterSheetBuilder sheetBuilder) {
+            this.config = config;
+            this.excelDataWriter = excelDataWriter;
+            this.sheetBuilder = sheetBuilder;
+            excelWriterBuilder = this.excelDataWriter.write();
+            excelWriter = this.excelWriterBuilder.build();
+            writeSheet = this.sheetBuilder.needHead(Boolean.TRUE).build();
+        }
+
+        private void init() {
+        }
+
+        /**
+         * 写入完成操作
+         */
+        @SuppressWarnings("rawtypes")
+        public void write(List<Map> listData) {
+            // 处理List<Map> listData
+            List<List<Object>> lists = getListData(listData, config);
+            excelWriter.write(lists, writeSheet);
+        }
+
+        /**
+         * 写入完成操作
+         */
+        public void fill(Map<String, Object> data, Map<String, Object> fillConfig) {
+
+//            excelWriter.fill()
+        }
+
+        /**
+         * 写入完成操作
+         */
+        public void finish() {
+            excelWriter.finish();
+        }
+    }
 
     @SuppressWarnings("rawtypes")
     public static class ExcelDataMap implements Serializable {
@@ -558,27 +609,59 @@ public class ExcelUtils {
         return Locale.SIMPLIFIED_CHINESE;
     }
 
+    @SuppressWarnings({"unchecked", "DuplicatedCode"})
     private static void toWriterStyleConfig(Map<String, Object> column, org.clever.hinny.core.ExcelUtils.WriterStyleConfig writerStyleConfig) {
-        toContentRowHeight(column, writerStyleConfig.getContentRowHeight());
-        toContentFontStyle(column, writerStyleConfig.getContentFontStyle());
-        toContentStyle(column, writerStyleConfig.getContentStyle());
         toHeadRowHeight(column, writerStyleConfig.getHeadRowHeight());
-        toHeadFontStyle(column, writerStyleConfig.getHeadFontStyle());
-        toHeadStyle(column, writerStyleConfig.getHeadStyle());
-        toOnceAbsoluteMerge(column, writerStyleConfig.getOnceAbsoluteMerge());
+        toContentRowHeight(column, writerStyleConfig.getContentRowHeight());
+        Object headFontStyle = column.get("headFontStyle");
+        if (headFontStyle instanceof Map) {
+            toHeadFontStyle((Map<String, Object>) headFontStyle, writerStyleConfig.getHeadFontStyle());
+        }
+        Object headStyle = column.get("headStyle");
+        if (headStyle instanceof Map) {
+            toHeadStyle((Map<String, Object>) headStyle, writerStyleConfig.getHeadStyle());
+        }
+        Object contentFontStyle = column.get("contentFontStyle");
+        if (contentFontStyle instanceof Map) {
+            toContentFontStyle((Map<String, Object>) contentFontStyle, writerStyleConfig.getContentFontStyle());
+        }
+        Object contentStyle = column.get("contentStyle");
+        if (contentStyle instanceof Map) {
+            toContentStyle((Map<String, Object>) contentStyle, writerStyleConfig.getContentStyle());
+        }
+        Object onceAbsoluteMerge = column.get("onceAbsoluteMerge");
+        if (onceAbsoluteMerge instanceof Map) {
+            toOnceAbsoluteMerge((Map<String, Object>) onceAbsoluteMerge, writerStyleConfig.getOnceAbsoluteMerge());
+        }
     }
 
+    @SuppressWarnings({"unchecked", "DuplicatedCode"})
     private static org.clever.hinny.core.ExcelUtils.ExcelWriterHeadConfig toExcelWriterHeadConfig(Map<String, Object> column) {
         org.clever.hinny.core.ExcelUtils.ExcelWriterHeadConfig headConfig = new org.clever.hinny.core.ExcelUtils.ExcelWriterHeadConfig();
         toExcelProperty(column, headConfig.getExcelProperty());
         toDateTimeFormat(column, headConfig.getDateTimeFormat());
         toNumberFormat(column, headConfig.getNumberFormat());
         toColumnWidth(column, headConfig.getColumnWidth());
-        toContentFontStyle(column, headConfig.getContentFontStyle());
-        toContentLoopMerge(column, headConfig.getContentLoopMerge());
-        toContentStyle(column, headConfig.getContentStyle());
-        toHeadFontStyle(column, headConfig.getHeadFontStyle());
-        toHeadStyle(column, headConfig.getHeadStyle());
+        Object headFontStyle = column.get("headFontStyle");
+        if (headFontStyle instanceof Map) {
+            toHeadFontStyle((Map<String, Object>) headFontStyle, headConfig.getHeadFontStyle());
+        }
+        Object headStyle = column.get("headStyle");
+        if (headStyle instanceof Map) {
+            toHeadStyle((Map<String, Object>) headStyle, headConfig.getHeadStyle());
+        }
+        Object contentFontStyle = column.get("contentFontStyle");
+        if (contentFontStyle instanceof Map) {
+            toContentFontStyle((Map<String, Object>) contentFontStyle, headConfig.getContentFontStyle());
+        }
+        Object contentStyle = column.get("contentStyle");
+        if (contentStyle instanceof Map) {
+            toContentStyle((Map<String, Object>) contentStyle, headConfig.getContentStyle());
+        }
+        Object contentLoopMerge = column.get("contentLoopMerge");
+        if (contentLoopMerge instanceof Map) {
+            toContentLoopMerge((Map<String, Object>) contentLoopMerge, headConfig.getContentLoopMerge());
+        }
         return headConfig;
     }
 
