@@ -56,6 +56,7 @@
         <module>graaljs-data-elasticsearch</module>
         <module>graaljs-data-rabbitmq</module>
         <module>graaljs-data-kafka</module>
+        <module>graaljs-mvc</module>
         <module>graaljs-test</module>
     </modules>
 
