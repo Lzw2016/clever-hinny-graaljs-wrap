@@ -15,11 +15,11 @@ import java.io.IOException;
 @Slf4j
 public abstract class AbstractTest {
     // yz笔记本路径
-//    protected final Folder rootFolder = FileSystemFolder.createRootPath(new File("C:\\Users\\mlrs\\Desktop\\clever-hinny-js").getAbsolutePath());
+    protected final Folder rootFolder = FileSystemFolder.createRootPath(new File("C:\\Users\\mlrs\\Desktop\\clever-hinny-js").getAbsolutePath());
     // yz公司路径
 //    protected final Folder rootFolder = FileSystemFolder.createRootPath(new File("C:\\Users\\ymx\\Desktop\\clever-hinny-js").getAbsolutePath());
     // lzw家里的路径
-    protected final Folder rootFolder = FileSystemFolder.createRootPath(new File("D:\\SourceCode\\clever\\clever-hinny-js").getAbsolutePath());
+//    protected final Folder rootFolder = FileSystemFolder.createRootPath(new File("D:\\SourceCode\\clever\\clever-hinny-js").getAbsolutePath());
     protected ScriptEngineInstance<?, ?> engineInstance;
     protected ScriptObject<?> scriptObject;
 
