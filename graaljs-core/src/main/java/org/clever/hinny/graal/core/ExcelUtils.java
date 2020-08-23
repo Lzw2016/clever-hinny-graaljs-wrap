@@ -2,10 +2,12 @@ package org.clever.hinny.graal.core;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.enums.CellExtraTypeEnum;
+import com.alibaba.excel.enums.WriteDirectionEnum;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.excel.write.builder.ExcelWriterBuilder;
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
 import com.alibaba.excel.write.metadata.WriteSheet;
+import com.alibaba.excel.write.metadata.fill.FillConfig;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -110,14 +112,28 @@ public class ExcelUtils {
             this.sheetBuilder = sheetBuilder;
             excelWriterBuilder = this.excelDataWriter.write();
             excelWriter = this.excelWriterBuilder.build();
+            if (config.getSheetNo() != null) {
+                this.sheetBuilder.sheetNo(config.getSheetNo());
+            }
+            if (StringUtils.isNotBlank(config.getSheetName())) {
+                this.sheetBuilder.sheetName(config.getSheetName());
+            }
             writeSheet = this.sheetBuilder.needHead(Boolean.TRUE).build();
         }
 
-        private void init() {
+        private FillConfig getFillConfig(Map<String, Object> fillConfigMap) {
+            FillConfig fillConfig = null;
+            if (fillConfigMap != null) {
+                fillConfig = new FillConfig();
+                fillConfig.setDirection(WriteDirectionEnum.VERTICAL);
+                fillConfig.setForceNewRow(false);
+                toFillConfig(fillConfigMap, fillConfig);
+            }
+            return fillConfig;
         }
 
         /**
-         * 写入完成操作
+         * 写入数据
          */
         @SuppressWarnings("rawtypes")
         public void write(List<Map> listData) {
@@ -127,11 +143,33 @@ public class ExcelUtils {
         }
 
         /**
-         * 写入完成操作
+         * 根据模块填充数据
          */
-        public void fill(Map<String, Object> data, Map<String, Object> fillConfig) {
+        public void fill(Map<String, Object> data, Map<String, Object> fillConfigMap) {
+            FillConfig fillConfig = getFillConfig(fillConfigMap);
+            excelWriter.fill(data, fillConfig, writeSheet);
+        }
 
-//            excelWriter.fill()
+        /**
+         * 根据模块填充数据
+         */
+        public void fill(Map<String, Object> data) {
+            excelWriter.fill(data, writeSheet);
+        }
+
+        /**
+         * 根据模块填充数据
+         */
+        public void fill(List<Map<String, Object>> listData, Map<String, Object> fillConfigMap) {
+            FillConfig fillConfig = getFillConfig(fillConfigMap);
+            excelWriter.fill(listData, fillConfig, writeSheet);
+        }
+
+        /**
+         * 根据模块填充数据
+         */
+        public void fill(List<Map<String, Object>> listData) {
+            excelWriter.fill(listData, writeSheet);
         }
 
         /**
@@ -609,6 +647,20 @@ public class ExcelUtils {
         return Locale.SIMPLIFIED_CHINESE;
     }
 
+    public static WriteDirectionEnum toWriteDirectionEnum(String direction) {
+        if (StringUtils.isBlank(direction)) {
+            return null;
+        }
+        switch (direction) {
+            case "VERTICAL":
+                return WriteDirectionEnum.VERTICAL;
+            case "HORIZONTAL":
+                return WriteDirectionEnum.HORIZONTAL;
+            default:
+                return WriteDirectionEnum.valueOf(direction);
+        }
+    }
+
     @SuppressWarnings({"unchecked", "DuplicatedCode"})
     private static void toWriterStyleConfig(Map<String, Object> column, org.clever.hinny.core.ExcelUtils.WriterStyleConfig writerStyleConfig) {
         toHeadRowHeight(column, writerStyleConfig.getHeadRowHeight());
@@ -914,6 +966,17 @@ public class ExcelUtils {
         Object lastColumnIndex = column.get("lastColumnIndex");
         if (lastColumnIndex instanceof Number) {
             onceAbsoluteMerge.setLastColumnIndex(((Number) lastColumnIndex).intValue());
+        }
+    }
+
+    private static void toFillConfig(Map<String, Object> config, FillConfig fillConfig) {
+        Object direction = config.get("direction");
+        if (direction instanceof String) {
+            fillConfig.setDirection(toWriteDirectionEnum((String) direction));
+        }
+        Object forceNewRow = config.get("forceNewRow");
+        if (forceNewRow instanceof Boolean) {
+            fillConfig.setForceNewRow((Boolean) forceNewRow);
         }
     }
 }
