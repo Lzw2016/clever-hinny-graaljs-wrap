@@ -33,4 +33,10 @@ public class T03JdbcDataSource extends AbstractJdbcDataSourceTest {
         scriptObject.callMember("t03");
         log.info("### ---------------------------------------------------------------------------> END");
     }
+
+    @Test
+    public void t04() {
+        scriptObject.callMember("t04");
+        log.info("### ---------------------------------------------------------------------------> END");
+    }
 }

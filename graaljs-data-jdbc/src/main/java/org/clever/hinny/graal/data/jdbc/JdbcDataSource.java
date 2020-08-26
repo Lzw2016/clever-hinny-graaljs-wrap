@@ -370,6 +370,52 @@ public class JdbcDataSource {
         return delegate.queryByPage(sql, pagination, paramMap);
     }
 
+    /**
+     * 查询数据库表数据
+     *
+     * @param tableName         表名称
+     * @param whereMap          更新条件字段(只支持=，and条件)
+     * @param camelToUnderscore 字段驼峰转下划线(可选)
+     */
+    public List<Map<String, Object>> queryTableList(String tableName, Map<String, Object> whereMap, boolean camelToUnderscore) {
+        whereMap = InteropScriptToJavaUtils.Instance.convertMap(whereMap);
+        return delegate.queryTableList(tableName, whereMap, camelToUnderscore);
+    }
+
+    /**
+     * 查询数据库表数据
+     *
+     * @param tableName 表名称
+     * @param whereMap  更新条件字段(只支持=，and条件)
+     */
+    public List<Map<String, Object>> queryTableList(String tableName, Map<String, Object> whereMap) {
+        whereMap = InteropScriptToJavaUtils.Instance.convertMap(whereMap);
+        return delegate.queryTableList(tableName, whereMap);
+    }
+
+    /**
+     * 查询数据库表数据
+     *
+     * @param tableName         表名称
+     * @param whereMap          更新条件字段(只支持=，and条件)
+     * @param camelToUnderscore 字段驼峰转下划线(可选)
+     */
+    public Map<String, Object> queryTableMap(String tableName, Map<String, Object> whereMap, boolean camelToUnderscore) {
+        whereMap = InteropScriptToJavaUtils.Instance.convertMap(whereMap);
+        return delegate.queryTableMap(tableName, whereMap, camelToUnderscore);
+    }
+
+    /**
+     * 查询数据库表数据
+     *
+     * @param tableName 表名称
+     * @param whereMap  更新条件字段(只支持=，and条件)
+     */
+    public Map<String, Object> queryTableMap(String tableName, Map<String, Object> whereMap) {
+        whereMap = InteropScriptToJavaUtils.Instance.convertMap(whereMap);
+        return delegate.queryTableMap(tableName, whereMap);
+    }
+
     // --------------------------------------------------------------------------------------------
     // Update 操作
     // --------------------------------------------------------------------------------------------
@@ -455,6 +501,33 @@ public class JdbcDataSource {
     public int[] batchUpdate(String sql, List<Map<String, Object>> paramMapList) {
         paramMapList = InteropScriptToJavaUtils.Instance.convertMapList(paramMapList);
         return delegate.batchUpdate(sql, paramMapList);
+    }
+
+    // --------------------------------------------------------------------------------------------
+    // Delete 操作
+    // --------------------------------------------------------------------------------------------
+
+    /**
+     * 删除数据库表数据
+     *
+     * @param tableName         表名称
+     * @param whereMap          更新条件字段(只支持=，and条件)
+     * @param camelToUnderscore 字段驼峰转下划线(可选)
+     */
+    public int deleteTable(String tableName, Map<String, Object> whereMap, boolean camelToUnderscore) {
+        whereMap = InteropScriptToJavaUtils.Instance.convertMap(whereMap);
+        return delegate.deleteTable(tableName, whereMap, camelToUnderscore);
+    }
+
+    /**
+     * 删除数据库表数据
+     *
+     * @param tableName 表名称
+     * @param whereMap  更新条件字段(只支持=，and条件)
+     */
+    public int deleteTable(String tableName, Map<String, Object> whereMap) {
+        whereMap = InteropScriptToJavaUtils.Instance.convertMap(whereMap);
+        return delegate.deleteTable(tableName, whereMap);
     }
 
     // --------------------------------------------------------------------------------------------
