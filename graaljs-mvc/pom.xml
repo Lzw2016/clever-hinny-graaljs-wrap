@@ -8,12 +8,15 @@
     <packaging>jar</packaging>
 
     <parent>
-        <artifactId>clever-hinny-graaljs-wrap</artifactId>
         <groupId>org.clever</groupId>
-        <version>1.0.0-SNAPSHOT</version>
+        <artifactId>clever-hinny-graaljs-wrap</artifactId>
+        <version>${revision}</version>
     </parent>
 
     <dependencies>
-
+        <dependency>
+            <groupId>org.clever</groupId>
+            <artifactId>hinny-mvc</artifactId>
+        </dependency>
     </dependencies>
 </project>
