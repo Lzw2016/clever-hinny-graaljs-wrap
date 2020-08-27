@@ -808,8 +808,7 @@ public class JdbcDataSource {
             for (Map.Entry<?, ?> entry : map.entrySet()) {
                 Object key = entry.getKey();
                 Object value = entry.getValue();
-
-                queryBySort.addOrderFieldMapping(String.valueOf(entry.getKey()), String.valueOf(entry.getValue()));
+                queryBySort.addOrderFieldMapping(String.valueOf(key), String.valueOf(value));
             }
         }
         return queryBySort;
