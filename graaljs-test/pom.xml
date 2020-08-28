@@ -22,25 +22,30 @@
             <groupId>org.clever</groupId>
             <artifactId>graaljs-data-jdbc</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.clever</groupId>
-            <artifactId>graaljs-data-redis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.clever</groupId>
-            <artifactId>graaljs-data-elasticsearch</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.clever</groupId>
-            <artifactId>graaljs-data-rabbitmq</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.clever</groupId>
-            <artifactId>graaljs-data-kafka</artifactId>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>org.clever</groupId>-->
+        <!--            <artifactId>graaljs-data-redis</artifactId>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.clever</groupId>-->
+        <!--            <artifactId>graaljs-data-elasticsearch</artifactId>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.clever</groupId>-->
+        <!--            <artifactId>graaljs-data-rabbitmq</artifactId>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.clever</groupId>-->
+        <!--            <artifactId>graaljs-data-kafka</artifactId>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.clever</groupId>
             <artifactId>graaljs-mvc</artifactId>
+        </dependency>
+        <!--spring-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <!--lib-->
         <dependency>
@@ -50,6 +55,10 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
         </dependency>
         <!--other-->
         <dependency>

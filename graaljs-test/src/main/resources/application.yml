@@ -1,0 +1,74 @@
+###################################################################################
+### Web服务器配置
+###################################################################################
+server:
+  port: 18081
+  servlet:
+    context-path: /
+
+###################################################################################
+### logging(logback)
+###################################################################################
+logging:
+  config: classpath:logback.xml
+  level:
+    org.springframework: warn
+    org.clever: debug
+    org.clever.canal: info
+
+###################################################################################
+### Spring配置
+###################################################################################
+spring:
+  profiles.active: dev
+  application.name: graaljs-test
+  aop.proxy-target-class: true
+
+  servlet: #------------------------------------------------------------ 文件上传配置
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+      location: 'data/temp'
+
+  http: #------------------------------------------------------------------ http配置
+    converters:
+      preferred-json-mapper: jackson
+    encoding:
+      charset: UTF-8
+      force: true
+
+  jackson: #------------------------------------------------------------ jackson配置
+    date-format: yyyy-MM-dd HH:mm:ss
+    joda-date-time-format: yyyy-MM-dd HH:mm:ss
+    locale: zh_CN
+    time-zone: GMT+8
+
+  resources: #------------------------------------------------ html、js、css 静态资源
+    chain:
+      cache: false
+      compressed: true
+    cache:
+      period: 0s
+    static-locations: [ 'classpath:/static/' ]
+
+  datasource: #----------------------------------------------------------- 数据库配置
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://mysql.msvc.top:3306/clever-template
+    username: clever-template
+    password: lizhiwei1993
+    hikari:
+      pool-name: defaultDataSource
+      data-source-properties:
+        serverTimezone: GMT+8
+        useUnicode: true
+        characterEncoding: utf-8
+        zeroDateTimeBehavior: convert_to_null
+        useSSL: false
+        useCursorFetch: true
+      auto-commit: false
+      maximum-pool-size: 100
+      minimum-idle: 5
+      max-lifetime: 1800000
+      connection-test-query: SELECT 1
