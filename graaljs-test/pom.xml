@@ -39,6 +39,11 @@
             <artifactId>graaljs-data-kafka</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.clever</groupId>
+            <artifactId>graaljs-mvc</artifactId>
+        </dependency>
+        <!--lib-->
+        <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
         </dependency>
