@@ -3,7 +3,11 @@ package org.clever.hinny.demo.config;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.SqlExplainInterceptor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
+import org.apache.commons.io.monitor.FileAlterationMonitor;
+import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.clever.hinny.api.ScriptEngineInstance;
 import org.clever.hinny.api.folder.FileSystemFolder;
@@ -90,20 +94,65 @@ public class BeanConfiguration {
         return sqlExplainInterceptor;
     }
 
+    @SneakyThrows
     @Bean
     public EngineInstancePool<Context, Value> engineInstancePool() {
+        final String absolutePath = new File("D:\\SourceCode\\clever\\clever-hinny-js").getAbsolutePath();
         // 创建对象池配置
         GenericObjectPoolConfig<ScriptEngineInstance<Context, Value>> config = new GenericObjectPoolConfig<>();
         config.setMaxWaitMillis(-1);
         config.setMaxTotal(8);
         config.setMinIdle(2);
         // 创建对象工厂
-        Folder rootFolder = FileSystemFolder.createRootPath(new File("D:\\SourceCode\\clever\\clever-hinny-js").getAbsolutePath());
+        Folder rootFolder = FileSystemFolder.createRootPath(absolutePath);
         Engine engine = Engine.newBuilder()
                 .useSystemProperties(true)
                 .build();
         GraalEngineFactory factory = new GraalEngineFactory(rootFolder, engine);
-        return new GenericEngineInstancePool<>(factory, config);
+        final EngineInstancePool<Context, Value> pool = new GenericEngineInstancePool<>(factory, config);
+        // 监听文件变化
+        FileAlterationMonitor monitor = new FileAlterationMonitor(1000 * 3);
+        FileAlterationObserver observer = new FileAlterationObserver(absolutePath);
+        observer.addListener(new FileAlterationListenerAdaptor() {
+            @Override
+            public void onDirectoryCreate(File directory) {
+                onChange(directory);
+            }
+
+            @Override
+            public void onDirectoryChange(File directory) {
+                onChange(directory);
+            }
+
+            @Override
+            public void onDirectoryDelete(File directory) {
+                onChange(directory);
+            }
+
+            @Override
+            public void onFileCreate(File file) {
+                onChange(file);
+            }
+
+            @Override
+            public void onFileChange(File file) {
+                onChange(file);
+            }
+
+            @Override
+            public void onFileDelete(File file) {
+                onChange(file);
+            }
+
+            @SneakyThrows
+            private void onChange(File fileOrDir) {
+                log.debug("脚本文件变化: -> {}", fileOrDir.getAbsolutePath());
+                pool.clear();
+            }
+        });
+        monitor.addObserver(observer);
+        monitor.start();
+        return pool;
     }
 
     @Bean
