@@ -146,8 +146,11 @@ public class BeanConfiguration {
 
             @SneakyThrows
             private void onChange(File fileOrDir) {
-                log.debug("脚本文件变化: -> {}", fileOrDir.getAbsolutePath());
-                pool.clear();
+                String path = fileOrDir.getAbsolutePath();
+                if (fileOrDir.isDirectory() || path.endsWith(".js")) {
+                    log.debug("脚本文件变化: -> {}", path);
+                    pool.clear();
+                }
             }
         });
         monitor.addObserver(observer);
