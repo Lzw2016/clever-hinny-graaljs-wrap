@@ -11,7 +11,6 @@ import org.clever.hinny.api.folder.Folder;
 import org.clever.hinny.api.pool.EngineInstancePool;
 import org.clever.hinny.api.pool.GenericEngineInstancePool;
 import org.clever.hinny.graal.mvc.HttpRequestGraalScriptHandler;
-import org.clever.hinny.graaljs.pool.GraalSingleEngineFactory;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Engine;
 import org.graalvm.polyglot.Value;
@@ -103,7 +102,7 @@ public class BeanConfiguration {
         Engine engine = Engine.newBuilder()
                 .useSystemProperties(true)
                 .build();
-        GraalSingleEngineFactory factory = new GraalSingleEngineFactory(rootFolder, engine);
+        GraalEngineFactory factory = new GraalEngineFactory(rootFolder, engine);
         return new GenericEngineInstancePool<>(factory, config);
     }
 

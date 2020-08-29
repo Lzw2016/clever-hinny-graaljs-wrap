@@ -1,6 +1,7 @@
 package org.clever.hinny.graal.mvc;
 
 import org.clever.hinny.api.pool.EngineInstancePool;
+import org.clever.hinny.api.utils.JacksonMapper;
 import org.clever.hinny.mvc.HttpRequestScriptHandler;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
@@ -24,5 +25,10 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
     @Override
     protected boolean fileExists(String fullPath) {
         return true;
+    }
+
+    @Override
+    protected String serializeRes(Object res) {
+        return JacksonMapper.getInstance().toJson(res);
     }
 }
