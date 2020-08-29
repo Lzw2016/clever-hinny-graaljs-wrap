@@ -38,17 +38,17 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
         final ScriptObject<Value> scriptObject = handlerScript.getValue1();
         final String method = handlerScript.getValue2();
         Object fucObject = scriptObject.getMember(method);
-        //  funObject类型不正确 - 跳过Script处理
+        //  fucObject类型不正确 - 跳过Script处理
         if (!(fucObject instanceof Value)) {
             return TupleTow.creat(null, true);
         }
         Value fucValue = (Value) fucObject;
-        // funValue是一个函数
+        // fucValue是一个函数
         if (fucValue.canExecute()) {
             Value res = fucValue.execute(httpContext);
             return TupleTow.creat(res, false);
         }
-        // funValue 是 HttpRouter 类型
+        // fucValue 是 HttpRouter 对象
         final String httpMethod = StringUtils.lowerCase(httpContext.request.getMethod());
         Value httpRouter = fucValue.getMember(httpMethod);
         if (httpRouter != null && httpRouter.canExecute()) {
