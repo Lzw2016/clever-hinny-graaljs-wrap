@@ -97,10 +97,10 @@ clever:
         - ''
         - '.json'
         - '.action'
-      engine-instance-pool:
-        max-wait-millis: -1
-        max-total: 8
-        min-idle: 2
+    engine-instance-pool:
+      max-wait-millis: -1
+      max-total: 8
+      min-idle: 2
     multiple-jdbc:
       default-jdbc: 'xxx'
       global-config:
@@ -113,4 +113,15 @@ clever:
         jdbc-2:
           k1: v1
           k2: v2
-
+    multiple-redis:
+      default-redis: 'xxx'
+      global-config:
+        k1: v1
+        k2: v2
+      redis-map:
+        redis-1:
+          k1: v1
+          k2: v2
+        redis-2:
+          k1: v1
+          k2: v2
