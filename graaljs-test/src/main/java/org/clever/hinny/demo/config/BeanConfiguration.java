@@ -118,6 +118,7 @@ public class BeanConfiguration {
                     pool.clear();
                 }
         );
+        fileSystemWatcher.start();
         return pool;
     }
 
