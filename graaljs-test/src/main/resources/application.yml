@@ -75,3 +75,42 @@ spring:
       minimum-idle: 5
       max-lifetime: 1800000
       connection-test-query: SELECT 1
+
+
+###################################################################################
+### clever
+###################################################################################
+clever:
+  hinny:
+    script-path: 'D:\SourceCode\clever\clever-hinny-js'
+    file-watcher:
+      interval: 3000
+      delay-millis: 200
+      include:
+        - '*.js'
+        - '*.json'
+      exclude:
+        - '*\node_modules\*'
+    script-handler:
+      prefix: '/!/'
+      support-suffix:
+        - ''
+        - '.json'
+        - '.action'
+      engine-instance-pool:
+        max-wait-millis: -1
+        max-total: 8
+        min-idle: 2
+    multiple-jdbc:
+      default-jdbc: 'xxx'
+      global-config:
+        k1: v1
+        k2: v2
+      jdbc-map:
+        jdbc-1:
+          k1: v1
+          k2: v2
+        jdbc-2:
+          k1: v1
+          k2: v2
+
