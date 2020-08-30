@@ -1,7 +1,9 @@
 package org.clever.hinny.graal.mvc;
 
 import org.apache.commons.lang3.StringUtils;
+import org.clever.hinny.api.ScriptEngineInstance;
 import org.clever.hinny.api.ScriptObject;
+import org.clever.hinny.api.folder.Folder;
 import org.clever.hinny.api.pool.EngineInstancePool;
 import org.clever.hinny.api.utils.JacksonMapper;
 import org.clever.hinny.mvc.HttpRequestScriptHandler;
@@ -19,6 +21,10 @@ import java.util.Set;
  * 创建时间：2020/08/24 21:34 <br/>
  */
 public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Context, Value> {
+    /**
+     * 脚本文件后缀
+     */
+    private static final String ScriptSuffix = ".js";
 
     public HttpRequestGraalScriptHandler(String supportPrefix, Set<String> supportSuffix, EngineInstancePool<Context, Value> engineInstancePool) {
         super(supportPrefix, supportSuffix, engineInstancePool);
@@ -29,8 +35,12 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
     }
 
     @Override
-    protected boolean fileExists(String fullPath) {
-        return true;
+    protected boolean fileExists(ScriptEngineInstance<Context, Value> engineInstance, String fullPath) {
+        if (!fullPath.endsWith(ScriptSuffix)) {
+            fullPath = fullPath + ScriptSuffix;
+        }
+        Folder folder = engineInstance.getRootPath().create(fullPath);
+        return folder != null && folder.isFile();
     }
 
     @Override
