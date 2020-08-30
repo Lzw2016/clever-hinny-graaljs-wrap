@@ -115,7 +115,11 @@ public class BeanConfiguration {
                 new String[]{},
                 event -> {
                     log.info("文件发生变化 | [{}] -> [{}]", event.getEventType(), event.getFileOrDir().getAbsolutePath());
-                    pool.clear();
+                    try {
+                        pool.clear();
+                    } catch (Exception e) {
+                        log.warn("清空脚本引擎池失败", e);
+                    }
                 }
         );
         fileSystemWatcher.start();
