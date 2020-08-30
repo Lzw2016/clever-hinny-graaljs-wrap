@@ -91,7 +91,7 @@ clever:
         - '*.json'
       exclude:
         - '*\node_modules\*'
-    script-handler:
+    mvc-handler:
       prefix: '/!/'
       support-suffix:
         - ''
