@@ -111,8 +111,8 @@ public class BeanConfiguration {
         // 监听文件变化
         FileSystemWatcher fileSystemWatcher = new FileSystemWatcher(
                 absolutePath,
-                new String[]{".js"},
-                new String[]{},
+                new String[]{"*.js", "*.json"},
+                new String[]{"*\\node_modules\\*"},
                 event -> {
                     log.info("文件发生变化 | [{}] -> [{}]", event.getEventType(), event.getFileOrDir().getAbsolutePath());
                     try {
