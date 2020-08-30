@@ -17,7 +17,7 @@ logging:
     com.zaxxer.hikari: info
     org.apache.ibatis: info
     org.clever: debug
-    org.clever.hinny.api.require: debug
+    org.clever.hinny.api.require: warn
 
 ###################################################################################
 ### Spring配置
