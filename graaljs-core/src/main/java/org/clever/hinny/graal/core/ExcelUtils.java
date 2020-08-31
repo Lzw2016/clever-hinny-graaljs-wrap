@@ -90,9 +90,8 @@ public class ExcelUtils {
     @SuppressWarnings("rawtypes")
     public void write(Map<String, Object> configMap, List<Map> listData) {
         ExcelWriter excelWriter = createWriter(configMap);
-        // 处理List<Map> listData
-        List<List<Object>> lists = getListData(listData, excelWriter.config);
-        excelWriter.sheetBuilder.doWrite(lists);
+        excelWriter.write(listData);
+        excelWriter.finish();
     }
 
     @Getter
