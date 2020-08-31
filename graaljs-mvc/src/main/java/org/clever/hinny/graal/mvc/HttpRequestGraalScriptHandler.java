@@ -12,6 +12,8 @@ import org.clever.hinny.mvc.support.TupleTow;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -44,7 +46,8 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
     }
 
     @Override
-    protected TupleTow<Object, Boolean> doHandle(TupleTow<ScriptObject<Value>, String> handlerScript, HttpContext httpContext) {
+    protected TupleTow<Object, Boolean> doHandle(HttpServletRequest request, HttpServletResponse response, TupleTow<ScriptObject<Value>, String> handlerScript) {
+        HttpContext httpContext = new HttpContext(request, response);
         final ScriptObject<Value> scriptObject = handlerScript.getValue1();
         final String method = handlerScript.getValue2();
         Object fucObject = scriptObject.getMember(method);
@@ -73,6 +76,14 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
         }
         Value res = httpHandle.execute(httpContext);
         return TupleTow.creat(res, false);
+    }
+
+    @Override
+    protected boolean resIsEmpty(Object res) {
+        if (res instanceof Value) {
+            return ((Value) res).isNull();
+        }
+        return res == null;
     }
 
     @Override
