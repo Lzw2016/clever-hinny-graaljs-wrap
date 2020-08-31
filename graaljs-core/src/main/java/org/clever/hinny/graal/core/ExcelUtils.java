@@ -111,12 +111,15 @@ public class ExcelUtils {
             this.sheetBuilder = sheetBuilder;
             excelWriterBuilder = this.excelDataWriter.write();
             excelWriter = this.excelWriterBuilder.build();
-            if (config.getSheetNo() != null) {
-                this.sheetBuilder.sheetNo(config.getSheetNo());
-            }
-            if (StringUtils.isNotBlank(config.getSheetName())) {
-                this.sheetBuilder.sheetName(config.getSheetName());
-            }
+            // bug fix! See https://github.com/alibaba/easyexcel/issues/1498
+            // if (this.sheetBuilder == null) {
+            //     if (config.getSheetNo() != null) {
+            //         this.sheetBuilder = excelWriterBuilder.sheet(config.getSheetNo());
+            //     }
+            //     if (StringUtils.isNotBlank(config.getSheetName())) {
+            //         this.sheetBuilder = excelWriterBuilder.sheet(config.getSheetName());
+            //     }
+            // }
             writeSheet = this.sheetBuilder.needHead(Boolean.TRUE).build();
         }
 
