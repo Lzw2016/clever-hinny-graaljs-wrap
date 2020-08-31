@@ -19,7 +19,6 @@ import org.clever.common.utils.excel.ExcelDataWriter;
 import org.clever.common.utils.excel.ExcelRowReader;
 import org.clever.common.utils.excel.dto.ExcelData;
 import org.clever.common.utils.excel.dto.ExcelRow;
-import org.clever.common.utils.reflection.ReflectionsUtils;
 import org.clever.common.utils.tuples.TupleTow;
 import org.clever.hinny.graaljs.utils.InteropScriptToJavaUtils;
 import org.graalvm.polyglot.Value;
@@ -380,22 +379,10 @@ public class ExcelUtils {
         Object request = configMap.get("request");
         if (request instanceof HttpServletRequest) {
             config.setRequest((HttpServletRequest) request);
-        } else if (request != null && "org.clever.hinny.mvc.http.HttpRequestWrapper".equals(request.getClass().getName())) {
-            // TODO 优化
-            Object requestDelegate = ReflectionsUtils.getFieldValue(request, "delegate");
-            if (requestDelegate instanceof HttpServletRequest) {
-                config.setRequest((HttpServletRequest) requestDelegate);
-            }
         }
         Object response = configMap.get("response");
         if (response instanceof HttpServletResponse) {
             config.setResponse((HttpServletResponse) response);
-        } else if (response != null && "org.clever.hinny.mvc.http.HttpResponseWrapper".equals(response.getClass().getName())) {
-            // TODO 优化
-            Object responseDelegate = ReflectionsUtils.getFieldValue(response, "delegate");
-            if (responseDelegate instanceof HttpServletResponse) {
-                config.setResponse((HttpServletResponse) responseDelegate);
-            }
         }
         Object fileName = configMap.get("fileName");
         if (fileName instanceof String) {
