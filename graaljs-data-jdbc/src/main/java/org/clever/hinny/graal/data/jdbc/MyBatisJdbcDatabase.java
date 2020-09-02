@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentMap;
  * 作者：lizw <br/>
  * 创建时间：2020/09/02 21:02 <br/>
  */
-public class MyBatisJdbcDatabase {
+public class MyBatisJdbcDatabase extends AbstractJdbcDatabase {
     public static final JdbcDatabase Instance = new JdbcDatabase();
 
     private static final ConcurrentMap<String, MyBatisJdbcDataSource> DATASOURCE_MAP = new ConcurrentHashMap<>();
@@ -83,28 +83,14 @@ public class MyBatisJdbcDatabase {
 //    /**
 //     * 添加数据源
 //     *
-//     * @param name       数据源名称
-//     * @param jdbcConfig 数据源配置
+//     * @param name   数据源名称
+//     * @param config 数据源配置
 //     */
-//    @SuppressWarnings("unchecked")
-//    public MyBatisJdbcDataSource add(String name, Map<String, Object> jdbcConfig) {
+//    public MyBatisJdbcDataSource add(String name, Map<String, Object> config) {
 //        Assert.isTrue(!DATASOURCE_MAP.containsKey(name), "数据源已经存在");
-//        jdbcConfig = InteropScriptToJavaUtils.Instance.convertMap(jdbcConfig);
-//        JdbcConfig config = new JdbcConfig();
-//        config.setDriverClassName((String) jdbcConfig.get("driverClassName"));
-//        config.setJdbcUrl((String) jdbcConfig.get("jdbcUrl"));
-//        config.setUsername((String) jdbcConfig.get("username"));
-//        config.setPassword((String) jdbcConfig.get("password"));
-//        config.setAutoCommit((Boolean) jdbcConfig.get("autoCommit"));
-//        config.setReadOnly((Boolean) jdbcConfig.get("readOnly"));
-//        config.setMaxPoolSize((Integer) jdbcConfig.get("maxPoolSize"));
-//        config.setMinIdle((Integer) jdbcConfig.get("minIdle"));
-//        config.setMaxLifetimeMs((Long) jdbcConfig.get("maxLifetimeMs"));
-//        config.setConnectionTimeoutMs((Long) jdbcConfig.get("connectionTimeoutMs"));
-//        config.setIdleTimeoutMs((Long) jdbcConfig.get("idleTimeoutMs"));
-//        config.setConnectionTestQuery((String) jdbcConfig.get("connectionTestQuery"));
-//        config.setDataSourceProperties((Map<String, Object>) jdbcConfig.get("dataSourceProperties"));
-//        org.clever.hinny.data.jdbc.JdbcDataSource jdbcDataSource = new org.clever.hinny.data.jdbc.JdbcDataSource(config.getHikariConfig());
+//        config = InteropScriptToJavaUtils.Instance.convertMap(config);
+//        JdbcConfig jdbcConfig = getJdbcConfig(config);
+//        org.clever.hinny.data.jdbc.JdbcDataSource jdbcDataSource = new org.clever.hinny.data.jdbc.JdbcDataSource(jdbcConfig.getHikariConfig());
 //        add(name, jdbcDataSource);
 //        return DATASOURCE_MAP.get(name);
 //    }

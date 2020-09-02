@@ -11,7 +11,7 @@ import java.util.Map;
  * 作者：lizw <br/>
  * 创建时间：2020/09/02 21:07 <br/>
  */
-public class AbstractDataSource {
+public abstract class AbstractDataSource {
     protected static final String Order_Field_Name = "orderField";
     protected static final String Sort_Name = "sort";
     protected static final String Order_Fields_Name = "orderFields";
