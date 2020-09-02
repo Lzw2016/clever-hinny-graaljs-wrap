@@ -19,12 +19,15 @@ import java.util.Map;
 
 /**
  * 作者：lizw <br/>
- * 创建时间：2020/07/29 12:51 <br/>
+ * 创建时间：2020/09/02 20:59 <br/>
  */
-public class JdbcDataSource extends AbstractDataSource {
-    private final org.clever.hinny.data.jdbc.JdbcDataSource delegate;
+public class MyBatisJdbcDataSource extends AbstractDataSource {
+    /**
+     * JDBC数据源
+     */
+    private final org.clever.hinny.data.jdbc.MyBatisJdbcDataSource delegate;
 
-    public JdbcDataSource(org.clever.hinny.data.jdbc.JdbcDataSource delegate) {
+    public MyBatisJdbcDataSource(org.clever.hinny.data.jdbc.MyBatisJdbcDataSource delegate) {
         this.delegate = delegate;
     }
 
@@ -49,317 +52,313 @@ public class JdbcDataSource extends AbstractDataSource {
         delegate.close();
     }
 
-    // --------------------------------------------------------------------------------------------
-    // Query 操作
-    // --------------------------------------------------------------------------------------------
-
     /**
      * 查询一条数据，返回一个Map
      *
-     * @param sql      sql脚本，参数格式[:param]
-     * @param paramMap 参数(可选)，参数格式[:param]
+     * @param sqlId    SqlID
+     * @param paramMap 查询参数
      */
-    public Map<String, Object> queryMap(String sql, Map<String, Object> paramMap) {
+    public Map<String, Object> queryMap(String sqlId, Map<String, Object> paramMap) {
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        return delegate.queryMap(sql, paramMap);
+        return delegate.queryMap(sqlId, paramMap);
     }
 
     /**
      * 查询一条数据，返回一个Map
      *
-     * @param sql sql脚本，参数格式[:param]
+     * @param sqlId SqlID
      */
-    public Map<String, Object> queryMap(String sql) {
-        return delegate.queryMap(sql);
+    public Map<String, Object> queryMap(String sqlId) {
+        return delegate.queryMap(sqlId);
     }
 
     /**
      * 查询多条数据，返回一个Map数组
      *
-     * @param sql      sql脚本，参数格式[:param]
-     * @param paramMap 参数(可选)，参数格式[:param]
+     * @param sqlId    SqlID
+     * @param paramMap 查询参数
      */
-    public List<Map<String, Object>> queryList(String sql, Map<String, Object> paramMap) {
+    public List<Map<String, Object>> queryList(String sqlId, Map<String, Object> paramMap) {
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        return delegate.queryList(sql, paramMap);
+        return delegate.queryList(sqlId, paramMap);
     }
 
     /**
      * 查询多条数据，返回一个Map数组
      *
-     * @param sql sql脚本，参数格式[:param]
+     * @param sqlId SqlID
      */
-    public List<Map<String, Object>> queryList(String sql) {
-        return delegate.queryList(sql);
+    public List<Map<String, Object>> queryList(String sqlId) {
+        return delegate.queryList(sqlId);
     }
 
     /**
      * 查询返回一个 String
      *
-     * @param sql      sql脚本，参数格式[:param]
-     * @param paramMap 参数(可选)，参数格式[:param]
+     * @param sqlId    SqlID
+     * @param paramMap 查询参数
      */
-    public String queryString(String sql, Map<String, Object> paramMap) {
+    public String queryString(String sqlId, Map<String, Object> paramMap) {
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        return delegate.queryString(sql, paramMap);
+        return delegate.queryString(sqlId, paramMap);
     }
 
     /**
      * 查询返回一个 String
      *
-     * @param sql sql脚本，参数格式[:param]
+     * @param sqlId SqlID
      */
-    public String queryString(String sql) {
-        return delegate.queryString(sql);
+    public String queryString(String sqlId) {
+        return delegate.queryString(sqlId);
     }
 
     /**
      * 查询返回一个 Long
      *
-     * @param sql      sql脚本，参数格式[:param]
-     * @param paramMap 参数(可选)，参数格式[:param]
+     * @param sqlId    SqlID
+     * @param paramMap 查询参数
      */
-    public Long queryLong(String sql, Map<String, Object> paramMap) {
+    public Long queryLong(String sqlId, Map<String, Object> paramMap) {
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        return delegate.queryLong(sql, paramMap);
+        return delegate.queryLong(sqlId, paramMap);
     }
 
     /**
      * 查询返回一个 Long
      *
-     * @param sql sql脚本，参数格式[:param]
+     * @param sqlId SqlID
      */
-    public Long queryLong(String sql) {
-        return delegate.queryLong(sql);
+    public Long queryLong(String sqlId) {
+        return delegate.queryLong(sqlId);
     }
 
     /**
      * 查询返回一个 Double
      *
-     * @param sql      sql脚本，参数格式[:param]
-     * @param paramMap 参数(可选)，参数格式[:param]
+     * @param sqlId    SqlID
+     * @param paramMap 查询参数
      */
-    public Double queryDouble(String sql, Map<String, Object> paramMap) {
+    public Double queryDouble(String sqlId, Map<String, Object> paramMap) {
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        return delegate.queryDouble(sql, paramMap);
+        return delegate.queryDouble(sqlId, paramMap);
     }
 
 
     /**
      * 查询返回一个 Double
      *
-     * @param sql sql脚本，参数格式[:param]
+     * @param sqlId SqlID
      */
-    public Double queryDouble(String sql) {
-        return delegate.queryDouble(sql);
+    public Double queryDouble(String sqlId) {
+        return delegate.queryDouble(sqlId);
     }
 
     /**
      * 查询返回一个 BigDecimal
      *
-     * @param sql      sql脚本，参数格式[:param]
-     * @param paramMap 参数(可选)，参数格式[:param]
+     * @param sqlId    SqlID
+     * @param paramMap 查询参数
      */
-    public BigDecimal queryBigDecimal(String sql, Map<String, Object> paramMap) {
+    public BigDecimal queryBigDecimal(String sqlId, Map<String, Object> paramMap) {
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        return delegate.queryBigDecimal(sql, paramMap);
+        return delegate.queryBigDecimal(sqlId, paramMap);
     }
 
     /**
      * 查询返回一个 BigDecimal
      *
-     * @param sql sql脚本，参数格式[:param]
+     * @param sqlId SqlID
      */
-    public BigDecimal queryBigDecimal(String sql) {
-        return delegate.queryBigDecimal(sql);
+    public BigDecimal queryBigDecimal(String sqlId) {
+        return delegate.queryBigDecimal(sqlId);
     }
 
     /**
      * 查询返回一个 Boolean
      *
-     * @param sql      sql脚本，参数格式[:param]
-     * @param paramMap 参数(可选)，参数格式[:param]
+     * @param sqlId    SqlID
+     * @param paramMap 查询参数
      */
-    public Boolean queryBoolean(String sql, Map<String, Object> paramMap) {
+    public Boolean queryBoolean(String sqlId, Map<String, Object> paramMap) {
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        return delegate.queryBoolean(sql, paramMap);
+        return delegate.queryBoolean(sqlId, paramMap);
     }
 
     /**
      * 查询返回一个 Boolean
      *
-     * @param sql sql脚本，参数格式[:param]
+     * @param sqlId SqlID
      */
-    public Boolean queryBoolean(String sql) {
-        return delegate.queryBoolean(sql);
+    public Boolean queryBoolean(String sqlId) {
+        return delegate.queryBoolean(sqlId);
     }
 
     /**
      * 查询返回一个 Date
      *
-     * @param sql      sql脚本，参数格式[:param]
-     * @param paramMap 参数(可选)，参数格式[:param]
+     * @param sqlId    SqlID
+     * @param paramMap 查询参数
      */
-    public Date queryDate(String sql, Map<String, Object> paramMap) {
+    public Date queryDate(String sqlId, Map<String, Object> paramMap) {
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        return delegate.queryDate(sql, paramMap);
+        return delegate.queryDate(sqlId, paramMap);
     }
 
     /**
      * 查询返回一个 Date
      *
-     * @param sql sql脚本，参数格式[:param]
+     * @param sqlId SqlID
      */
-    public Date queryDate(String sql) {
-        return delegate.queryDate(sql);
+    public Date queryDate(String sqlId) {
+        return delegate.queryDate(sqlId);
     }
 
     /**
      * SQL Count(获取一个SQL返回的数据总量)
      *
-     * @param sql      sql脚本，参数格式[:param]
-     * @param paramMap 参数(可选)，参数格式[:param]
+     * @param sqlId    SqlID
+     * @param paramMap 查询参数
      */
-    public long queryCount(String sql, Map<String, Object> paramMap) {
+    public long queryCount(String sqlId, Map<String, Object> paramMap) {
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        return delegate.queryCount(sql, paramMap);
+        return delegate.queryCount(sqlId, paramMap);
     }
 
     /**
      * SQL Count(获取一个SQL返回的数据总量)
      *
-     * @param sql sql脚本，参数格式[:param]
+     * @param sqlId SqlID
      */
-    public long queryCount(String sql) {
-        return delegate.queryCount(sql);
+    public long queryCount(String sqlId) {
+        return delegate.queryCount(sqlId);
     }
 
     /**
      * 查询多条数据(大量数据)，使用游标读取
      *
-     * @param sql       sql脚本，参数格式[:param]
-     * @param paramMap  参数(可选)，参数格式[:param]
+     * @param sqlId     SqlID
+     * @param paramMap  查询参数
      * @param batchSize 一个批次的数据量
      * @param consumer  游标批次读取数据消费者
      */
-    public void query(String sql, Map<String, Object> paramMap, int batchSize, Value consumer) {
+    public void query(String sqlId, Map<String, Object> paramMap, int batchSize, Value consumer) {
         Assert.isTrue(consumer != null && consumer.canExecute(), "参数consumer必须是回调函数");
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        delegate.query(sql, paramMap, batchSize, consumer::executeVoid);
+        delegate.query(sqlId, paramMap, batchSize, consumer::executeVoid);
     }
 
     /**
      * 查询多条数据(大量数据)，使用游标读取
      *
-     * @param sql       sql脚本，参数格式[:param]
+     * @param sqlId     SqlID
      * @param batchSize 一个批次的数据量
      * @param consumer  游标批次读取数据消费者
      */
-    public void query(String sql, int batchSize, Value consumer) {
+    public void query(String sqlId, int batchSize, Value consumer) {
         Assert.isTrue(consumer != null && consumer.canExecute(), "参数consumer必须是回调函数");
-        delegate.query(sql, batchSize, consumer::executeVoid);
+        delegate.query(sqlId, batchSize, consumer::executeVoid);
     }
 
     /**
      * 查询多条数据(大量数据)，使用游标读取
      *
-     * @param sql      sql脚本，参数格式[:param]
-     * @param paramMap 参数(可选)，参数格式[:param]
+     * @param sqlId    SqlID
+     * @param paramMap 查询参数
      * @param consumer 游标读取数据消费者
      */
-    public void query(String sql, Map<String, Object> paramMap, Value consumer) {
+    public void query(String sqlId, Map<String, Object> paramMap, Value consumer) {
         Assert.isTrue(consumer != null && consumer.canExecute(), "参数consumer必须是回调函数");
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        delegate.query(sql, paramMap, consumer::executeVoid);
+        delegate.query(sqlId, paramMap, consumer::executeVoid);
     }
 
     /**
      * 查询多条数据(大量数据)，使用游标读取
      *
-     * @param sql      sql脚本，参数格式[:param]
+     * @param sqlId    SqlID
      * @param consumer 游标读取数据消费者
      */
-    public void query(String sql, Value consumer) {
+    public void query(String sqlId, Value consumer) {
         Assert.isTrue(consumer != null && consumer.canExecute(), "参数consumer必须是回调函数");
-        delegate.query(sql, consumer::executeVoid);
+        delegate.query(sqlId, consumer::executeVoid);
     }
 
     /**
      * 排序查询
      *
-     * @param sql      sql脚本，参数格式[:param]
+     * @param sqlId    SqlID
      * @param sortMap  排序配置
-     * @param paramMap 参数，参数格式[:param]
+     * @param paramMap 查询参数
      */
-    public List<Map<String, Object>> queryBySort(String sql, Map<String, Object> sortMap, Map<String, Object> paramMap) {
+    public List<Map<String, Object>> queryBySort(String sqlId, Map<String, Object> sortMap, Map<String, Object> paramMap) {
         sortMap = InteropScriptToJavaUtils.Instance.convertMap(sortMap);
         QueryBySort sort = getQueryBySort(sortMap, null);
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        return delegate.queryBySort(sql, sort, paramMap);
+        return delegate.queryBySort(sqlId, sort, paramMap);
     }
 
     /**
      * 排序查询
      *
-     * @param sql     sql脚本，参数格式[:param]
+     * @param sqlId   SqlID
      * @param sortMap 排序配置
      */
-    public List<Map<String, Object>> queryBySort(String sql, Map<String, Object> sortMap) {
+    public List<Map<String, Object>> queryBySort(String sqlId, Map<String, Object> sortMap) {
         sortMap = InteropScriptToJavaUtils.Instance.convertMap(sortMap);
         QueryBySort sort = getQueryBySort(sortMap, null);
-        return delegate.queryBySort(sql, sort);
+        return delegate.queryBySort(sqlId, sort);
     }
 
     /**
      * 分页查询(支持排序)，返回分页对象
      *
-     * @param sql           sql脚本，参数格式[:param]
-     * @param paginationMap 分页配置(支持排序)
-     * @param paramMap      参数，参数格式[:param]
-     * @param countQuery    是否要执行count查询(可选)
-     */
-    public IPage<Map<String, Object>> queryByPage(String sql, Map<String, Object> paginationMap, Map<String, Object> paramMap, boolean countQuery) {
-        paginationMap = InteropScriptToJavaUtils.Instance.convertMap(paginationMap);
-        QueryByPage pagination = getQueryByPage(paginationMap);
-        paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        return delegate.queryByPage(sql, pagination, paramMap, countQuery);
-    }
-
-    /**
-     * 分页查询(支持排序)，返回分页对象
-     *
-     * @param sql           sql脚本，参数格式[:param]
-     * @param paginationMap 分页配置(支持排序)
-     * @param paramMap      参数，参数格式[:param]
-     */
-    public IPage<Map<String, Object>> queryByPage(String sql, Map<String, Object> paginationMap, Map<String, Object> paramMap) {
-        paginationMap = InteropScriptToJavaUtils.Instance.convertMap(paginationMap);
-        QueryByPage pagination = getQueryByPage(paginationMap);
-        paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        return delegate.queryByPage(sql, pagination, paramMap);
-    }
-
-    /**
-     * 分页查询(支持排序)，返回分页对象
-     *
-     * @param sql           sql脚本，参数格式[:param]
+     * @param sqlId         SqlID
+     * @param paramMap      查询参数
      * @param paginationMap 分页配置(支持排序)
      * @param countQuery    是否要执行count查询(可选)
      */
-    public IPage<Map<String, Object>> queryByPage(String sql, Map<String, Object> paginationMap, boolean countQuery) {
+    public IPage<Map<String, Object>> queryByPage(String sqlId, Map<String, Object> paginationMap, Map<String, Object> paramMap, boolean countQuery) {
         paginationMap = InteropScriptToJavaUtils.Instance.convertMap(paginationMap);
         QueryByPage pagination = getQueryByPage(paginationMap);
-        return delegate.queryByPage(sql, pagination, countQuery);
+        paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
+        return delegate.queryByPage(sqlId, pagination, paramMap, countQuery);
     }
 
     /**
      * 分页查询(支持排序)，返回分页对象
      *
-     * @param sql           sql脚本，参数格式[:param]
+     * @param sqlId         SqlID
+     * @param paginationMap 分页配置(支持排序)
+     * @param paramMap      查询参数
+     */
+    public IPage<Map<String, Object>> queryByPage(String sqlId, Map<String, Object> paginationMap, Map<String, Object> paramMap) {
+        paginationMap = InteropScriptToJavaUtils.Instance.convertMap(paginationMap);
+        QueryByPage pagination = getQueryByPage(paginationMap);
+        paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
+        return delegate.queryByPage(sqlId, pagination, paramMap);
+    }
+
+    /**
+     * 分页查询(支持排序)，返回分页对象
+     *
+     * @param sqlId         SqlID
+     * @param paginationMap 分页配置(支持排序)
+     * @param countQuery    是否要执行count查询(可选)
+     */
+    public IPage<Map<String, Object>> queryByPage(String sqlId, Map<String, Object> paginationMap, boolean countQuery) {
+        paginationMap = InteropScriptToJavaUtils.Instance.convertMap(paginationMap);
+        QueryByPage pagination = getQueryByPage(paginationMap);
+        return delegate.queryByPage(sqlId, pagination, countQuery);
+    }
+
+    /**
+     * 分页查询(支持排序)，返回分页对象
+     *
+     * @param sqlId         SqlID
      * @param paginationMap 分页配置(支持排序) - 支持加入查询参数
      */
     @SuppressWarnings("DuplicatedCode")
-    public IPage<Map<String, Object>> queryByPage(String sql, Map<String, Object> paginationMap) {
+    public IPage<Map<String, Object>> queryByPage(String sqlId, Map<String, Object> paginationMap) {
         paginationMap = InteropScriptToJavaUtils.Instance.convertMap(paginationMap);
         QueryByPage pagination = getQueryByPage(paginationMap);
         Map<String, Object> paramMap = new HashMap<>(paginationMap);
@@ -371,7 +370,7 @@ public class JdbcDataSource extends AbstractDataSource {
         paramMap.remove(Page_Size_Name);
         paramMap.remove(Page_No_Name);
         paramMap.remove(Is_Search_Count_Name);
-        return delegate.queryByPage(sql, pagination, paramMap);
+        return delegate.queryByPage(sqlId, pagination, paramMap);
     }
 
     /**
@@ -427,21 +426,21 @@ public class JdbcDataSource extends AbstractDataSource {
     /**
      * 执行更新SQL，返回更新影响数据量
      *
-     * @param sql      sql脚本，参数格式[:param]
-     * @param paramMap 参数(可选)，参数格式[:param]
+     * @param sqlId    SqlID
+     * @param paramMap 查询参数
      */
-    public int update(String sql, Map<String, Object> paramMap) {
+    public int update(String sqlId, Map<String, Object> paramMap) {
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        return delegate.update(sql, paramMap);
+        return delegate.update(sqlId, paramMap);
     }
 
     /**
      * 执行更新SQL，返回更新影响数据量
      *
-     * @param sql sql脚本，参数格式[:param]
+     * @param sqlId SqlID
      */
-    public int update(String sql) {
-        return delegate.update(sql);
+    public int update(String sqlId) {
+        return delegate.update(sqlId);
     }
 
     /**
@@ -499,12 +498,12 @@ public class JdbcDataSource extends AbstractDataSource {
     /**
      * 批量执行更新SQL，返回更新影响数据量
      *
-     * @param sql          sql脚本，参数格式[:param]
-     * @param paramMapList 参数数组，参数格式[:param]
+     * @param sqlId        SqlID
+     * @param paramMapList 参数数组
      */
-    public int[] batchUpdate(String sql, List<Map<String, Object>> paramMapList) {
+    public int[] batchUpdate(String sqlId, List<Map<String, Object>> paramMapList) {
         paramMapList = InteropScriptToJavaUtils.Instance.convertMapList(paramMapList);
-        return delegate.batchUpdate(sql, paramMapList);
+        return delegate.batchUpdate(sqlId, paramMapList);
     }
 
     // --------------------------------------------------------------------------------------------
@@ -541,21 +540,21 @@ public class JdbcDataSource extends AbstractDataSource {
     /**
      * 执行insert SQL，返回数据库自增主键值和新增数据量
      *
-     * @param sql      sql脚本，参数格式[:param]
-     * @param paramMap 参数(可选)，参数格式[:param]
+     * @param sqlId    SqlID
+     * @param paramMap 查询参数
      */
-    public InsertResult insert(String sql, Map<String, Object> paramMap) {
+    public InsertResult insert(String sqlId, Map<String, Object> paramMap) {
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        return delegate.insert(sql, paramMap);
+        return delegate.insert(sqlId, paramMap);
     }
 
     /**
      * 执行insert SQL，返回数据库自增主键值和新增数据量
      *
-     * @param sql sql脚本，参数格式[:param]
+     * @param sqlId SqlID
      */
-    public InsertResult insert(String sql) {
-        return delegate.insert(sql);
+    public InsertResult insert(String sqlId) {
+        return delegate.insert(sqlId);
     }
 
     /**
