@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.SqlExplainInterceptor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOCase;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.clever.hinny.api.ScriptEngineInstance;
 import org.clever.hinny.api.folder.FileSystemFolder;
@@ -12,6 +13,7 @@ import org.clever.hinny.api.folder.Folder;
 import org.clever.hinny.api.pool.EngineInstancePool;
 import org.clever.hinny.api.pool.GenericEngineInstancePool;
 import org.clever.hinny.api.watch.FileSystemWatcher;
+import org.clever.hinny.data.jdbc.dynamic.MyBatisMapperSql;
 import org.clever.hinny.graal.mvc.HttpRequestGraalScriptHandler;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Engine;
@@ -124,6 +126,22 @@ public class BeanConfiguration {
         );
         fileSystemWatcher.start();
         return pool;
+    }
+
+    @Bean
+    public MyBatisMapperSql myBatisMapperSql() {
+        final String absolutePath = new File("D:\\SourceCode\\clever\\clever-hinny-js\\test\\mvc").getAbsolutePath();
+        MyBatisMapperSql mapperSql = new MyBatisMapperSql(absolutePath);
+        org.clever.hinny.data.jdbc.dynamic.watch.FileSystemWatcher watcher = new org.clever.hinny.data.jdbc.dynamic.watch.FileSystemWatcher(
+                absolutePath,
+                file -> mapperSql.reloadFile(file.getAbsolutePath()),
+                new String[]{"*.xml"},
+                new String[]{},
+                IOCase.SYSTEM,
+                1000
+        );
+        watcher.start();
+        return mapperSql;
     }
 
     @Bean

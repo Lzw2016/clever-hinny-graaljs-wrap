@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentMap;
  * 创建时间：2020/09/02 21:02 <br/>
  */
 public class MyBatisJdbcDatabase extends AbstractJdbcDatabase {
-    public static final JdbcDatabase Instance = new JdbcDatabase();
+    public static final MyBatisJdbcDatabase Instance = new MyBatisJdbcDatabase();
 
     private static final ConcurrentMap<String, MyBatisJdbcDataSource> DATASOURCE_MAP = new ConcurrentHashMap<>();
 
@@ -34,6 +34,19 @@ public class MyBatisJdbcDatabase extends AbstractJdbcDatabase {
         Assert.isTrue(DATASOURCE_MAP.containsKey(defaultName) && !DATASOURCE_MAP.get(defaultName).isClosed(), "默认数据源已经关闭(isClosed)");
         this.defaultName = defaultName;
         return getDefault();
+    }
+
+    /**
+     * 设置默认数据源
+     *
+     * @param defaultName           默认数据源名称
+     * @param myBatisJdbcDataSource 默认数据源对象
+     */
+    public void setDefault(String defaultName, org.clever.hinny.data.jdbc.MyBatisJdbcDataSource myBatisJdbcDataSource) {
+        Assert.hasText(defaultName, "参数defaultName不能为空");
+        Assert.isTrue(!myBatisJdbcDataSource.isClosed(), "默认数据源已经关闭(isClosed)");
+        this.defaultName = defaultName;
+        add(defaultName, myBatisJdbcDataSource);
     }
 
     /**
