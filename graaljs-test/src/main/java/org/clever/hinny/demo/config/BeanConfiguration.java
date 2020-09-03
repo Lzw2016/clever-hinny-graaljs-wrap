@@ -21,6 +21,7 @@ import org.graalvm.polyglot.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.xml.sax.SAXParseException;
 
 import java.io.File;
 
@@ -134,7 +135,24 @@ public class BeanConfiguration {
         MyBatisMapperSql mapperSql = new MyBatisMapperSql(absolutePath);
         org.clever.hinny.data.jdbc.dynamic.watch.FileSystemWatcher watcher = new org.clever.hinny.data.jdbc.dynamic.watch.FileSystemWatcher(
                 absolutePath,
-                file -> mapperSql.reloadFile(file.getAbsolutePath()),
+                file -> {
+                    final String absPath = file.getAbsolutePath();
+                    try {
+                        mapperSql.reloadFile(absPath);
+                    } catch (Exception e) {
+                        String error = e.getMessage();
+                        if (e.getCause() instanceof SAXParseException) {
+                            SAXParseException saxParseException = (SAXParseException) e.getCause();
+                            error = String.format(
+                                    "第%d行，第%d列存在错误: %s",
+                                    saxParseException.getLineNumber(),
+                                    saxParseException.getColumnNumber(),
+                                    saxParseException.getMessage()
+                            );
+                        }
+                        log.error("重新加载Mapper.xml文件失败 | path={} | error={}", absPath, error);
+                    }
+                },
                 new String[]{"*.xml"},
                 new String[]{},
                 IOCase.SYSTEM,
