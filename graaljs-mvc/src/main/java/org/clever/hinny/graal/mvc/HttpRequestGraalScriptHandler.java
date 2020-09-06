@@ -10,6 +10,7 @@ import org.clever.hinny.graal.mvc.http.HttpContext;
 import org.clever.hinny.mvc.HttpRequestScriptHandler;
 import org.clever.hinny.mvc.support.TupleTow;
 import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.Value;
 
 import javax.servlet.http.HttpServletRequest;
@@ -89,6 +90,27 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
     @Override
     protected String serializeRes(Object res) {
         return JacksonMapper.getInstance().toJson(res);
+    }
+
+    @Override
+    protected void errHandle(Throwable e) throws Exception {
+        PolyglotException polyglotException = null;
+        if (e instanceof PolyglotException) {
+            polyglotException = (PolyglotException) e;
+        } else if (e.getCause() instanceof PolyglotException) {
+            polyglotException = (PolyglotException) e.getCause();
+        }
+        if (polyglotException != null) {
+            Throwable err = polyglotException.asHostException();
+            if (err == null) {
+                throw polyglotException;
+            }
+            e = err;
+        }
+        if (e instanceof Exception) {
+            throw (Exception) e;
+        }
+        throw new RuntimeException(e);
     }
 
     /**
