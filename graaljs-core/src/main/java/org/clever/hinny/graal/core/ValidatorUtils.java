@@ -2,6 +2,7 @@ package org.clever.hinny.graal.core;
 
 import org.clever.hinny.graaljs.utils.InteropScriptToJavaUtils;
 import org.graalvm.polyglot.Value;
+import org.springframework.validation.BindException;
 
 import java.util.*;
 import java.util.function.Function;
@@ -17,6 +18,50 @@ public class ValidatorUtils {
 
     private ValidatorUtils() {
         delegate = org.clever.hinny.core.ValidatorUtils.Instance;
+    }
+
+    /**
+     * 对象数据校验(数据校验错误抛出异常)
+     *
+     * @param bean 数据对象
+     * @param rule 校验规则
+     * @param fast 快速验证(只要有一个错误就返回)
+     */
+    public void validated(final Map<String, Object> bean, final Map<String, Object> rule, final boolean fast) throws BindException {
+        Map<String, Object> ruleMap = new HashMap<>();
+        if (bean != null && rule != null) {
+            convertRule(bean, rule, ruleMap);
+        }
+        delegate.validated(bean, ruleMap, fast);
+    }
+
+    /**
+     * 对象数据校验(数据校验错误抛出异常)
+     *
+     * @param bean 数据对象
+     * @param rule 校验规则
+     */
+    public void validated(final Map<String, Object> bean, final Map<String, Object> rule) throws BindException {
+        Map<String, Object> ruleMap = new HashMap<>();
+        if (bean != null && rule != null) {
+            convertRule(bean, rule, ruleMap);
+        }
+        delegate.validated(bean, ruleMap);
+    }
+
+    /**
+     * 对象数据校验(返回验证结果)
+     *
+     * @param bean 数据对象
+     * @param rule 校验规则
+     * @param fast 快速验证(只要有一个错误就返回)
+     */
+    public org.clever.hinny.core.ValidatorUtils.ValidResult valid(Map<String, Object> bean, Map<String, Object> rule, boolean fast) {
+        Map<String, Object> ruleMap = new HashMap<>();
+        if (bean != null && rule != null) {
+            convertRule(bean, rule, ruleMap);
+        }
+        return delegate.valid(bean, ruleMap, fast);
     }
 
     /**
@@ -39,7 +84,7 @@ public class ValidatorUtils {
             final String filed = entry.getKey();                // 字段名
             final Object ruleItem = entry.getValue();           // 校验配置
             final Object value = bean.get(filed);               // 字段值
-            // final boolean hasValue = bean.containsKey(filed);   // 是否存在字段值
+            // final boolean hasValue = bean.containsKey(filed);// 是否存在字段值
             if (ruleItem == null) {
                 continue;
             }
@@ -65,11 +110,11 @@ public class ValidatorUtils {
         }
     }
 
+    /**
+     * 判断数据是否是校验配置
+     */
     protected boolean isRuleConfig(Map<String, Object> ruleItem) {
-        if (ruleItem.containsKey("__valid_flag")) {
-            return true;
-        }
-        return false;
+        return ruleItem.containsKey("__valid_flag");
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
