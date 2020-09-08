@@ -10,7 +10,9 @@ import org.clever.hinny.graal.mvc.http.HttpContext;
 import org.clever.hinny.mvc.HttpRequestScriptHandler;
 import org.clever.hinny.mvc.support.TupleTow;
 import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.Value;
+import org.springframework.core.convert.ConversionService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,13 +29,19 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
      * 脚本文件后缀
      */
     private static final String ScriptSuffix = ".js";
+    /**
+     * MVC请求数据装换
+     */
+    private final ConversionService conversionService;
 
-    public HttpRequestGraalScriptHandler(String supportPrefix, Set<String> supportSuffix, EngineInstancePool<Context, Value> engineInstancePool) {
+    public HttpRequestGraalScriptHandler(String supportPrefix, Set<String> supportSuffix, EngineInstancePool<Context, Value> engineInstancePool, ConversionService conversionService) {
         super(supportPrefix, supportSuffix, engineInstancePool);
+        this.conversionService = conversionService;
     }
 
-    public HttpRequestGraalScriptHandler(EngineInstancePool<Context, Value> engineInstancePool) {
+    public HttpRequestGraalScriptHandler(EngineInstancePool<Context, Value> engineInstancePool, ConversionService conversionService) {
         super(engineInstancePool);
+        this.conversionService = conversionService;
     }
 
     @Override
@@ -47,7 +55,7 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
 
     @Override
     protected TupleTow<Object, Boolean> doHandle(HttpServletRequest request, HttpServletResponse response, TupleTow<ScriptObject<Value>, String> handlerScript) {
-        HttpContext httpContext = new HttpContext(request, response);
+        HttpContext httpContext = new HttpContext(request, response, conversionService);
         final ScriptObject<Value> scriptObject = handlerScript.getValue1();
         final String method = handlerScript.getValue2();
         Object fucObject = scriptObject.getMember(method);
@@ -89,6 +97,27 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
     @Override
     protected String serializeRes(Object res) {
         return JacksonMapper.getInstance().toJson(res);
+    }
+
+    @Override
+    protected void errHandle(Throwable e) throws Exception {
+        PolyglotException polyglotException = null;
+        if (e instanceof PolyglotException) {
+            polyglotException = (PolyglotException) e;
+        } else if (e.getCause() instanceof PolyglotException) {
+            polyglotException = (PolyglotException) e.getCause();
+        }
+        if (polyglotException != null) {
+            Throwable err = polyglotException.asHostException();
+            if (err == null) {
+                throw polyglotException;
+            }
+            e = err;
+        }
+        if (e instanceof Exception) {
+            throw (Exception) e;
+        }
+        throw new RuntimeException(e);
     }
 
     /**

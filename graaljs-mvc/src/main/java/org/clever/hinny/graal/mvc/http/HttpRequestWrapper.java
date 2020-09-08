@@ -1,6 +1,9 @@
 package org.clever.hinny.graal.mvc.http;
 
+import org.clever.hinny.graal.core.ValidatorUtils;
+import org.clever.hinny.graaljs.utils.InteropScriptToJavaUtils;
 import org.graalvm.polyglot.proxy.ProxyObject;
+import org.springframework.validation.BindException;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
@@ -429,5 +432,146 @@ public class HttpRequestWrapper {
      */
     public ProxyObject getQueryByPage() {
         return ProxyObject.fromMap(delegate.getQueryByPage());
+    }
+
+    /**
+     * 从Body中填充数据
+     *
+     * @param model    数据结构以及初始值
+     * @param fillNull null值是否也要填充
+     */
+    public void fillFromBody(Map<String, Object> model, boolean fillNull) throws IOException {
+        model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
+        delegate.fillFromBody(model, fillNull);
+    }
+
+    /**
+     * 从Body中填充数据
+     *
+     * @param model 数据结构以及初始值
+     */
+    public void fillFromBody(Map<String, Object> model) throws IOException {
+        model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
+        delegate.fillFromBody(model);
+    }
+
+    /**
+     * 从Params中填充数据
+     *
+     * @param model    数据结构以及初始值
+     * @param fillNull null值是否也要填充
+     */
+    public void fillFromParams(Map<String, Object> model, boolean fillNull) {
+        model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
+        delegate.fillFromParams(model, fillNull);
+    }
+
+    /**
+     * 从Params中填充数据
+     *
+     * @param model 数据结构以及初始值
+     */
+    public void fillFromParams(Map<String, Object> model) {
+        model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
+        delegate.fillFromParams(model);
+    }
+
+    /**
+     * 从Body或者Params中填充数据
+     *
+     * @param model    数据结构以及初始值
+     * @param fillNull null值是否也要填充
+     */
+    public void fillFromAny(Map<String, Object> model, boolean fillNull) throws IOException {
+        model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
+        delegate.fillFromAny(model, fillNull);
+    }
+
+    /**
+     * 从Body或者Params中填充数据
+     *
+     * @param model 数据结构以及初始值
+     */
+    public void fillFromAny(Map<String, Object> model) throws IOException {
+        model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
+        delegate.fillFromAny(model);
+    }
+
+    /**
+     * 从Body中填充数据然后验证数据
+     *
+     * @param model    数据结构以及初始值
+     * @param rule     校验规则
+     * @param fillNull null值是否也要填充
+     * @param fast     快速验证(只要有一个错误就抛出异常)
+     */
+    public void fillAndValidatedFromBody(Map<String, Object> model, Map<String, Object> rule, boolean fillNull, boolean fast) throws IOException, BindException {
+        model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
+        fillFromBody(model, fillNull);
+        ValidatorUtils.Instance.validated(model, rule, fast);
+    }
+
+    /**
+     * 从Body中填充数据然后验证数据
+     *
+     * @param model 数据结构以及初始值
+     * @param rule  校验规则
+     */
+    public void fillAndValidatedFromBody(Map<String, Object> model, Map<String, Object> rule) throws IOException, BindException {
+        model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
+        fillFromBody(model);
+        ValidatorUtils.Instance.validated(model, rule);
+    }
+
+    /**
+     * 从Params中填充数据然后验证数据
+     *
+     * @param model    数据结构以及初始值
+     * @param rule     校验规则
+     * @param fillNull null值是否也要填充
+     * @param fast     快速验证(只要有一个错误就抛出异常)
+     */
+    public void fillAndValidatedFromParams(Map<String, Object> model, Map<String, Object> rule, boolean fillNull, boolean fast) throws BindException {
+        model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
+        fillFromParams(model, fillNull);
+        ValidatorUtils.Instance.validated(model, rule, fast);
+    }
+
+    /**
+     * 从Params中填充数据然后验证数据
+     *
+     * @param model 数据结构以及初始值
+     * @param rule  校验规则
+     */
+    public void fillAndValidatedFromParams(Map<String, Object> model, Map<String, Object> rule) throws BindException {
+        model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
+        fillFromParams(model);
+        ValidatorUtils.Instance.validated(model, rule);
+    }
+
+    /**
+     * 从Body或者Params中填充数据然后验证数据
+     *
+     * @param model    数据结构以及初始值
+     * @param rule     校验规则
+     * @param fillNull null值是否也要填充
+     * @param fast     快速验证(只要有一个错误就抛出异常)
+     */
+    public void fillAndValidatedFromAny(Map<String, Object> model, Map<String, Object> rule, boolean fillNull, boolean fast) throws IOException, BindException {
+        model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
+        fillFromAny(model, fillNull);
+        ValidatorUtils.Instance.validated(model, rule, fast);
+    }
+
+    /**
+     * 从Body或者Params中填充数据然后验证数据
+     *
+     * @param model 数据结构以及初始值
+     * @param rule  校验规则
+     */
+    public void fillAndValidatedFromAny(Map<String, Object> model, Map<String, Object> rule) throws IOException, BindException {
+        model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
+        fillFromAny(model);
+        ValidatorUtils.Instance.validated(model, rule);
     }
 }

@@ -18,6 +18,10 @@
             <groupId>org.clever</groupId>
             <artifactId>hinny-mvc</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.clever</groupId>
+            <artifactId>graaljs-core</artifactId>
+        </dependency>
         <!--lib-->
         <dependency>
             <groupId>javax.servlet</groupId>
