@@ -1,5 +1,7 @@
 package org.clever.hinny.graal.mvc.http;
 
+import org.springframework.core.convert.ConversionService;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,8 +16,8 @@ public class HttpContext {
     public HttpSessionWrapper session;
     public final ServletContextWrapper servletContext;
 
-    public HttpContext(HttpServletRequest request, HttpServletResponse response) {
-        org.clever.hinny.mvc.http.HttpContext httpContext = new org.clever.hinny.mvc.http.HttpContext(request, response);
+    public HttpContext(HttpServletRequest request, HttpServletResponse response, ConversionService conversionService) {
+        org.clever.hinny.mvc.http.HttpContext httpContext = new org.clever.hinny.mvc.http.HttpContext(request, response, conversionService);
         this.request = new HttpRequestWrapper(httpContext.request);
         this.response = new HttpResponseWrapper(httpContext.response);
         HttpSessionWrapper sessionWrapper = null;

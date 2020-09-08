@@ -12,6 +12,7 @@ import org.clever.hinny.mvc.support.TupleTow;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.Value;
+import org.springframework.core.convert.ConversionService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,13 +29,19 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
      * 脚本文件后缀
      */
     private static final String ScriptSuffix = ".js";
+    /**
+     * MVC请求数据装换
+     */
+    private final ConversionService conversionService;
 
-    public HttpRequestGraalScriptHandler(String supportPrefix, Set<String> supportSuffix, EngineInstancePool<Context, Value> engineInstancePool) {
+    public HttpRequestGraalScriptHandler(String supportPrefix, Set<String> supportSuffix, EngineInstancePool<Context, Value> engineInstancePool, ConversionService conversionService) {
         super(supportPrefix, supportSuffix, engineInstancePool);
+        this.conversionService = conversionService;
     }
 
-    public HttpRequestGraalScriptHandler(EngineInstancePool<Context, Value> engineInstancePool) {
+    public HttpRequestGraalScriptHandler(EngineInstancePool<Context, Value> engineInstancePool, ConversionService conversionService) {
         super(engineInstancePool);
+        this.conversionService = conversionService;
     }
 
     @Override
@@ -48,7 +55,7 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
 
     @Override
     protected TupleTow<Object, Boolean> doHandle(HttpServletRequest request, HttpServletResponse response, TupleTow<ScriptObject<Value>, String> handlerScript) {
-        HttpContext httpContext = new HttpContext(request, response);
+        HttpContext httpContext = new HttpContext(request, response, conversionService);
         final ScriptObject<Value> scriptObject = handlerScript.getValue1();
         final String method = handlerScript.getValue2();
         Object fucObject = scriptObject.getMember(method);

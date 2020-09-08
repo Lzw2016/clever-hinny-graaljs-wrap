@@ -21,6 +21,7 @@ import org.graalvm.polyglot.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.convert.ConversionService;
 import org.xml.sax.SAXParseException;
 
 import java.io.File;
@@ -163,7 +164,7 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public HttpRequestGraalScriptHandler httpRequestGraalScriptHandler(EngineInstancePool<Context, Value> engineInstancePool) {
-        return new HttpRequestGraalScriptHandler(engineInstancePool);
+    public HttpRequestGraalScriptHandler httpRequestGraalScriptHandler(EngineInstancePool<Context, Value> engineInstancePool, ConversionService conversionService) {
+        return new HttpRequestGraalScriptHandler(engineInstancePool, conversionService);
     }
 }
