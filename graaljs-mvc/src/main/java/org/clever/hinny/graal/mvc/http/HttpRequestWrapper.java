@@ -460,6 +460,14 @@ public class HttpRequestWrapper {
     }
 
     /**
+     * 获取请求参数(Parameter和Body都会取)
+     */
+    public Object getRequestData() throws IOException {
+        Map<String, Object> data = delegate.getRequestData();
+        return InteropJavaToScriptUtils.Instance.convertMap(data);
+    }
+
+    /**
      * 从Body中填充数据
      *
      * @param model    数据结构以及初始值
