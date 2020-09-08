@@ -1,6 +1,7 @@
 package org.clever.hinny.graal.mvc.http;
 
 import org.clever.hinny.graal.core.ValidatorUtils;
+import org.clever.hinny.graaljs.utils.InteropJavaToScriptUtils;
 import org.clever.hinny.graaljs.utils.InteropScriptToJavaUtils;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.springframework.validation.BindException;
@@ -443,6 +444,7 @@ public class HttpRequestWrapper {
     public void fillFromBody(Map<String, Object> model, boolean fillNull) throws IOException {
         model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
         delegate.fillFromBody(model, fillNull);
+        InteropJavaToScriptUtils.Instance.convertMap(model);
     }
 
     /**
@@ -453,6 +455,7 @@ public class HttpRequestWrapper {
     public void fillFromBody(Map<String, Object> model) throws IOException {
         model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
         delegate.fillFromBody(model);
+        InteropJavaToScriptUtils.Instance.convertMap(model);
     }
 
     /**
@@ -464,6 +467,7 @@ public class HttpRequestWrapper {
     public void fillFromParams(Map<String, Object> model, boolean fillNull) {
         model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
         delegate.fillFromParams(model, fillNull);
+        InteropJavaToScriptUtils.Instance.convertMap(model);
     }
 
     /**
@@ -474,6 +478,7 @@ public class HttpRequestWrapper {
     public void fillFromParams(Map<String, Object> model) {
         model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
         delegate.fillFromParams(model);
+        InteropJavaToScriptUtils.Instance.convertMap(model);
     }
 
     /**
@@ -485,6 +490,7 @@ public class HttpRequestWrapper {
     public void fillFromAny(Map<String, Object> model, boolean fillNull) throws IOException {
         model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
         delegate.fillFromAny(model, fillNull);
+        InteropJavaToScriptUtils.Instance.convertMap(model);
     }
 
     /**
@@ -495,6 +501,7 @@ public class HttpRequestWrapper {
     public void fillFromAny(Map<String, Object> model) throws IOException {
         model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
         delegate.fillFromAny(model);
+        InteropJavaToScriptUtils.Instance.convertMap(model);
     }
 
     /**
@@ -509,6 +516,7 @@ public class HttpRequestWrapper {
         model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
         fillFromBody(model, fillNull);
         ValidatorUtils.Instance.validated(model, rule, fast);
+        InteropJavaToScriptUtils.Instance.convertMap(model);
     }
 
     /**
@@ -521,6 +529,7 @@ public class HttpRequestWrapper {
         model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
         fillFromBody(model);
         ValidatorUtils.Instance.validated(model, rule);
+        InteropJavaToScriptUtils.Instance.convertMap(model);
     }
 
     /**
@@ -535,6 +544,7 @@ public class HttpRequestWrapper {
         model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
         fillFromParams(model, fillNull);
         ValidatorUtils.Instance.validated(model, rule, fast);
+        InteropJavaToScriptUtils.Instance.convertMap(model);
     }
 
     /**
@@ -547,6 +557,7 @@ public class HttpRequestWrapper {
         model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
         fillFromParams(model);
         ValidatorUtils.Instance.validated(model, rule);
+        InteropJavaToScriptUtils.Instance.convertMap(model);
     }
 
     /**
@@ -561,6 +572,7 @@ public class HttpRequestWrapper {
         model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
         fillFromAny(model, fillNull);
         ValidatorUtils.Instance.validated(model, rule, fast);
+        InteropJavaToScriptUtils.Instance.convertMap(model);
     }
 
     /**
@@ -573,5 +585,6 @@ public class HttpRequestWrapper {
         model = InteropScriptToJavaUtils.Instance.deepConvertMap(model);
         fillFromAny(model);
         ValidatorUtils.Instance.validated(model, rule);
+        InteropJavaToScriptUtils.Instance.convertMap(model);
     }
 }
