@@ -4,6 +4,7 @@ import org.clever.hinny.graal.core.ValidatorUtils;
 import org.clever.hinny.graaljs.utils.InteropJavaToScriptUtils;
 import org.clever.hinny.graaljs.utils.InteropScriptToJavaUtils;
 import org.graalvm.polyglot.proxy.ProxyObject;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindException;
 
 import javax.servlet.DispatcherType;
@@ -433,6 +434,29 @@ public class HttpRequestWrapper {
      */
     public ProxyObject getQueryByPage() {
         return ProxyObject.fromMap(delegate.getQueryByPage());
+    }
+
+    /**
+     * 获取参数对象
+     */
+    public Object getParams() {
+        Map<String, Object> body = delegate.getParams();
+        return InteropJavaToScriptUtils.Instance.convertMap(body);
+    }
+
+    /**
+     * 获取Body对象
+     */
+    public Object getBody() throws IOException {
+        Map<String, Object> body = delegate.getBody();
+        return InteropJavaToScriptUtils.Instance.convertMap(body);
+    }
+
+    /**
+     * 获取参数Map
+     */
+    public MultiValueMap<String, String> getParamsMap() {
+        return delegate.getParamsMap();
     }
 
     /**
