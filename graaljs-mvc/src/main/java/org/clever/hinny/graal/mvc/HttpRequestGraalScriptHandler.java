@@ -107,7 +107,7 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
         } else if (e.getCause() instanceof PolyglotException) {
             polyglotException = (PolyglotException) e.getCause();
         }
-        if (polyglotException != null) {
+        if (polyglotException != null && polyglotException.isHostException()) {
             Throwable err = polyglotException.asHostException();
             if (err == null) {
                 throw polyglotException;
