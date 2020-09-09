@@ -39,7 +39,7 @@ spring:
       preferred-json-mapper: jackson
     encoding:
       charset: UTF-8
-      force: true
+      force: false
 
   jackson: #------------------------------------------------------------ jackson配置
     date-format: yyyy-MM-dd HH:mm:ss

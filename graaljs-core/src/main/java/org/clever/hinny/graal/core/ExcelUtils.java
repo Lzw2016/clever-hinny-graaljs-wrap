@@ -242,6 +242,10 @@ public class ExcelUtils {
     @SuppressWarnings({"unchecked", "rawtypes", "DuplicatedCode"})
     private static org.clever.hinny.core.ExcelUtils.ExcelDataReaderConfig toExcelDataReaderConfig(Map<String, Object> configMap) {
         org.clever.hinny.core.ExcelUtils.ExcelDataReaderConfig config = new org.clever.hinny.core.ExcelUtils.ExcelDataReaderConfig();
+        Object request = configMap.get("request");
+        if (request instanceof HttpServletRequest) {
+            config.setRequest((HttpServletRequest) request);
+        }
         Object filename = configMap.get("filename");
         if (filename instanceof String) {
             config.setFilename((String) filename);
