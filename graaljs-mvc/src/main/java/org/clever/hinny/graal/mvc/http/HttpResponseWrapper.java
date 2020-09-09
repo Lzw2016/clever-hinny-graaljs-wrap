@@ -270,4 +270,23 @@ public class HttpResponseWrapper {
     }
 
     //---------------------------------------------------------------------------------------------------------------------------------------------- 高阶封装
+
+    /**
+     * 设置当前响应是下载文件
+     *
+     * @param fileName      文件名称
+     * @param contentLength 文件内容大小
+     */
+    public void setDownloadFileName(String fileName, Long contentLength) {
+        delegate.setDownloadFileName(fileName, contentLength);
+    }
+
+    /**
+     * 设置当前响应是下载文件
+     *
+     * @param fileName 文件名称
+     */
+    public void setDownloadFileName(String fileName) {
+        delegate.setDownloadFileName(fileName);
+    }
 }
