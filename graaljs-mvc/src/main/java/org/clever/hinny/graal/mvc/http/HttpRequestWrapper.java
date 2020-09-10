@@ -619,4 +619,52 @@ public class HttpRequestWrapper {
         ValidatorUtils.Instance.validated(model, rule);
         InteropJavaToScriptUtils.Instance.convertMap(model);
     }
+
+    /**
+     * 获取上传的文件名称
+     */
+    public List<String> getUploadFileNames() {
+        return delegate.getUploadFileNames();
+    }
+
+    /**
+     * 获取上传的文件
+     *
+     * @param filename 文件名称
+     */
+    public org.clever.hinny.mvc.http.HttpRequestWrapper.UploadFile getUploadFile(String filename) {
+        return delegate.getUploadFile(filename);
+    }
+
+    /**
+     * 获取上传的文件
+     *
+     * @param filename 文件名称
+     */
+    public List<org.clever.hinny.mvc.http.HttpRequestWrapper.UploadFile> getUploadFiles(String filename) {
+        return delegate.getUploadFiles(filename);
+    }
+
+    /**
+     * 获取所有上传的文件
+     */
+    public MultiValueMap<String, org.clever.hinny.mvc.http.HttpRequestWrapper.UploadFile> getAllUploadFiles() {
+        return delegate.getAllUploadFiles();
+    }
+
+    /**
+     * 获取所有上传的文件
+     *
+     * @param filename 文件名称
+     */
+    public List<org.clever.hinny.mvc.http.HttpRequestWrapper.UploadFile> getAllUploadFiles(String filename) {
+        return delegate.getAllUploadFiles(filename);
+    }
+
+    /**
+     * 获取第一个上传的文件
+     */
+    public org.clever.hinny.mvc.http.HttpRequestWrapper.UploadFile getFirstUploadFile() {
+        return delegate.getFirstUploadFile();
+    }
 }
