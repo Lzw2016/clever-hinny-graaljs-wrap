@@ -2,6 +2,7 @@ package org.clever.hinny.graal.data.jdbc;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.clever.common.model.request.QueryByPage;
 import org.clever.common.model.request.QueryBySort;
 import org.clever.hinny.data.jdbc.support.InsertResult;
@@ -9,13 +10,11 @@ import org.clever.hinny.data.jdbc.support.JdbcDataSourceStatus;
 import org.clever.hinny.data.jdbc.support.JdbcInfo;
 import org.clever.hinny.graaljs.utils.InteropScriptToJavaUtils;
 import org.graalvm.polyglot.Value;
+import org.graalvm.polyglot.proxy.ProxyObject;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 作者：lizw <br/>
@@ -58,9 +57,10 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
      * @param sqlId    SqlID
      * @param paramMap 查询参数
      */
-    public Map<String, Object> queryEntity(String sqlId, Map<String, Object> paramMap) {
+    public ProxyObject queryEntity(String sqlId, Map<String, Object> paramMap) {
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        return delegate.queryEntity(sqlId, paramMap);
+        Map<String, Object> data = delegate.queryEntity(sqlId, paramMap);
+        return getProxyObject(data);
     }
 
     /**
@@ -68,8 +68,9 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
      *
      * @param sqlId SqlID
      */
-    public Map<String, Object> queryEntity(String sqlId) {
-        return delegate.queryEntity(sqlId);
+    public ProxyObject queryEntity(String sqlId) {
+        Map<String, Object> data = delegate.queryEntity(sqlId);
+        return getProxyObject(data);
     }
 
     /**
@@ -78,9 +79,10 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
      * @param sqlId    SqlID
      * @param paramMap 查询参数
      */
-    public List<Map<String, Object>> queryList(String sqlId, Map<String, Object> paramMap) {
+    public List<ProxyObject> queryList(String sqlId, Map<String, Object> paramMap) {
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        return delegate.queryList(sqlId, paramMap);
+        List<Map<String, Object>> dataList = delegate.queryList(sqlId, paramMap);
+        return getProxyObjectList(dataList);
     }
 
     /**
@@ -88,8 +90,9 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
      *
      * @param sqlId SqlID
      */
-    public List<Map<String, Object>> queryList(String sqlId) {
-        return delegate.queryList(sqlId);
+    public List<ProxyObject> queryList(String sqlId) {
+        List<Map<String, Object>> dataList = delegate.queryList(sqlId);
+        return getProxyObjectList(dataList);
     }
 
     /**
@@ -290,11 +293,12 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
      * @param sortMap  排序配置
      * @param paramMap 查询参数
      */
-    public List<Map<String, Object>> queryBySort(String sqlId, Map<String, Object> sortMap, Map<String, Object> paramMap) {
+    public List<ProxyObject> queryBySort(String sqlId, Map<String, Object> sortMap, Map<String, Object> paramMap) {
         sortMap = InteropScriptToJavaUtils.Instance.convertMap(sortMap);
         QueryBySort sort = getQueryBySort(sortMap, null);
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        return delegate.queryBySort(sqlId, sort, paramMap);
+        List<Map<String, Object>> dataList = delegate.queryBySort(sqlId, sort, paramMap);
+        return getProxyObjectList(dataList);
     }
 
     /**
@@ -303,10 +307,11 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
      * @param sqlId   SqlID
      * @param sortMap 排序配置
      */
-    public List<Map<String, Object>> queryBySort(String sqlId, Map<String, Object> sortMap) {
+    public List<ProxyObject> queryBySort(String sqlId, Map<String, Object> sortMap) {
         sortMap = InteropScriptToJavaUtils.Instance.convertMap(sortMap);
         QueryBySort sort = getQueryBySort(sortMap, null);
-        return delegate.queryBySort(sqlId, sort);
+        List<Map<String, Object>> dataList = delegate.queryBySort(sqlId, sort);
+        return getProxyObjectList(dataList);
     }
 
     /**
@@ -317,11 +322,12 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
      * @param paginationMap 分页配置(支持排序)
      * @param countQuery    是否要执行count查询(可选)
      */
-    public IPage<Map<String, Object>> queryByPage(String sqlId, Map<String, Object> paginationMap, Map<String, Object> paramMap, boolean countQuery) {
+    public IPage<ProxyObject> queryByPage(String sqlId, Map<String, Object> paginationMap, Map<String, Object> paramMap, boolean countQuery) {
         paginationMap = InteropScriptToJavaUtils.Instance.convertMap(paginationMap);
         QueryByPage pagination = getQueryByPage(paginationMap);
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        return delegate.queryByPage(sqlId, pagination, paramMap, countQuery);
+        IPage<Map<String, Object>> page = delegate.queryByPage(sqlId, pagination, paramMap, countQuery);
+        return getProxyObjectPage(page);
     }
 
     /**
@@ -331,11 +337,12 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
      * @param paginationMap 分页配置(支持排序)
      * @param paramMap      查询参数
      */
-    public IPage<Map<String, Object>> queryByPage(String sqlId, Map<String, Object> paginationMap, Map<String, Object> paramMap) {
+    public IPage<ProxyObject> queryByPage(String sqlId, Map<String, Object> paginationMap, Map<String, Object> paramMap) {
         paginationMap = InteropScriptToJavaUtils.Instance.convertMap(paginationMap);
         QueryByPage pagination = getQueryByPage(paginationMap);
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        return delegate.queryByPage(sqlId, pagination, paramMap);
+        IPage<Map<String, Object>> page = delegate.queryByPage(sqlId, pagination, paramMap);
+        return getProxyObjectPage(page);
     }
 
     /**
@@ -345,10 +352,11 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
      * @param paginationMap 分页配置(支持排序)
      * @param countQuery    是否要执行count查询(可选)
      */
-    public IPage<Map<String, Object>> queryByPage(String sqlId, Map<String, Object> paginationMap, boolean countQuery) {
+    public IPage<ProxyObject> queryByPage(String sqlId, Map<String, Object> paginationMap, boolean countQuery) {
         paginationMap = InteropScriptToJavaUtils.Instance.convertMap(paginationMap);
         QueryByPage pagination = getQueryByPage(paginationMap);
-        return delegate.queryByPage(sqlId, pagination, countQuery);
+        IPage<Map<String, Object>> page = delegate.queryByPage(sqlId, pagination, countQuery);
+        return getProxyObjectPage(page);
     }
 
     /**
@@ -358,7 +366,7 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
      * @param paginationMap 分页配置(支持排序) - 支持加入查询参数
      */
     @SuppressWarnings("DuplicatedCode")
-    public IPage<Map<String, Object>> queryByPage(String sqlId, Map<String, Object> paginationMap) {
+    public IPage<ProxyObject> queryByPage(String sqlId, Map<String, Object> paginationMap) {
         paginationMap = InteropScriptToJavaUtils.Instance.convertMap(paginationMap);
         QueryByPage pagination = getQueryByPage(paginationMap);
         Map<String, Object> paramMap = new HashMap<>(paginationMap);
@@ -370,7 +378,8 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
         paramMap.remove(Page_Size_Name);
         paramMap.remove(Page_No_Name);
         paramMap.remove(Is_Search_Count_Name);
-        return delegate.queryByPage(sqlId, pagination, paramMap);
+        IPage<Map<String, Object>> page = delegate.queryByPage(sqlId, pagination, paramMap);
+        return getProxyObjectPage(page);
     }
 
     /**
@@ -379,9 +388,10 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
      * @param tableName 表名称
      * @param whereMap  更新条件字段(只支持=，and条件)
      */
-    public List<Map<String, Object>> queryTableList(String tableName, Map<String, Object> whereMap) {
+    public List<ProxyObject> queryTableList(String tableName, Map<String, Object> whereMap) {
         whereMap = InteropScriptToJavaUtils.Instance.convertMap(whereMap);
-        return delegate.queryTableList(tableName, whereMap);
+        List<Map<String, Object>> dataList = delegate.queryTableList(tableName, whereMap);
+        return getProxyObjectList(dataList);
     }
 
     /**
@@ -390,9 +400,10 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
      * @param tableName 表名称
      * @param whereMap  更新条件字段(只支持=，and条件)
      */
-    public Map<String, Object> queryTableEntity(String tableName, Map<String, Object> whereMap) {
+    public ProxyObject queryTableEntity(String tableName, Map<String, Object> whereMap) {
         whereMap = InteropScriptToJavaUtils.Instance.convertMap(whereMap);
-        return delegate.queryTableEntity(tableName, whereMap);
+        Map<String, Object> data = delegate.queryTableEntity(tableName, whereMap);
+        return getProxyObject(data);
     }
 
     // --------------------------------------------------------------------------------------------
@@ -651,5 +662,35 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
      */
     public JdbcDataSourceStatus getStatus() {
         return delegate.getStatus();
+    }
+
+    // --------------------------------------------------------------------------------------------
+    //  内部函数
+    // --------------------------------------------------------------------------------------------
+
+    private ProxyObject getProxyObject(Map<String, Object> data) {
+        if (data == null) {
+            return null;
+        }
+        return ProxyObject.fromMap(data);
+    }
+
+    private List<ProxyObject> getProxyObjectList(List<Map<String, Object>> list) {
+        if (list == null) {
+            return null;
+        }
+        List<ProxyObject> result = new ArrayList<>(list.size());
+        for (Map<String, Object> map : list) {
+            result.add(getProxyObject(map));
+        }
+        return result;
+    }
+
+    private IPage<ProxyObject> getProxyObjectPage(IPage<Map<String, Object>> page) {
+        Page<ProxyObject> result = new Page<>(page.getCurrent(), page.getSize(), page.getTotal(), page.isSearchCount());
+        result.setOptimizeCountSql(page.optimizeCountSql());
+        result.setOrders(page.orders());
+        result.setRecords(getProxyObjectList(page.getRecords()));
+        return result;
     }
 }
