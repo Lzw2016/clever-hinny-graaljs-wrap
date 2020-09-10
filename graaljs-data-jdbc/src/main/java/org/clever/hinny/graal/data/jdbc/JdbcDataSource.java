@@ -56,12 +56,34 @@ public class JdbcDataSource extends AbstractDataSource {
     /**
      * 查询一条数据，返回一个Map
      *
+     * @param sql              sql脚本，参数格式[:param]
+     * @param paramMap         参数(可选)，参数格式[:param]
+     * @param underlineToCamel 下划线转驼峰
+     */
+    public Map<String, Object> queryMap(String sql, Map<String, Object> paramMap, boolean underlineToCamel) {
+        paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
+        return delegate.queryMap(sql, paramMap, underlineToCamel);
+    }
+
+    /**
+     * 查询一条数据，返回一个Map
+     *
      * @param sql      sql脚本，参数格式[:param]
      * @param paramMap 参数(可选)，参数格式[:param]
      */
     public Map<String, Object> queryMap(String sql, Map<String, Object> paramMap) {
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
         return delegate.queryMap(sql, paramMap);
+    }
+
+    /**
+     * 查询一条数据，返回一个Map
+     *
+     * @param sql              sql脚本，参数格式[:param]
+     * @param underlineToCamel 下划线转驼峰
+     */
+    public Map<String, Object> queryMap(String sql, boolean underlineToCamel) {
+        return delegate.queryMap(sql, underlineToCamel);
     }
 
     /**
@@ -76,12 +98,34 @@ public class JdbcDataSource extends AbstractDataSource {
     /**
      * 查询多条数据，返回一个Map数组
      *
+     * @param sql              sql脚本，参数格式[:param]
+     * @param paramMap         参数(可选)，参数格式[:param]
+     * @param underlineToCamel 下划线转驼峰
+     */
+    public List<Map<String, Object>> queryList(String sql, Map<String, Object> paramMap, boolean underlineToCamel) {
+        paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
+        return delegate.queryList(sql, paramMap, underlineToCamel);
+    }
+
+    /**
+     * 查询多条数据，返回一个Map数组
+     *
      * @param sql      sql脚本，参数格式[:param]
      * @param paramMap 参数(可选)，参数格式[:param]
      */
     public List<Map<String, Object>> queryList(String sql, Map<String, Object> paramMap) {
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
         return delegate.queryList(sql, paramMap);
+    }
+
+    /**
+     * 查询多条数据，返回一个Map数组
+     *
+     * @param sql              sql脚本，参数格式[:param]
+     * @param underlineToCamel 下划线转驼峰
+     */
+    public List<Map<String, Object>> queryList(String sql, boolean underlineToCamel) {
+        return delegate.queryList(sql, underlineToCamel);
     }
 
     /**
@@ -237,6 +281,21 @@ public class JdbcDataSource extends AbstractDataSource {
     /**
      * 查询多条数据(大量数据)，使用游标读取
      *
+     * @param sql              sql脚本，参数格式[:param]
+     * @param paramMap         参数(可选)，参数格式[:param]
+     * @param batchSize        一个批次的数据量
+     * @param consumer         游标批次读取数据消费者
+     * @param underlineToCamel 下划线转驼峰
+     */
+    public void query(String sql, Map<String, Object> paramMap, int batchSize, Value consumer, boolean underlineToCamel) {
+        Assert.isTrue(consumer != null && consumer.canExecute(), "参数consumer必须是回调函数");
+        paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
+        delegate.query(sql, paramMap, batchSize, consumer::executeVoid, underlineToCamel);
+    }
+
+    /**
+     * 查询多条数据(大量数据)，使用游标读取
+     *
      * @param sql       sql脚本，参数格式[:param]
      * @param paramMap  参数(可选)，参数格式[:param]
      * @param batchSize 一个批次的数据量
@@ -251,6 +310,19 @@ public class JdbcDataSource extends AbstractDataSource {
     /**
      * 查询多条数据(大量数据)，使用游标读取
      *
+     * @param sql              sql脚本，参数格式[:param]
+     * @param batchSize        一个批次的数据量
+     * @param consumer         游标批次读取数据消费者
+     * @param underlineToCamel 下划线转驼峰
+     */
+    public void query(String sql, int batchSize, Value consumer, boolean underlineToCamel) {
+        Assert.isTrue(consumer != null && consumer.canExecute(), "参数consumer必须是回调函数");
+        delegate.query(sql, batchSize, consumer::executeVoid, underlineToCamel);
+    }
+
+    /**
+     * 查询多条数据(大量数据)，使用游标读取
+     *
      * @param sql       sql脚本，参数格式[:param]
      * @param batchSize 一个批次的数据量
      * @param consumer  游标批次读取数据消费者
@@ -258,6 +330,20 @@ public class JdbcDataSource extends AbstractDataSource {
     public void query(String sql, int batchSize, Value consumer) {
         Assert.isTrue(consumer != null && consumer.canExecute(), "参数consumer必须是回调函数");
         delegate.query(sql, batchSize, consumer::executeVoid);
+    }
+
+    /**
+     * 查询多条数据(大量数据)，使用游标读取
+     *
+     * @param sql              sql脚本，参数格式[:param]
+     * @param paramMap         参数(可选)，参数格式[:param]
+     * @param consumer         游标读取数据消费者
+     * @param underlineToCamel 下划线转驼峰
+     */
+    public void query(String sql, Map<String, Object> paramMap, Value consumer, boolean underlineToCamel) {
+        Assert.isTrue(consumer != null && consumer.canExecute(), "参数consumer必须是回调函数");
+        paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
+        delegate.query(sql, paramMap, consumer::executeVoid, underlineToCamel);
     }
 
     /**
@@ -276,12 +362,39 @@ public class JdbcDataSource extends AbstractDataSource {
     /**
      * 查询多条数据(大量数据)，使用游标读取
      *
+     * @param sql              sql脚本，参数格式[:param]
+     * @param consumer         游标读取数据消费者
+     * @param underlineToCamel 下划线转驼峰
+     */
+    public void query(String sql, Value consumer, boolean underlineToCamel) {
+        Assert.isTrue(consumer != null && consumer.canExecute(), "参数consumer必须是回调函数");
+        delegate.query(sql, consumer::executeVoid, underlineToCamel);
+    }
+
+    /**
+     * 查询多条数据(大量数据)，使用游标读取
+     *
      * @param sql      sql脚本，参数格式[:param]
      * @param consumer 游标读取数据消费者
      */
     public void query(String sql, Value consumer) {
         Assert.isTrue(consumer != null && consumer.canExecute(), "参数consumer必须是回调函数");
         delegate.query(sql, consumer::executeVoid);
+    }
+
+    /**
+     * 排序查询
+     *
+     * @param sql              sql脚本，参数格式[:param]
+     * @param sortMap          排序配置
+     * @param paramMap         参数，参数格式[:param]
+     * @param underlineToCamel 下划线转驼峰
+     */
+    public List<Map<String, Object>> queryBySort(String sql, Map<String, Object> sortMap, Map<String, Object> paramMap, boolean underlineToCamel) {
+        sortMap = InteropScriptToJavaUtils.Instance.convertMap(sortMap);
+        QueryBySort sort = getQueryBySort(sortMap, null);
+        paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
+        return delegate.queryBySort(sql, sort, paramMap, underlineToCamel);
     }
 
     /**
@@ -301,6 +414,19 @@ public class JdbcDataSource extends AbstractDataSource {
     /**
      * 排序查询
      *
+     * @param sql              sql脚本，参数格式[:param]
+     * @param sortMap          排序配置
+     * @param underlineToCamel 下划线转驼峰
+     */
+    public List<Map<String, Object>> queryBySort(String sql, Map<String, Object> sortMap, boolean underlineToCamel) {
+        sortMap = InteropScriptToJavaUtils.Instance.convertMap(sortMap);
+        QueryBySort sort = getQueryBySort(sortMap, null);
+        return delegate.queryBySort(sql, sort, underlineToCamel);
+    }
+
+    /**
+     * 排序查询
+     *
      * @param sql     sql脚本，参数格式[:param]
      * @param sortMap 排序配置
      */
@@ -308,6 +434,22 @@ public class JdbcDataSource extends AbstractDataSource {
         sortMap = InteropScriptToJavaUtils.Instance.convertMap(sortMap);
         QueryBySort sort = getQueryBySort(sortMap, null);
         return delegate.queryBySort(sql, sort);
+    }
+
+    /**
+     * 分页查询(支持排序)，返回分页对象
+     *
+     * @param sql              sql脚本，参数格式[:param]
+     * @param paginationMap    分页配置(支持排序)
+     * @param paramMap         参数，参数格式[:param]
+     * @param countQuery       是否要执行count查询(可选)
+     * @param underlineToCamel 下划线转驼峰
+     */
+    public IPage<Map<String, Object>> queryByPage(String sql, Map<String, Object> paginationMap, Map<String, Object> paramMap, boolean countQuery, boolean underlineToCamel) {
+        paginationMap = InteropScriptToJavaUtils.Instance.convertMap(paginationMap);
+        QueryByPage pagination = getQueryByPage(paginationMap);
+        paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
+        return delegate.queryByPage(sql, pagination, paramMap, countQuery, underlineToCamel);
     }
 
     /**
@@ -379,6 +521,19 @@ public class JdbcDataSource extends AbstractDataSource {
      *
      * @param tableName         表名称
      * @param whereMap          更新条件字段(只支持=，and条件)
+     * @param camelToUnderscore whereMap字段驼峰转下划线(可选)
+     * @param underlineToCamel  返回数据下划线转驼峰
+     */
+    public List<Map<String, Object>> queryTableList(String tableName, Map<String, Object> whereMap, boolean camelToUnderscore, boolean underlineToCamel) {
+        whereMap = InteropScriptToJavaUtils.Instance.convertMap(whereMap);
+        return delegate.queryTableList(tableName, whereMap, camelToUnderscore, underlineToCamel);
+    }
+
+    /**
+     * 查询数据库表数据
+     *
+     * @param tableName         表名称
+     * @param whereMap          更新条件字段(只支持=，and条件)
      * @param camelToUnderscore 字段驼峰转下划线(可选)
      */
     public List<Map<String, Object>> queryTableList(String tableName, Map<String, Object> whereMap, boolean camelToUnderscore) {
@@ -395,6 +550,19 @@ public class JdbcDataSource extends AbstractDataSource {
     public List<Map<String, Object>> queryTableList(String tableName, Map<String, Object> whereMap) {
         whereMap = InteropScriptToJavaUtils.Instance.convertMap(whereMap);
         return delegate.queryTableList(tableName, whereMap);
+    }
+
+    /**
+     * 查询数据库表数据
+     *
+     * @param tableName         表名称
+     * @param whereMap          更新条件字段(只支持=，and条件)
+     * @param camelToUnderscore whereMap字段驼峰转下划线(可选)
+     * @param underlineToCamel  返回数据下划线转驼峰
+     */
+    public Map<String, Object> queryTableMap(String tableName, Map<String, Object> whereMap, boolean camelToUnderscore, boolean underlineToCamel) {
+        whereMap = InteropScriptToJavaUtils.Instance.convertMap(whereMap);
+        return delegate.queryTableMap(tableName, whereMap, camelToUnderscore, underlineToCamel);
     }
 
     /**

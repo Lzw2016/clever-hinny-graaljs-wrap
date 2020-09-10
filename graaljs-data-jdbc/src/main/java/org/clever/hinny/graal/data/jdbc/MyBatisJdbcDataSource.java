@@ -58,9 +58,9 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
      * @param sqlId    SqlID
      * @param paramMap 查询参数
      */
-    public Map<String, Object> queryMap(String sqlId, Map<String, Object> paramMap) {
+    public Map<String, Object> queryEntity(String sqlId, Map<String, Object> paramMap) {
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        return delegate.queryMap(sqlId, paramMap);
+        return delegate.queryEntity(sqlId, paramMap);
     }
 
     /**
@@ -68,8 +68,8 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
      *
      * @param sqlId SqlID
      */
-    public Map<String, Object> queryMap(String sqlId) {
-        return delegate.queryMap(sqlId);
+    public Map<String, Object> queryEntity(String sqlId) {
+        return delegate.queryEntity(sqlId);
     }
 
     /**
@@ -376,18 +376,6 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
     /**
      * 查询数据库表数据
      *
-     * @param tableName         表名称
-     * @param whereMap          更新条件字段(只支持=，and条件)
-     * @param camelToUnderscore 字段驼峰转下划线(可选)
-     */
-    public List<Map<String, Object>> queryTableList(String tableName, Map<String, Object> whereMap, boolean camelToUnderscore) {
-        whereMap = InteropScriptToJavaUtils.Instance.convertMap(whereMap);
-        return delegate.queryTableList(tableName, whereMap, camelToUnderscore);
-    }
-
-    /**
-     * 查询数据库表数据
-     *
      * @param tableName 表名称
      * @param whereMap  更新条件字段(只支持=，and条件)
      */
@@ -399,24 +387,12 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
     /**
      * 查询数据库表数据
      *
-     * @param tableName         表名称
-     * @param whereMap          更新条件字段(只支持=，and条件)
-     * @param camelToUnderscore 字段驼峰转下划线(可选)
-     */
-    public Map<String, Object> queryTableMap(String tableName, Map<String, Object> whereMap, boolean camelToUnderscore) {
-        whereMap = InteropScriptToJavaUtils.Instance.convertMap(whereMap);
-        return delegate.queryTableMap(tableName, whereMap, camelToUnderscore);
-    }
-
-    /**
-     * 查询数据库表数据
-     *
      * @param tableName 表名称
      * @param whereMap  更新条件字段(只支持=，and条件)
      */
-    public Map<String, Object> queryTableMap(String tableName, Map<String, Object> whereMap) {
+    public Map<String, Object> queryTableEntity(String tableName, Map<String, Object> whereMap) {
         whereMap = InteropScriptToJavaUtils.Instance.convertMap(whereMap);
-        return delegate.queryTableMap(tableName, whereMap);
+        return delegate.queryTableEntity(tableName, whereMap);
     }
 
     // --------------------------------------------------------------------------------------------
@@ -446,20 +422,6 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
     /**
      * 更新数据库表数据
      *
-     * @param tableName         表名称
-     * @param fields            更新字段值
-     * @param whereMap          更新条件字段(只支持=，and条件)
-     * @param camelToUnderscore 字段驼峰转下划线(可选)
-     */
-    public int updateTable(String tableName, Map<String, Object> fields, Map<String, Object> whereMap, boolean camelToUnderscore) {
-        fields = InteropScriptToJavaUtils.Instance.convertMap(fields);
-        whereMap = InteropScriptToJavaUtils.Instance.convertMap(whereMap);
-        return delegate.updateTable(tableName, fields, whereMap, camelToUnderscore);
-    }
-
-    /**
-     * 更新数据库表数据
-     *
      * @param tableName 表名称
      * @param fields    更新字段值
      * @param whereMap  更新条件字段(只支持=，and条件)
@@ -468,19 +430,6 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
         fields = InteropScriptToJavaUtils.Instance.convertMap(fields);
         whereMap = InteropScriptToJavaUtils.Instance.convertMap(whereMap);
         return delegate.updateTable(tableName, fields, whereMap);
-    }
-
-    /**
-     * 更新数据库表数据
-     *
-     * @param tableName         表名称
-     * @param fields            更新字段值
-     * @param where             自定义where条件(不用写where关键字)
-     * @param camelToUnderscore 字段驼峰转下划线(可选)
-     */
-    public int updateTable(String tableName, Map<String, Object> fields, String where, boolean camelToUnderscore) {
-        fields = InteropScriptToJavaUtils.Instance.convertMap(fields);
-        return delegate.updateTable(tableName, fields, where, camelToUnderscore);
     }
 
     /**
@@ -509,18 +458,6 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
     // --------------------------------------------------------------------------------------------
     // Delete 操作
     // --------------------------------------------------------------------------------------------
-
-    /**
-     * 删除数据库表数据
-     *
-     * @param tableName         表名称
-     * @param whereMap          更新条件字段(只支持=，and条件)
-     * @param camelToUnderscore 字段驼峰转下划线(可选)
-     */
-    public int deleteTable(String tableName, Map<String, Object> whereMap, boolean camelToUnderscore) {
-        whereMap = InteropScriptToJavaUtils.Instance.convertMap(whereMap);
-        return delegate.deleteTable(tableName, whereMap, camelToUnderscore);
-    }
 
     /**
      * 删除数据库表数据
@@ -560,36 +497,12 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
     /**
      * 数据插入到表
      *
-     * @param tableName         表名称
-     * @param fields            字段名
-     * @param camelToUnderscore 字段驼峰转下划线(可选)
-     */
-    public InsertResult insertTable(String tableName, Map<String, Object> fields, boolean camelToUnderscore) {
-        fields = InteropScriptToJavaUtils.Instance.convertMap(fields);
-        return delegate.insertTable(tableName, fields, camelToUnderscore);
-    }
-
-    /**
-     * 数据插入到表
-     *
      * @param tableName 表名称
      * @param fields    字段名
      */
     public InsertResult insertTable(String tableName, Map<String, Object> fields) {
         fields = InteropScriptToJavaUtils.Instance.convertMap(fields);
         return delegate.insertTable(tableName, fields);
-    }
-
-    /**
-     * 数据插入到表
-     *
-     * @param tableName         表名称
-     * @param fieldsList        字段名集合
-     * @param camelToUnderscore 字段驼峰转下划线(可选)
-     */
-    public List<InsertResult> insertTables(String tableName, List<Map<String, Object>> fieldsList, boolean camelToUnderscore) {
-        fieldsList = InteropScriptToJavaUtils.Instance.convertMapList(fieldsList);
-        return delegate.insertTables(tableName, fieldsList, camelToUnderscore);
     }
 
     /**
