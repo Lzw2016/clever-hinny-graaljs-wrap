@@ -3,6 +3,7 @@ package org.clever.hinny.graal.core;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.enums.CellExtraTypeEnum;
 import com.alibaba.excel.enums.WriteDirectionEnum;
+import com.alibaba.excel.read.builder.ExcelReaderBuilder;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.excel.write.builder.ExcelWriterBuilder;
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
@@ -50,10 +51,9 @@ public class ExcelUtils {
         delegate = org.clever.hinny.core.ExcelUtils.Instance;
     }
 
-    @SuppressWarnings("rawtypes")
-    public ExcelDataReader<Map> createReader(Map<String, Object> configMap) {
+    public ExcelEntityReader createReader(Map<String, Object> configMap) {
         org.clever.hinny.core.ExcelUtils.ExcelDataReaderConfig config = toExcelDataReaderConfig(configMap);
-        return delegate.createReader(config);
+        return new ExcelEntityReader(delegate.createReader(config));
     }
 
     public ExcelWriter createWriter(Map<String, Object> configMap) {
@@ -72,7 +72,7 @@ public class ExcelUtils {
     }
 
     @SuppressWarnings({"rawtypes"})
-    public ExcelDataMap read(Map<String, Object> configMap) {
+    public ExcelDataEntity read(Map<String, Object> configMap) {
         org.clever.hinny.core.ExcelUtils.ExcelDataReaderConfig config = toExcelDataReaderConfig(configMap);
         ExcelDataReader<Map> excelDataReader = delegate.createReader(config);
         if (config.getSheetNo() != null) {
@@ -83,7 +83,7 @@ public class ExcelUtils {
             excelDataReader.read().doReadAll();
         }
         if (excelDataReader.isEnableExcelData()) {
-            return new ExcelDataMap(excelDataReader);
+            return new ExcelDataEntity(excelDataReader);
         }
         return null;
     }
@@ -184,39 +184,129 @@ public class ExcelUtils {
     }
 
     @SuppressWarnings("rawtypes")
-    public static class ExcelDataMap implements Serializable {
-        private final ExcelDataReader<Map> excelDataReader;
+    public static class ExcelDataEntity implements Serializable {
+        // private final ExcelDataReader<Map> excelDataReader;
+        /**
+         * Excel读取结果
+         */
+        private final LinkedHashMap<String, ExcelData<ProxyObject>> excelSheetMap = new LinkedHashMap<>(1);
 
-        public ExcelDataMap(ExcelDataReader<Map> excelDataReader) {
-            this.excelDataReader = excelDataReader;
+        public ExcelDataEntity(ExcelDataReader<Map> excelDataReader) {
+            // this.excelDataReader = excelDataReader;
+            for (Map.Entry<String, ExcelData<Map>> entry : excelDataReader.getExcelSheetMap().entrySet()) {
+                String key = entry.getKey();
+                ExcelData<Map> excelData = entry.getValue();
+                excelSheetMap.put(key, toEntityExcelData(excelData));
+            }
         }
 
         /**
          * 返回第一个页签数据
          */
-        public ExcelData<Map> getFirstExcelData() {
-            return excelDataReader.getFirstExcelData();
+        public ExcelData<ProxyObject> getFirstExcelData() {
+            if (excelSheetMap.isEmpty()) {
+                return null;
+            }
+            for (Map.Entry<String, ExcelData<ProxyObject>> entry : excelSheetMap.entrySet()) {
+                return entry.getValue();
+            }
+            return null;
         }
 
         /**
          * 根据页签编号返回页签数据
          */
-        public ExcelData<Map> getExcelData(int sheetNo) {
-            return excelDataReader.getExcelData(sheetNo);
+        public ExcelData<ProxyObject> getExcelData(int sheetNo) {
+            for (Map.Entry<String, ExcelData<ProxyObject>> entry : excelSheetMap.entrySet()) {
+                ExcelData<ProxyObject> excelData = entry.getValue();
+                if (excelData != null && Objects.equals(excelData.getSheetNo(), sheetNo)) {
+                    return excelData;
+                }
+            }
+            return null;
         }
 
         /**
          * 根据页签名称返回页签数据
          */
-        public ExcelData<Map> getExcelData(String sheetName) {
-            return excelDataReader.getExcelData(sheetName);
+        public ExcelData<ProxyObject> getExcelData(String sheetName) {
+            for (Map.Entry<String, ExcelData<ProxyObject>> entry : excelSheetMap.entrySet()) {
+                ExcelData<ProxyObject> excelData = entry.getValue();
+                if (excelData != null && Objects.equals(excelData.getSheetName(), sheetName)) {
+                    return excelData;
+                }
+            }
+            return null;
         }
 
         /**
          * Excel读取结果
          */
-        public Map<String, ExcelData<Map>> getExcelSheetMap() {
-            return excelDataReader.getExcelSheetMap();
+        public Map<String, ExcelData<ProxyObject>> getExcelSheetMap() {
+            return excelSheetMap;
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    public static class ExcelEntityReader {
+        private final ExcelDataReader<Map> delegate;
+
+        public ExcelEntityReader(ExcelDataReader<Map> excelDataReader) {
+            this.delegate = excelDataReader;
+        }
+
+        public String getFilename() {
+            return delegate.getFilename();
+        }
+
+        public int getLimitRows() {
+            return delegate.getLimitRows();
+        }
+
+        public boolean isEnableExcelData() {
+            return delegate.isEnableExcelData();
+        }
+
+        public ExcelReaderBuilder read() {
+            return delegate.read();
+        }
+
+        /**
+         * 返回第一个页签数据
+         */
+        public ExcelData<ProxyObject> getFirstExcelData() {
+            ExcelData<Map> excelData = delegate.getFirstExcelData();
+            return toEntityExcelData(excelData);
+        }
+
+        /**
+         * 根据页签编号返回页签数据
+         */
+        public ExcelData<ProxyObject> getExcelData(int sheetNo) {
+            ExcelData<Map> excelData = delegate.getExcelData(sheetNo);
+            return toEntityExcelData(excelData);
+        }
+
+        /**
+         * 根据页签名称返回页签数据
+         */
+        public ExcelData<ProxyObject> getExcelData(String sheetName) {
+            ExcelData<Map> excelData = delegate.getExcelData(sheetName);
+            return toEntityExcelData(excelData);
+        }
+
+        /**
+         * Excel读取结果
+         */
+        public Map<String, ExcelData<ProxyObject>> getExcelSheetMap() {
+            LinkedHashMap<String, ExcelData<Map>> excelSheetMap = delegate.getExcelSheetMap();
+            LinkedHashMap<String, ExcelData<ProxyObject>> result = new LinkedHashMap<>(excelSheetMap.size());
+            for (Map.Entry<String, ExcelData<Map>> entry : excelSheetMap.entrySet()) {
+                String key = entry.getKey();
+                ExcelData<Map> excelData = entry.getValue();
+                result.put(key, toEntityExcelData(excelData));
+            }
+            return result;
         }
     }
 
@@ -996,10 +1086,35 @@ public class ExcelUtils {
         return excelRow;
     }
 
+    @SuppressWarnings({"rawtypes"})
+    private static ExcelData<ProxyObject> toEntityExcelData(ExcelData<Map> data) {
+        ExcelData<ProxyObject> excelData = new ExcelData<>(ProxyObject.class, data.getSheetName(), data.getSheetNo());
+        excelData.getHeads().addAll(data.getHeads());
+        excelData.setImportData(data.getImportData());
+        excelData.setStartTime(data.getStartTime());
+        excelData.setEndTime(data.getEndTime());
+        excelData.setInterruptByRowNum(data.getInterruptByRowNum());
+        for (ExcelRow<Map> row : data.getRows()) {
+            excelData.addRow(toEntityExcelRow(row));
+        }
+        return excelData;
+    }
+
     private static ProxyObject getProxyObject(Map<String, Object> data) {
         if (data == null) {
             return null;
         }
         return ProxyObject.fromMap(data);
+    }
+
+    private static List<ProxyObject> getProxyObjectList(List<Map<String, Object>> list) {
+        if (list == null) {
+            return null;
+        }
+        List<ProxyObject> result = new ArrayList<>(list.size());
+        for (Map<String, Object> map : list) {
+            result.add(getProxyObject(map));
+        }
+        return result;
     }
 }
