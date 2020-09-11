@@ -1090,7 +1090,7 @@ public class ExcelUtils {
     private static ExcelData<ProxyObject> toEntityExcelData(ExcelData<Map> data) {
         ExcelData<ProxyObject> excelData = new ExcelData<>(ProxyObject.class, data.getSheetName(), data.getSheetNo());
         excelData.getHeads().addAll(data.getHeads());
-        excelData.setImportData(data.getImportData());
+        // excelData.setImportData(data.getImportData());
         excelData.setStartTime(data.getStartTime());
         excelData.setEndTime(data.getEndTime());
         excelData.setInterruptByRowNum(data.getInterruptByRowNum());
