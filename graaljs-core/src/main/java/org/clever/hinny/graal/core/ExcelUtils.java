@@ -22,6 +22,7 @@ import org.clever.common.utils.excel.dto.ExcelRow;
 import org.clever.common.utils.tuples.TupleTow;
 import org.clever.hinny.graaljs.utils.InteropScriptToJavaUtils;
 import org.graalvm.polyglot.Value;
+import org.graalvm.polyglot.proxy.ProxyObject;
 import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
@@ -287,7 +288,7 @@ public class ExcelUtils {
                     @Override
                     public void readRow(Map data, ExcelRow<Map> excelRow, AnalysisContext context) {
                         if (readRowExe) {
-                            ((Function) readRow).apply(new Object[]{data, excelRow, context});
+                            ((Function) readRow).apply(new Object[]{data, toEntityExcelRow(excelRow), context});
                         }
                     }
 
@@ -984,5 +985,21 @@ public class ExcelUtils {
         if (forceNewRow instanceof Boolean) {
             fillConfig.setForceNewRow((Boolean) forceNewRow);
         }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static ExcelRow<ProxyObject> toEntityExcelRow(ExcelRow<Map> row) {
+        ExcelRow<ProxyObject> excelRow = new ExcelRow<>(getProxyObject(row.getData()), row.getExcelRowNum());
+        excelRow.setDataSignature(row.getDataSignature());
+        excelRow.getColumnError().putAll(row.getColumnError());
+        excelRow.getRowError().addAll(row.getRowError());
+        return excelRow;
+    }
+
+    private static ProxyObject getProxyObject(Map<String, Object> data) {
+        if (data == null) {
+            return null;
+        }
+        return ProxyObject.fromMap(data);
     }
 }
