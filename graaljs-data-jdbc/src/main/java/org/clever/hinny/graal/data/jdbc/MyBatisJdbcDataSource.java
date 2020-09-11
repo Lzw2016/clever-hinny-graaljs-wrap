@@ -3,11 +3,10 @@ package org.clever.hinny.graal.data.jdbc;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.Getter;
 import org.clever.common.model.request.QueryByPage;
 import org.clever.common.model.request.QueryBySort;
-import org.clever.hinny.data.jdbc.support.InsertResult;
-import org.clever.hinny.data.jdbc.support.JdbcDataSourceStatus;
-import org.clever.hinny.data.jdbc.support.JdbcInfo;
+import org.clever.hinny.data.jdbc.support.*;
 import org.clever.hinny.graaljs.utils.InteropScriptToJavaUtils;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
@@ -15,6 +14,7 @@ import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * 作者：lizw <br/>
@@ -247,7 +247,7 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
     public void query(String sqlId, Map<String, Object> paramMap, int batchSize, Value consumer) {
         Assert.isTrue(consumer != null && consumer.canExecute(), "参数consumer必须是回调函数");
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        delegate.query(sqlId, paramMap, batchSize, consumer::executeVoid);
+        delegate.query(sqlId, paramMap, batchSize, getBatchDataConsumer(consumer));
     }
 
     /**
@@ -259,7 +259,7 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
      */
     public void query(String sqlId, int batchSize, Value consumer) {
         Assert.isTrue(consumer != null && consumer.canExecute(), "参数consumer必须是回调函数");
-        delegate.query(sqlId, batchSize, consumer::executeVoid);
+        delegate.query(sqlId, batchSize, getBatchDataConsumer(consumer));
     }
 
     /**
@@ -272,7 +272,7 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
     public void query(String sqlId, Map<String, Object> paramMap, Value consumer) {
         Assert.isTrue(consumer != null && consumer.canExecute(), "参数consumer必须是回调函数");
         paramMap = InteropScriptToJavaUtils.Instance.convertMap(paramMap);
-        delegate.query(sqlId, paramMap, consumer::executeVoid);
+        delegate.query(sqlId, paramMap, getRowDataConsumer(consumer));
     }
 
     /**
@@ -283,7 +283,7 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
      */
     public void query(String sqlId, Value consumer) {
         Assert.isTrue(consumer != null && consumer.canExecute(), "参数consumer必须是回调函数");
-        delegate.query(sqlId, consumer::executeVoid);
+        delegate.query(sqlId, getRowDataConsumer(consumer));
     }
 
     /**
@@ -668,14 +668,14 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
     //  内部函数
     // --------------------------------------------------------------------------------------------
 
-    private ProxyObject getProxyObject(Map<String, Object> data) {
+    private static ProxyObject getProxyObject(Map<String, Object> data) {
         if (data == null) {
             return null;
         }
         return ProxyObject.fromMap(data);
     }
 
-    private List<ProxyObject> getProxyObjectList(List<Map<String, Object>> list) {
+    private static List<ProxyObject> getProxyObjectList(List<Map<String, Object>> list) {
         if (list == null) {
             return null;
         }
@@ -686,11 +686,59 @@ public class MyBatisJdbcDataSource extends AbstractDataSource {
         return result;
     }
 
-    private IPage<ProxyObject> getProxyObjectPage(IPage<Map<String, Object>> page) {
+    private static IPage<ProxyObject> getProxyObjectPage(IPage<Map<String, Object>> page) {
         Page<ProxyObject> result = new Page<>(page.getCurrent(), page.getSize(), page.getTotal(), page.isSearchCount());
         result.setOptimizeCountSql(page.optimizeCountSql());
         result.setOrders(page.orders());
         result.setRecords(getProxyObjectList(page.getRecords()));
         return result;
+    }
+
+    public Consumer<BatchData> getBatchDataConsumer(Value consumer) {
+        return batchData -> consumer.executeVoid(new EntityBatchData(batchData));
+    }
+
+    public Consumer<RowData> getRowDataConsumer(Value consumer) {
+        return rowData -> consumer.executeVoid(new EntityRowData(rowData));
+    }
+
+    @Getter
+    public static class EntityBatchData extends BatchData {
+        /**
+         * 当前批次数
+         */
+        private final List<ProxyObject> rowDataList;
+
+        @SuppressWarnings("unchecked")
+        public EntityBatchData(BatchData batchData) {
+            super(
+                    batchData.getColumnNames().toArray(new String[0]),
+                    batchData.originalGetColumnTypes(),
+                    batchData.getColumnCount(),
+                    (List<Map<String, Object>>) batchData.getRowDataList(),
+                    batchData.getRowCount()
+            );
+            this.rowDataList = getProxyObjectList((List<Map<String, Object>>) batchData.getRowDataList());
+        }
+    }
+
+    @Getter
+    public static class EntityRowData extends RowData {
+        /**
+         * 当前批次数
+         */
+        private final ProxyObject rowData;
+
+        @SuppressWarnings("unchecked")
+        public EntityRowData(RowData rowData) {
+            super(
+                    rowData.getColumnNames().toArray(new String[0]),
+                    rowData.originalGetColumnTypes(),
+                    rowData.getColumnCount(),
+                    (Map<String, Object>) rowData.getRowData(),
+                    rowData.getRowCount()
+            );
+            this.rowData = getProxyObject((Map<String, Object>) rowData.getRowData());
+        }
     }
 }
