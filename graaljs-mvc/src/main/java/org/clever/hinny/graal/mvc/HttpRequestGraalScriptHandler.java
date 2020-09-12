@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 /**
@@ -34,7 +35,7 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
      */
     private final ConversionService conversionService;
 
-    public HttpRequestGraalScriptHandler(String supportPrefix, Set<String> supportSuffix, EngineInstancePool<Context, Value> engineInstancePool, ConversionService conversionService) {
+    public HttpRequestGraalScriptHandler(LinkedHashMap<String, String> supportPrefix, Set<String> supportSuffix, EngineInstancePool<Context, Value> engineInstancePool, ConversionService conversionService) {
         super(supportPrefix, supportSuffix, engineInstancePool);
         this.conversionService = conversionService;
     }
