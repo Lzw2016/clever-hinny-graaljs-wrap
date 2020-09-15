@@ -197,7 +197,7 @@
                 <version>2.22.2</version>
                 <configuration>
                     <argLine>
-                        -XX:+UnlockExperimentalVMOptions -XX:+EnableJVMCI --module-path=${compiler.dir} --upgrade-module-path=${compiler.dir}/compiler.jar
+                        -XX:+UnlockExperimentalVMOptions -XX:+EnableJVMCI --module-path=${compiler.dir} --upgrade-module-path=${compiler.dir}/compiler.jar --add-opens org.graalvm.sdk/org.graalvm.polyglot.proxy=ALL-UNNAMED
                     </argLine>
                 </configuration>
             </plugin>
@@ -265,6 +265,7 @@
                                 <argument>-XX:+UnlockExperimentalVMOptions</argument>
                                 <argument>-XX:+EnableJVMCI</argument>
                                 <argument>--upgrade-module-path=${compiler.dir}/compiler.jar</argument>
+                                <argument>--add-opens org.graalvm.sdk/org.graalvm.polyglot.proxy=ALL-UNNAMED</argument>
                                 <argument>org.clever.hinny.graaljs.MainClass</argument>
                             </arguments>
                         </configuration>
