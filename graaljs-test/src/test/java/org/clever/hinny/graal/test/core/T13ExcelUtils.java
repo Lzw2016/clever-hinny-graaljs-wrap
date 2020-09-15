@@ -46,9 +46,9 @@ public class T13ExcelUtils extends AbstractTest {
         log.info("### ---------------------------------------------------------------------------> END");
     }
 
-    @Test
-    public void t06() {
-        scriptObject.callMember("t06");
-        log.info("### ---------------------------------------------------------------------------> END");
-    }
+//    @Test
+//    public void t06() {
+//        scriptObject.callMember("t06");
+//        log.info("### ---------------------------------------------------------------------------> END");
+//    }
 }
