@@ -8,18 +8,18 @@ import org.clever.hinny.api.pool.EngineInstancePool;
 import org.clever.hinny.api.utils.JacksonMapper;
 import org.clever.hinny.graal.mvc.http.HttpContext;
 import org.clever.hinny.mvc.HttpRequestScriptHandler;
+import org.clever.hinny.mvc.support.IntegerToDateConverter;
+import org.clever.hinny.mvc.support.StringToDateConverter;
 import org.clever.hinny.mvc.support.TupleTow;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.Value;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.support.GenericConversionService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 作者：lizw <br/>
@@ -38,11 +38,22 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
     public HttpRequestGraalScriptHandler(LinkedHashMap<String, String> supportPrefix, Set<String> supportSuffix, EngineInstancePool<Context, Value> engineInstancePool, ConversionService conversionService) {
         super(supportPrefix, supportSuffix, engineInstancePool);
         this.conversionService = conversionService;
+        init();
     }
 
     public HttpRequestGraalScriptHandler(EngineInstancePool<Context, Value> engineInstancePool, ConversionService conversionService) {
         super(engineInstancePool);
         this.conversionService = conversionService;
+        init();
+    }
+
+    private void init() {
+        if (conversionService instanceof GenericConversionService) {
+            GenericConversionService genericConversionService = (GenericConversionService) conversionService;
+            genericConversionService.addConverter(String.class, Date.class, StringToDateConverter.Instance);
+            genericConversionService.addConverter(Integer.class, Date.class, IntegerToDateConverter.Instance);
+            genericConversionService.addConverter(int.class, Date.class, IntegerToDateConverter.Instance);
+        }
     }
 
     @Override
