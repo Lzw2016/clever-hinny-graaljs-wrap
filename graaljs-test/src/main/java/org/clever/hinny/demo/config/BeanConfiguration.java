@@ -15,6 +15,7 @@ import org.clever.hinny.api.pool.GenericEngineInstancePool;
 import org.clever.hinny.api.watch.FileSystemWatcher;
 import org.clever.hinny.data.jdbc.dynamic.MyBatisMapperSql;
 import org.clever.hinny.graal.mvc.HttpRequestGraalScriptHandler;
+import org.clever.hinny.mvc.ScriptHandlerController;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Engine;
 import org.graalvm.polyglot.Value;
@@ -166,5 +167,10 @@ public class BeanConfiguration {
     @Bean
     public HttpRequestGraalScriptHandler httpRequestGraalScriptHandler(EngineInstancePool<Context, Value> engineInstancePool, ConversionService conversionService) {
         return new HttpRequestGraalScriptHandler(engineInstancePool, conversionService);
+    }
+
+    @Bean
+    public ScriptHandlerController scriptHandlerController(HttpRequestGraalScriptHandler httpRequestGraalScriptHandler) {
+        return new ScriptHandlerController(httpRequestGraalScriptHandler);
     }
 }
