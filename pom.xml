@@ -62,12 +62,9 @@
 
     <properties>
         <revision>1.0.0-SNAPSHOT</revision>
-        <java.version>11</java.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <JAVA_HOME>C:/Program Files/Java/jdk-11.0.6</JAVA_HOME>
-        <compiler.dir>${project.build.directory}/compiler</compiler.dir>
-        <!--<clever-common.version>2.0.1-SNAPSHOT</clever-common.version>-->
+        <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <clever-hinny.version>1.0.0-SNAPSHOT</clever-hinny.version>
         <clever-hinny-java.version>1.0.0-SNAPSHOT</clever-hinny-java.version>
         <graalvm.version>20.2.0</graalvm.version>
@@ -179,102 +176,4 @@
             <version>${clever-hinny.version}</version>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
-                <configuration>
-                    <argLine>
-                        -XX:+UnlockExperimentalVMOptions -XX:+EnableJVMCI --module-path=${compiler.dir} --upgrade-module-path=${compiler.dir}/compiler.jar --add-opens org.graalvm.sdk/org.graalvm.polyglot.proxy=ALL-UNNAMED
-                    </argLine>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.1.2</version>
-                <executions>
-                    <execution>
-                        <id>copy-graalvm-compiler</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.graalvm.compiler</groupId>
-                                    <artifactId>compiler</artifactId>
-                                    <version>${graalvm.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <destFileName>compiler.jar</destFileName>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.graalvm.truffle</groupId>
-                                    <artifactId>truffle-api</artifactId>
-                                    <version>${graalvm.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <destFileName>truffle-api.jar</destFileName>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.graalvm.sdk</groupId>
-                                    <artifactId>graal-sdk</artifactId>
-                                    <version>${graalvm.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <destFileName>graal-sdk.jar</destFileName>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${compiler.dir}</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.6.0</version>
-                <executions>
-                    <execution>
-                        <id>exec-with-graalvm</id>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>
-                                <argument>--module-path</argument>
-                                <!-- automatically creates the module path using all project dependencies, also adding the project build directory -->
-                                <modulepath/>
-                                <argument>-classpath</argument>
-                                <!-- automatically creates the classpath using all project dependencies, also adding the project build directory -->
-                                <classpath/>
-                                <argument>-XX:+UnlockExperimentalVMOptions</argument>
-                                <argument>-XX:+EnableJVMCI</argument>
-                                <argument>--upgrade-module-path=${compiler.dir}/compiler.jar</argument>
-                                <argument>--add-opens org.graalvm.sdk/org.graalvm.polyglot.proxy=ALL-UNNAMED</argument>
-                                <argument>org.clever.hinny.graaljs.MainClass</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <executable>${JAVA_HOME}/bin/java</executable>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
