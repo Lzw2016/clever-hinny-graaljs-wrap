@@ -373,7 +373,7 @@ public class ExcelUtils {
             boolean readRowExe = readRow instanceof Function;
             boolean readEndExe = readEnd instanceof Function;
             if (readRowExe || readEndExe) {
-                config.setExcelRowReader(new ExcelRowReader<>() {
+                config.setExcelRowReader(new ExcelRowReader<Map>() {
                     @SuppressWarnings("rawtypes")
                     @Override
                     public void readRow(Map data, ExcelRow<Map> excelRow, AnalysisContext context) {
