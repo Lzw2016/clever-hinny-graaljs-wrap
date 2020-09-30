@@ -7,6 +7,7 @@ import org.clever.hinny.api.folder.Folder;
 import org.clever.hinny.api.pool.EngineInstancePool;
 import org.clever.hinny.api.utils.JacksonMapper;
 import org.clever.hinny.graal.mvc.http.HttpContext;
+import org.clever.hinny.mvc.ExceptionResolver;
 import org.clever.hinny.mvc.HttpRequestScriptHandler;
 import org.clever.hinny.mvc.support.IntegerToDateConverter;
 import org.clever.hinny.mvc.support.StringToDateConverter;
@@ -14,6 +15,7 @@ import org.clever.hinny.mvc.support.TupleTow;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.Value;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.GenericConversionService;
 
@@ -33,15 +35,20 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
     /**
      * MVC请求数据装换
      */
-    private final ConversionService conversionService;
+    private final ObjectProvider<ConversionService> conversionService;
 
-    public HttpRequestGraalScriptHandler(LinkedHashMap<String, String> supportPrefix, Set<String> supportSuffix, EngineInstancePool<Context, Value> engineInstancePool, ConversionService conversionService) {
-        super(supportPrefix, supportSuffix, engineInstancePool);
+    public HttpRequestGraalScriptHandler(
+            LinkedHashMap<String, String> supportPrefix,
+            Set<String> supportSuffix,
+            EngineInstancePool<Context, Value> engineInstancePool,
+            ExceptionResolver exceptionResolver,
+            ObjectProvider<ConversionService> conversionService) {
+        super(supportPrefix, supportSuffix, engineInstancePool, exceptionResolver);
         this.conversionService = conversionService;
         init();
     }
 
-    public HttpRequestGraalScriptHandler(EngineInstancePool<Context, Value> engineInstancePool, ConversionService conversionService) {
+    public HttpRequestGraalScriptHandler(EngineInstancePool<Context, Value> engineInstancePool, ObjectProvider<ConversionService> conversionService) {
         super(engineInstancePool);
         this.conversionService = conversionService;
         init();
@@ -67,7 +74,7 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
 
     @Override
     protected TupleTow<Object, Boolean> doHandle(HttpServletRequest request, HttpServletResponse response, TupleTow<ScriptObject<Value>, String> handlerScript) {
-        HttpContext httpContext = new HttpContext(request, response, conversionService);
+        HttpContext httpContext = new HttpContext(request, response, conversionService.getIfAvailable());
         final ScriptObject<Value> scriptObject = handlerScript.getValue1();
         final String method = handlerScript.getValue2();
         Object fucObject = scriptObject.getMember(method);

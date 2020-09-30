@@ -3,7 +3,7 @@ package org.clever.hinny.demo.config;
 import lombok.extern.slf4j.Slf4j;
 import org.clever.hinny.data.jdbc.JdbcDataSource;
 import org.clever.hinny.data.jdbc.MyBatisJdbcDataSource;
-import org.clever.hinny.data.jdbc.dynamic.MyBatisMapperSql;
+import org.clever.hinny.data.jdbc.mybatis.MyBatisMapperSql;
 import org.clever.hinny.graal.data.jdbc.JdbcDatabase;
 import org.clever.hinny.graal.data.jdbc.MyBatisJdbcDatabase;
 import org.springframework.beans.factory.annotation.Autowired;

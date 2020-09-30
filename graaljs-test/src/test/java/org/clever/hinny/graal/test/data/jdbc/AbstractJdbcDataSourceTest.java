@@ -19,9 +19,9 @@ public abstract class AbstractJdbcDataSourceTest {
     // yz笔记本路径
 //    protected final Folder rootFolder = FileSystemFolder.createRootPath(new File("C:\\Users\\mlrs\\Desktop\\clever-hinny-js").getAbsolutePath());
     // yz公司路径
-    protected final Folder rootFolder = FileSystemFolder.createRootPath(new File("C:\\Users\\ymx\\Desktop\\clever-hinny-js").getAbsolutePath());
+//    protected final Folder rootFolder = FileSystemFolder.createRootPath(new File("C:\\Users\\ymx\\Desktop\\clever-hinny-js").getAbsolutePath());
     // lzw家里的路径
-//    protected final Folder rootFolder = FileSystemFolder.createRootPath(new File("D:\\SourceCode\\clever\\clever-hinny-js").getAbsolutePath());
+    protected final Folder rootFolder = FileSystemFolder.createRootPath(new File("D:\\SourceCode\\clever\\clever-hinny-js").getAbsolutePath());
     protected ScriptEngineInstance<?, ?> engineInstance;
     protected ScriptObject<?> scriptObject;
 
@@ -31,13 +31,13 @@ public abstract class AbstractJdbcDataSourceTest {
 
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
-//        hikariConfig.setJdbcUrl("jdbc:mysql://mysql.msvc.top:3306/clever-template");
+        hikariConfig.setJdbcUrl("jdbc:mysql://mysql.msvc.top:3306/clever-template");
 //        hikariConfig.setJdbcUrl("jdbc:mysql://192.168.31.40:3306/clever-template");
-//        hikariConfig.setUsername("clever-template");
-//        hikariConfig.setPassword("lizhiwei1993");
-        hikariConfig.setJdbcUrl("jdbc:mysql://mysql.yocu.top:3306/stu");
-        hikariConfig.setUsername("root");
-        hikariConfig.setPassword("mlrsyq361");
+        hikariConfig.setUsername("clever-template");
+        hikariConfig.setPassword("lizhiwei1993");
+//        hikariConfig.setJdbcUrl("jdbc:mysql://mysql.yocu.top:3306/stu");
+//        hikariConfig.setUsername("root");
+//        hikariConfig.setPassword("mlrsyq361");
         hikariConfig.setAutoCommit(false);
         hikariConfig.setMaximumPoolSize(10);
         hikariConfig.setMinimumIdle(1);

@@ -13,12 +13,13 @@ import org.clever.hinny.api.folder.Folder;
 import org.clever.hinny.api.pool.EngineInstancePool;
 import org.clever.hinny.api.pool.GenericEngineInstancePool;
 import org.clever.hinny.api.watch.FileSystemWatcher;
-import org.clever.hinny.data.jdbc.dynamic.MyBatisMapperSql;
+import org.clever.hinny.data.jdbc.mybatis.FileSystemMyBatisMapperSql;
+import org.clever.hinny.data.jdbc.mybatis.MyBatisMapperSql;
 import org.clever.hinny.graal.mvc.HttpRequestGraalScriptHandler;
-import org.clever.hinny.mvc.ScriptHandlerController;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Engine;
 import org.graalvm.polyglot.Value;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -134,7 +135,7 @@ public class BeanConfiguration {
     @Bean
     public MyBatisMapperSql myBatisMapperSql() {
         final String absolutePath = new File("D:\\SourceCode\\clever\\clever-hinny-js\\test\\mvc").getAbsolutePath();
-        MyBatisMapperSql mapperSql = new MyBatisMapperSql(absolutePath);
+        FileSystemMyBatisMapperSql mapperSql = new FileSystemMyBatisMapperSql(absolutePath);
         org.clever.hinny.data.jdbc.dynamic.watch.FileSystemWatcher watcher = new org.clever.hinny.data.jdbc.dynamic.watch.FileSystemWatcher(
                 absolutePath,
                 file -> {
@@ -165,12 +166,7 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public HttpRequestGraalScriptHandler httpRequestGraalScriptHandler(EngineInstancePool<Context, Value> engineInstancePool, ConversionService conversionService) {
+    public HttpRequestGraalScriptHandler httpRequestGraalScriptHandler(EngineInstancePool<Context, Value> engineInstancePool, ObjectProvider<ConversionService> conversionService) {
         return new HttpRequestGraalScriptHandler(engineInstancePool, conversionService);
-    }
-
-    @Bean
-    public ScriptHandlerController scriptHandlerController(HttpRequestGraalScriptHandler httpRequestGraalScriptHandler) {
-        return new ScriptHandlerController(httpRequestGraalScriptHandler);
     }
 }
