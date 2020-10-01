@@ -52,6 +52,7 @@
     <modules>
         <module>graaljs-core</module>
         <module>graaljs-data-jdbc</module>
+        <module>graaljs-meta-data</module>
         <module>graaljs-data-redis</module>
         <module>graaljs-data-elasticsearch</module>
         <module>graaljs-data-rabbitmq</module>
@@ -139,6 +140,11 @@
             <dependency>
                 <groupId>org.clever</groupId>
                 <artifactId>hinny-data-jdbc</artifactId>
+                <version>${clever-hinny-java.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.clever</groupId>
+                <artifactId>hinny-meta-data</artifactId>
                 <version>${clever-hinny-java.version}</version>
             </dependency>
             <dependency>
