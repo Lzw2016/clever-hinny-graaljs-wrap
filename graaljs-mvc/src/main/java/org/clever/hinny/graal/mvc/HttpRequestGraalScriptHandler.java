@@ -1,6 +1,7 @@
 package org.clever.hinny.graal.mvc;
 
 import org.apache.commons.lang3.StringUtils;
+import org.clever.hinny.api.ScriptEngineContext;
 import org.clever.hinny.api.ScriptEngineInstance;
 import org.clever.hinny.api.ScriptObject;
 import org.clever.hinny.api.folder.Folder;
@@ -103,6 +104,30 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
         }
         Value res = httpHandle.execute(httpContext);
         return TupleTow.creat(res, false);
+    }
+
+    @Override
+    protected ScriptEngineInstance<Context, Value> borrowEngineInstance() throws Exception {
+        ScriptEngineInstance<Context, Value> scriptEngineInstance = super.borrowEngineInstance();
+        ScriptEngineContext<Context, Value> scriptEngineContext = scriptEngineInstance.getContext();
+        Context context = scriptEngineContext.getEngine();
+        context.enter();
+        return scriptEngineInstance;
+    }
+
+    @Override
+    protected void returnEngineInstance(ScriptEngineInstance<Context, Value> engineInstance) {
+        Context engine = null;
+        if (engineInstance != null && engineInstance.getContext() != null && engineInstance.getContext().getEngine() != null) {
+            engine = engineInstance.getContext().getEngine();
+        }
+        try {
+            if (engine != null) {
+                engine.leave();
+            }
+        } finally {
+            super.returnEngineInstance(engineInstance);
+        }
     }
 
     @Override
