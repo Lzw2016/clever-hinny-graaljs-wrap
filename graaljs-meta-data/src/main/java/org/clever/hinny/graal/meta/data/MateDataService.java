@@ -4,6 +4,7 @@ import org.clever.hinny.meta.data.model.DataBaseSummary;
 import org.clever.hinny.meta.data.model.TableSchema;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 /**
  * 作者：lizw <br/>
@@ -21,6 +22,10 @@ public class MateDataService {
      */
     public void reload() {
         delegate.reload();
+    }
+
+    public List<DataBaseSummary> getDataBaseSummaryList() {
+        return delegate.getDataBaseSummaryList();
     }
 
     /**
