@@ -310,7 +310,7 @@ public class ExcelUtils {
         }
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static List<List<Object>> getListData(List<Map> listData, org.clever.hinny.core.ExcelUtils.ExcelDataWriterConfig config) {
         List<TupleTow<String, org.clever.hinny.core.ExcelUtils.ExcelWriterHeadConfig>> list = config.getHeadConfigs();
         List<String> propertyNames = list.stream()
@@ -318,6 +318,9 @@ public class ExcelUtils {
                 .map(TupleTow::getValue1)
                 .collect(Collectors.toList());
         Assert.notEmpty(propertyNames, "columns配置不能是空");
+        if (!listData.isEmpty()) {
+            listData = (List<Map>) InteropScriptToJavaUtils.Instance.convertList(listData);
+        }
         List<List<Object>> lists = new ArrayList<>(listData.size());
         for (Map map : listData) {
             List<Object> dataRow = new ArrayList<>(propertyNames.size());
