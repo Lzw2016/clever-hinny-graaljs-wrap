@@ -21,9 +21,9 @@ import org.clever.common.utils.excel.ExcelRowReader;
 import org.clever.common.utils.excel.dto.ExcelData;
 import org.clever.common.utils.excel.dto.ExcelRow;
 import org.clever.common.utils.tuples.TupleTow;
+import org.clever.hinny.graaljs.proxy.LinkedHashMapProxy;
 import org.clever.hinny.graaljs.utils.InteropScriptToJavaUtils;
 import org.graalvm.polyglot.Value;
-import org.graalvm.polyglot.proxy.ProxyObject;
 import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
@@ -189,7 +189,7 @@ public class ExcelUtils {
         /**
          * Excel读取结果
          */
-        private final LinkedHashMap<String, ExcelData<ProxyObject>> excelSheetMap = new LinkedHashMap<>(1);
+        private final LinkedHashMap<String, ExcelData<LinkedHashMapProxy>> excelSheetMap = new LinkedHashMap<>(1);
 
         public ExcelDataEntity(ExcelDataReader<Map> excelDataReader) {
             // this.excelDataReader = excelDataReader;
@@ -203,11 +203,11 @@ public class ExcelUtils {
         /**
          * 返回第一个页签数据
          */
-        public ExcelData<ProxyObject> getFirstExcelData() {
+        public ExcelData<LinkedHashMapProxy> getFirstExcelData() {
             if (excelSheetMap.isEmpty()) {
                 return null;
             }
-            for (Map.Entry<String, ExcelData<ProxyObject>> entry : excelSheetMap.entrySet()) {
+            for (Map.Entry<String, ExcelData<LinkedHashMapProxy>> entry : excelSheetMap.entrySet()) {
                 return entry.getValue();
             }
             return null;
@@ -216,9 +216,9 @@ public class ExcelUtils {
         /**
          * 根据页签编号返回页签数据
          */
-        public ExcelData<ProxyObject> getExcelData(int sheetNo) {
-            for (Map.Entry<String, ExcelData<ProxyObject>> entry : excelSheetMap.entrySet()) {
-                ExcelData<ProxyObject> excelData = entry.getValue();
+        public ExcelData<LinkedHashMapProxy> getExcelData(int sheetNo) {
+            for (Map.Entry<String, ExcelData<LinkedHashMapProxy>> entry : excelSheetMap.entrySet()) {
+                ExcelData<LinkedHashMapProxy> excelData = entry.getValue();
                 if (excelData != null && Objects.equals(excelData.getSheetNo(), sheetNo)) {
                     return excelData;
                 }
@@ -229,9 +229,9 @@ public class ExcelUtils {
         /**
          * 根据页签名称返回页签数据
          */
-        public ExcelData<ProxyObject> getExcelData(String sheetName) {
-            for (Map.Entry<String, ExcelData<ProxyObject>> entry : excelSheetMap.entrySet()) {
-                ExcelData<ProxyObject> excelData = entry.getValue();
+        public ExcelData<LinkedHashMapProxy> getExcelData(String sheetName) {
+            for (Map.Entry<String, ExcelData<LinkedHashMapProxy>> entry : excelSheetMap.entrySet()) {
+                ExcelData<LinkedHashMapProxy> excelData = entry.getValue();
                 if (excelData != null && Objects.equals(excelData.getSheetName(), sheetName)) {
                     return excelData;
                 }
@@ -242,7 +242,7 @@ public class ExcelUtils {
         /**
          * Excel读取结果
          */
-        public Map<String, ExcelData<ProxyObject>> getExcelSheetMap() {
+        public Map<String, ExcelData<LinkedHashMapProxy>> getExcelSheetMap() {
             return excelSheetMap;
         }
     }
@@ -274,7 +274,7 @@ public class ExcelUtils {
         /**
          * 返回第一个页签数据
          */
-        public ExcelData<ProxyObject> getFirstExcelData() {
+        public ExcelData<LinkedHashMapProxy> getFirstExcelData() {
             ExcelData<Map> excelData = delegate.getFirstExcelData();
             return toEntityExcelData(excelData);
         }
@@ -282,7 +282,7 @@ public class ExcelUtils {
         /**
          * 根据页签编号返回页签数据
          */
-        public ExcelData<ProxyObject> getExcelData(int sheetNo) {
+        public ExcelData<LinkedHashMapProxy> getExcelData(int sheetNo) {
             ExcelData<Map> excelData = delegate.getExcelData(sheetNo);
             return toEntityExcelData(excelData);
         }
@@ -290,7 +290,7 @@ public class ExcelUtils {
         /**
          * 根据页签名称返回页签数据
          */
-        public ExcelData<ProxyObject> getExcelData(String sheetName) {
+        public ExcelData<LinkedHashMapProxy> getExcelData(String sheetName) {
             ExcelData<Map> excelData = delegate.getExcelData(sheetName);
             return toEntityExcelData(excelData);
         }
@@ -298,9 +298,9 @@ public class ExcelUtils {
         /**
          * Excel读取结果
          */
-        public Map<String, ExcelData<ProxyObject>> getExcelSheetMap() {
+        public Map<String, ExcelData<LinkedHashMapProxy>> getExcelSheetMap() {
             LinkedHashMap<String, ExcelData<Map>> excelSheetMap = delegate.getExcelSheetMap();
-            LinkedHashMap<String, ExcelData<ProxyObject>> result = new LinkedHashMap<>(excelSheetMap.size());
+            LinkedHashMap<String, ExcelData<LinkedHashMapProxy>> result = new LinkedHashMap<>(excelSheetMap.size());
             for (Map.Entry<String, ExcelData<Map>> entry : excelSheetMap.entrySet()) {
                 String key = entry.getKey();
                 ExcelData<Map> excelData = entry.getValue();
@@ -310,7 +310,7 @@ public class ExcelUtils {
         }
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({"rawtypes"})
     public static List<List<Object>> getListData(List<Map> listData, org.clever.hinny.core.ExcelUtils.ExcelDataWriterConfig config) {
         List<TupleTow<String, org.clever.hinny.core.ExcelUtils.ExcelWriterHeadConfig>> list = config.getHeadConfigs();
         List<String> propertyNames = list.stream()
@@ -318,9 +318,9 @@ public class ExcelUtils {
                 .map(TupleTow::getValue1)
                 .collect(Collectors.toList());
         Assert.notEmpty(propertyNames, "columns配置不能是空");
-        if (!listData.isEmpty()) {
-            listData = (List<Map>) InteropScriptToJavaUtils.Instance.convertList(listData);
-        }
+//        if (!listData.isEmpty()) {
+//            listData = (List<Map>) InteropScriptToJavaUtils.Instance.convertList(listData);
+//        }
         List<List<Object>> lists = new ArrayList<>(listData.size());
         for (Map map : listData) {
             List<Object> dataRow = new ArrayList<>(propertyNames.size());
@@ -1081,8 +1081,8 @@ public class ExcelUtils {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private static ExcelRow<ProxyObject> toEntityExcelRow(ExcelRow<Map> row) {
-        ExcelRow<ProxyObject> excelRow = new ExcelRow<>(getProxyObject(row.getData()), row.getExcelRowNum());
+    private static ExcelRow<LinkedHashMapProxy> toEntityExcelRow(ExcelRow<Map> row) {
+        ExcelRow<LinkedHashMapProxy> excelRow = new ExcelRow<>(getProxyObject(row.getData()), row.getExcelRowNum());
         excelRow.setDataSignature(row.getDataSignature());
         excelRow.getColumnError().putAll(row.getColumnError());
         excelRow.getRowError().addAll(row.getRowError());
@@ -1090,8 +1090,8 @@ public class ExcelUtils {
     }
 
     @SuppressWarnings({"rawtypes"})
-    private static ExcelData<ProxyObject> toEntityExcelData(ExcelData<Map> data) {
-        ExcelData<ProxyObject> excelData = new ExcelData<>(ProxyObject.class, data.getSheetName(), data.getSheetNo());
+    private static ExcelData<LinkedHashMapProxy> toEntityExcelData(ExcelData<Map> data) {
+        ExcelData<LinkedHashMapProxy> excelData = new ExcelData<>(LinkedHashMapProxy.class, data.getSheetName(), data.getSheetNo());
         excelData.getHeads().addAll(data.getHeads());
         // excelData.setImportData(data.getImportData());
         excelData.setStartTime(data.getStartTime());
@@ -1103,18 +1103,18 @@ public class ExcelUtils {
         return excelData;
     }
 
-    private static ProxyObject getProxyObject(Map<String, Object> data) {
+    private static LinkedHashMapProxy getProxyObject(Map<String, Object> data) {
         if (data == null) {
             return null;
         }
-        return ProxyObject.fromMap(data);
+        return new LinkedHashMapProxy(data);
     }
 
-    private static List<ProxyObject> getProxyObjectList(List<Map<String, Object>> list) {
+    private static List<LinkedHashMapProxy> getProxyObjectList(List<Map<String, Object>> list) {
         if (list == null) {
             return null;
         }
-        List<ProxyObject> result = new ArrayList<>(list.size());
+        List<LinkedHashMapProxy> result = new ArrayList<>(list.size());
         for (Map<String, Object> map : list) {
             result.add(getProxyObject(map));
         }

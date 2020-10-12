@@ -1,9 +1,9 @@
 package org.clever.hinny.graal.mvc.http;
 
 import org.clever.hinny.graal.core.ValidatorUtils;
+import org.clever.hinny.graaljs.proxy.HashMapProxy;
 import org.clever.hinny.graaljs.utils.InteropJavaToScriptUtils;
 import org.clever.hinny.graaljs.utils.InteropScriptToJavaUtils;
-import org.graalvm.polyglot.proxy.ProxyObject;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindException;
 
@@ -425,15 +425,15 @@ public class HttpRequestWrapper {
     /**
      * 获取数据库排序查询参数
      */
-    public ProxyObject getQueryBySort() {
-        return ProxyObject.fromMap(delegate.getQueryBySort());
+    public HashMapProxy getQueryBySort() {
+        return new HashMapProxy(delegate.getQueryBySort());
     }
 
     /**
      * 获取数据库分页查询参数
      */
-    public ProxyObject getQueryByPage() {
-        return ProxyObject.fromMap(delegate.getQueryByPage());
+    public HashMapProxy getQueryByPage() {
+        return new HashMapProxy(delegate.getQueryByPage());
     }
 
     /**
