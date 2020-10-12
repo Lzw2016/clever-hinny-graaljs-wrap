@@ -318,9 +318,6 @@ public class ExcelUtils {
                 .map(TupleTow::getValue1)
                 .collect(Collectors.toList());
         Assert.notEmpty(propertyNames, "columns配置不能是空");
-//        if (!listData.isEmpty()) {
-//            listData = (List<Map>) InteropScriptToJavaUtils.Instance.convertList(listData);
-//        }
         List<List<Object>> lists = new ArrayList<>(listData.size());
         for (Map map : listData) {
             List<Object> dataRow = new ArrayList<>(propertyNames.size());
