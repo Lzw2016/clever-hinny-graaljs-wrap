@@ -1,5 +1,6 @@
 package org.clever.hinny.graal.core;
 
+import org.clever.hinny.graaljs.proxy.HashMapProxy;
 import org.clever.hinny.graaljs.utils.InteropScriptToJavaUtils;
 
 import java.util.HashMap;
@@ -61,10 +62,10 @@ public class HttpUtils {
      * @param params  Url Query Parameter(可选)
      * @param headers 请求头(可选)
      */
-    public Map<String, Object> getMap(final String url, Map<String, Object> params, Map<String, Object> headers) {
+    public HashMapProxy getMap(final String url, Map<String, Object> params, Map<String, Object> headers) {
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
         headers = InteropScriptToJavaUtils.Instance.convertMap(headers);
-        return delegate.getMap(url, convertMap(params), convertMap(headers));
+        return new HashMapProxy(delegate.getMap(url, convertMap(params), convertMap(headers)));
     }
 
     /**
@@ -73,9 +74,9 @@ public class HttpUtils {
      * @param url    请求url(非空)
      * @param params Url Query Parameter(可选)
      */
-    public Map<String, Object> getMap(final String url, Map<String, Object> params) {
+    public HashMapProxy getMap(final String url, Map<String, Object> params) {
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
-        return delegate.getMap(url, convertMap(params));
+        return new HashMapProxy(delegate.getMap(url, convertMap(params)));
     }
 
     /**
@@ -83,8 +84,8 @@ public class HttpUtils {
      *
      * @param url 请求url(非空)
      */
-    public Map<String, Object> getMap(final String url) {
-        return delegate.getMap(url);
+    public HashMapProxy getMap(final String url) {
+        return new HashMapProxy(delegate.getMap(url));
     }
 
     // POST请求
@@ -157,11 +158,11 @@ public class HttpUtils {
      * @param params  Url Query Parameter(可选)
      * @param headers 请求头(可选)
      */
-    public Map<String, Object> postMap(final String url, Object body, Map<String, Object> params, Map<String, Object> headers) {
+    public HashMapProxy postMap(final String url, Object body, Map<String, Object> params, Map<String, Object> headers) {
         body = InteropScriptToJavaUtils.Instance.deepToJavaObject(body);
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
         headers = InteropScriptToJavaUtils.Instance.convertMap(headers);
-        return delegate.postMap(url, body, convertMap(params), convertMap(headers));
+        return new HashMapProxy(delegate.postMap(url, body, convertMap(params), convertMap(headers)));
     }
 
     /**
@@ -171,10 +172,10 @@ public class HttpUtils {
      * @param body   Json Body(非空)
      * @param params Url Query Parameter(可选)
      */
-    public Map<String, Object> postMap(final String url, Object body, Map<String, Object> params) {
+    public HashMapProxy postMap(final String url, Object body, Map<String, Object> params) {
         body = InteropScriptToJavaUtils.Instance.deepToJavaObject(body);
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
-        return delegate.postMap(url, body, convertMap(params));
+        return new HashMapProxy(delegate.postMap(url, body, convertMap(params)));
     }
 
     /**
@@ -183,9 +184,9 @@ public class HttpUtils {
      * @param url  请求url(非空)
      * @param body Json Body(非空)
      */
-    public Map<String, Object> postMap(final String url, Object body) {
+    public HashMapProxy postMap(final String url, Object body) {
         body = InteropScriptToJavaUtils.Instance.deepToJavaObject(body);
-        return delegate.postMap(url, body);
+        return new HashMapProxy(delegate.postMap(url, body));
     }
 
     /**
@@ -194,9 +195,9 @@ public class HttpUtils {
      * @param url    请求url(非空)
      * @param params Url Query Parameter(可选)
      */
-    public Map<String, Object> postMap(final String url, Map<String, Object> params) {
+    public HashMapProxy postMap(final String url, Map<String, Object> params) {
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
-        return delegate.postMap(url, convertMap(params));
+        return new HashMapProxy(delegate.postMap(url, convertMap(params)));
     }
 
     /**
@@ -204,8 +205,8 @@ public class HttpUtils {
      *
      * @param url 请求url(非空)
      */
-    public Map<String, Object> postMap(final String url) {
-        return delegate.postMap(url);
+    public HashMapProxy postMap(final String url) {
+        return new HashMapProxy(delegate.postMap(url));
     }
 
     // DELETE请求
@@ -278,11 +279,11 @@ public class HttpUtils {
      * @param params  Url Query Parameter(可选)
      * @param headers 请求头(可选)
      */
-    public Map<String, Object> deleteMap(final String url, Object body, Map<String, Object> params, Map<String, Object> headers) {
+    public HashMapProxy deleteMap(final String url, Object body, Map<String, Object> params, Map<String, Object> headers) {
         body = InteropScriptToJavaUtils.Instance.deepToJavaObject(body);
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
         headers = InteropScriptToJavaUtils.Instance.convertMap(headers);
-        return delegate.deleteMap(url, body, convertMap(params), convertMap(headers));
+        return new HashMapProxy(delegate.deleteMap(url, body, convertMap(params), convertMap(headers)));
     }
 
     /**
@@ -292,10 +293,10 @@ public class HttpUtils {
      * @param body   Json Body(非空)
      * @param params Url Query Parameter(可选)
      */
-    public Map<String, Object> deleteMap(final String url, Object body, Map<String, Object> params) {
+    public HashMapProxy deleteMap(final String url, Object body, Map<String, Object> params) {
         body = InteropScriptToJavaUtils.Instance.deepToJavaObject(body);
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
-        return delegate.deleteMap(url, body, convertMap(params));
+        return new HashMapProxy(delegate.deleteMap(url, body, convertMap(params)));
     }
 
     /**
@@ -304,9 +305,9 @@ public class HttpUtils {
      * @param url  请求url(非空)
      * @param body Json Body(非空)
      */
-    public Map<String, Object> deleteMap(final String url, Object body) {
+    public HashMapProxy deleteMap(final String url, Object body) {
         body = InteropScriptToJavaUtils.Instance.deepToJavaObject(body);
-        return delegate.deleteMap(url, body);
+        return new HashMapProxy(delegate.deleteMap(url, body));
     }
 
     /**
@@ -315,9 +316,9 @@ public class HttpUtils {
      * @param url    请求url(非空)
      * @param params Url Query Parameter(可选)
      */
-    public Map<String, Object> deleteMap(final String url, Map<String, Object> params) {
+    public HashMapProxy deleteMap(final String url, Map<String, Object> params) {
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
-        return delegate.deleteMap(url, convertMap(params));
+        return new HashMapProxy(delegate.deleteMap(url, convertMap(params)));
     }
 
     /**
@@ -325,8 +326,8 @@ public class HttpUtils {
      *
      * @param url 请求url(非空)
      */
-    public Map<String, Object> deleteMap(final String url) {
-        return delegate.deleteMap(url);
+    public HashMapProxy deleteMap(final String url) {
+        return new HashMapProxy(delegate.deleteMap(url));
     }
 
     // PUT请求
@@ -399,11 +400,11 @@ public class HttpUtils {
      * @param params  Url Query Parameter(可选)
      * @param headers 请求头(可选)
      */
-    public Map<String, Object> putMap(final String url, Object body, Map<String, Object> params, Map<String, Object> headers) {
+    public HashMapProxy putMap(final String url, Object body, Map<String, Object> params, Map<String, Object> headers) {
         body = InteropScriptToJavaUtils.Instance.deepToJavaObject(body);
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
         headers = InteropScriptToJavaUtils.Instance.convertMap(headers);
-        return delegate.putMap(url, body, convertMap(params), convertMap(headers));
+        return new HashMapProxy(delegate.putMap(url, body, convertMap(params), convertMap(headers)));
     }
 
     /**
@@ -413,10 +414,10 @@ public class HttpUtils {
      * @param body   Json Body(非空)
      * @param params Url Query Parameter(可选)
      */
-    public Map<String, Object> putMap(final String url, Object body, Map<String, Object> params) {
+    public HashMapProxy putMap(final String url, Object body, Map<String, Object> params) {
         body = InteropScriptToJavaUtils.Instance.deepToJavaObject(body);
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
-        return delegate.putMap(url, body, convertMap(params));
+        return new HashMapProxy(delegate.putMap(url, body, convertMap(params)));
     }
 
     /**
@@ -425,9 +426,9 @@ public class HttpUtils {
      * @param url  请求url(非空)
      * @param body Json Body(非空)
      */
-    public Map<String, Object> putMap(final String url, Object body) {
+    public HashMapProxy putMap(final String url, Object body) {
         body = InteropScriptToJavaUtils.Instance.deepToJavaObject(body);
-        return delegate.putMap(url, body);
+        return new HashMapProxy(delegate.putMap(url, body));
     }
 
     /**
@@ -436,9 +437,9 @@ public class HttpUtils {
      * @param url    请求url(非空)
      * @param params Url Query Parameter(可选)
      */
-    public Map<String, Object> putMap(final String url, Map<String, Object> params) {
+    public HashMapProxy putMap(final String url, Map<String, Object> params) {
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
-        return delegate.putMap(url, convertMap(params));
+        return new HashMapProxy(delegate.putMap(url, convertMap(params)));
     }
 
     /**
@@ -446,8 +447,8 @@ public class HttpUtils {
      *
      * @param url 请求url(非空)
      */
-    public Map<String, Object> putMap(final String url) {
-        return delegate.putMap(url);
+    public HashMapProxy putMap(final String url) {
+        return new HashMapProxy(delegate.putMap(url));
     }
 
     // HEAD请求
@@ -493,10 +494,10 @@ public class HttpUtils {
      * @param params  Url Query Parameter(可选)
      * @param headers 请求头(可选)
      */
-    public Map<String, Object> headMap(final String url, Map<String, Object> params, Map<String, Object> headers) {
+    public HashMapProxy headMap(final String url, Map<String, Object> params, Map<String, Object> headers) {
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
         headers = InteropScriptToJavaUtils.Instance.convertMap(headers);
-        return delegate.headMap(url, convertMap(params), convertMap(headers));
+        return new HashMapProxy(delegate.headMap(url, convertMap(params), convertMap(headers)));
     }
 
     /**
@@ -505,9 +506,9 @@ public class HttpUtils {
      * @param url    请求url(非空)
      * @param params Url Query Parameter(可选)
      */
-    public Map<String, Object> headMap(final String url, Map<String, Object> params) {
+    public HashMapProxy headMap(final String url, Map<String, Object> params) {
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
-        return delegate.headMap(url, convertMap(params));
+        return new HashMapProxy(delegate.headMap(url, convertMap(params)));
     }
 
     /**
@@ -515,8 +516,8 @@ public class HttpUtils {
      *
      * @param url 请求url(非空)
      */
-    public Map<String, Object> headMap(final String url) {
-        return delegate.headMap(url);
+    public HashMapProxy headMap(final String url) {
+        return new HashMapProxy(delegate.headMap(url));
     }
 
     // OPTIONS请求
@@ -589,11 +590,11 @@ public class HttpUtils {
      * @param params  Url Query Parameter(可选)
      * @param headers 请求头(可选)
      */
-    public Map<String, Object> optionsMap(final String url, Object body, Map<String, Object> params, Map<String, Object> headers) {
+    public HashMapProxy optionsMap(final String url, Object body, Map<String, Object> params, Map<String, Object> headers) {
         body = InteropScriptToJavaUtils.Instance.deepToJavaObject(body);
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
         headers = InteropScriptToJavaUtils.Instance.convertMap(headers);
-        return delegate.optionsMap(url, body, convertMap(params), convertMap(headers));
+        return new HashMapProxy(delegate.optionsMap(url, body, convertMap(params), convertMap(headers)));
     }
 
     /**
@@ -603,10 +604,10 @@ public class HttpUtils {
      * @param body   Json Body(非空)
      * @param params Url Query Parameter(可选)
      */
-    public Map<String, Object> optionsMap(final String url, Object body, Map<String, Object> params) {
+    public HashMapProxy optionsMap(final String url, Object body, Map<String, Object> params) {
         body = InteropScriptToJavaUtils.Instance.deepToJavaObject(body);
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
-        return delegate.optionsMap(url, body, convertMap(params));
+        return new HashMapProxy(delegate.optionsMap(url, body, convertMap(params)));
     }
 
     /**
@@ -615,9 +616,9 @@ public class HttpUtils {
      * @param url  请求url(非空)
      * @param body Json Body(非空)
      */
-    public Map<String, Object> optionsMap(final String url, Object body) {
+    public HashMapProxy optionsMap(final String url, Object body) {
         body = InteropScriptToJavaUtils.Instance.deepToJavaObject(body);
-        return delegate.optionsMap(url, body);
+        return new HashMapProxy(delegate.optionsMap(url, body));
     }
 
     /**
@@ -626,9 +627,9 @@ public class HttpUtils {
      * @param url    请求url(非空)
      * @param params Url Query Parameter(可选)
      */
-    public Map<String, Object> optionsMap(final String url, Map<String, Object> params) {
+    public HashMapProxy optionsMap(final String url, Map<String, Object> params) {
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
-        return delegate.optionsMap(url, convertMap(params));
+        return new HashMapProxy(delegate.optionsMap(url, convertMap(params)));
     }
 
     /**
@@ -636,8 +637,8 @@ public class HttpUtils {
      *
      * @param url 请求url(非空)
      */
-    public Map<String, Object> optionsMap(final String url) {
-        return delegate.optionsMap(url);
+    public HashMapProxy optionsMap(final String url) {
+        return new HashMapProxy(delegate.optionsMap(url));
     }
 
     // PATCH请求
@@ -710,11 +711,11 @@ public class HttpUtils {
      * @param params  Url Query Parameter(可选)
      * @param headers 请求头(可选)
      */
-    public Map<String, Object> patchMap(final String url, Object body, Map<String, Object> params, Map<String, Object> headers) {
+    public HashMapProxy patchMap(final String url, Object body, Map<String, Object> params, Map<String, Object> headers) {
         body = InteropScriptToJavaUtils.Instance.deepToJavaObject(body);
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
         headers = InteropScriptToJavaUtils.Instance.convertMap(headers);
-        return delegate.patchMap(url, body, convertMap(params), convertMap(headers));
+        return new HashMapProxy(delegate.patchMap(url, body, convertMap(params), convertMap(headers)));
     }
 
     /**
@@ -724,10 +725,10 @@ public class HttpUtils {
      * @param body   Json Body(非空)
      * @param params Url Query Parameter(可选)
      */
-    public Map<String, Object> patchMap(final String url, Object body, Map<String, Object> params) {
+    public HashMapProxy patchMap(final String url, Object body, Map<String, Object> params) {
         body = InteropScriptToJavaUtils.Instance.deepToJavaObject(body);
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
-        return delegate.patchMap(url, body, convertMap(params));
+        return new HashMapProxy(delegate.patchMap(url, body, convertMap(params)));
     }
 
     /**
@@ -736,9 +737,9 @@ public class HttpUtils {
      * @param url  请求url(非空)
      * @param body Json Body(非空)
      */
-    public Map<String, Object> patchMap(final String url, Object body) {
+    public HashMapProxy patchMap(final String url, Object body) {
         body = InteropScriptToJavaUtils.Instance.deepToJavaObject(body);
-        return delegate.patchMap(url, body);
+        return new HashMapProxy(delegate.patchMap(url, body));
     }
 
     /**
@@ -747,9 +748,9 @@ public class HttpUtils {
      * @param url    请求url(非空)
      * @param params Url Query Parameter(可选)
      */
-    public Map<String, Object> patchMap(final String url, Map<String, Object> params) {
+    public HashMapProxy patchMap(final String url, Map<String, Object> params) {
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
-        return delegate.patchMap(url, convertMap(params));
+        return new HashMapProxy(delegate.patchMap(url, convertMap(params)));
     }
 
     /**
@@ -757,8 +758,8 @@ public class HttpUtils {
      *
      * @param url 请求url(非空)
      */
-    public Map<String, Object> patchMap(final String url) {
-        return delegate.patchMap(url);
+    public HashMapProxy patchMap(final String url) {
+        return new HashMapProxy(delegate.patchMap(url));
     }
 
     // TRACE请求
@@ -831,11 +832,11 @@ public class HttpUtils {
      * @param params  Url Query Parameter(可选)
      * @param headers 请求头(可选)
      */
-    public Map<String, Object> traceMap(final String url, Object body, Map<String, Object> params, Map<String, Object> headers) {
+    public HashMapProxy traceMap(final String url, Object body, Map<String, Object> params, Map<String, Object> headers) {
         body = InteropScriptToJavaUtils.Instance.deepToJavaObject(body);
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
         headers = InteropScriptToJavaUtils.Instance.convertMap(headers);
-        return delegate.traceMap(url, body, convertMap(params), convertMap(headers));
+        return new HashMapProxy(delegate.traceMap(url, body, convertMap(params), convertMap(headers)));
     }
 
     /**
@@ -845,10 +846,10 @@ public class HttpUtils {
      * @param body   Json Body(非空)
      * @param params Url Query Parameter(可选)
      */
-    public Map<String, Object> traceMap(final String url, Object body, Map<String, Object> params) {
+    public HashMapProxy traceMap(final String url, Object body, Map<String, Object> params) {
         body = InteropScriptToJavaUtils.Instance.deepToJavaObject(body);
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
-        return delegate.traceMap(url, body, convertMap(params));
+        return new HashMapProxy(delegate.traceMap(url, body, convertMap(params)));
     }
 
     /**
@@ -857,9 +858,9 @@ public class HttpUtils {
      * @param url  请求url(非空)
      * @param body Json Body(非空)
      */
-    public Map<String, Object> traceMap(final String url, Object body) {
+    public HashMapProxy traceMap(final String url, Object body) {
         body = InteropScriptToJavaUtils.Instance.deepToJavaObject(body);
-        return delegate.traceMap(url, body);
+        return new HashMapProxy(delegate.traceMap(url, body));
     }
 
     /**
@@ -868,9 +869,9 @@ public class HttpUtils {
      * @param url    请求url(非空)
      * @param params Url Query Parameter(可选)
      */
-    public Map<String, Object> traceMap(final String url, Map<String, Object> params) {
+    public HashMapProxy traceMap(final String url, Map<String, Object> params) {
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
-        return delegate.traceMap(url, convertMap(params));
+        return new HashMapProxy(delegate.traceMap(url, convertMap(params)));
     }
 
     /**
@@ -878,8 +879,8 @@ public class HttpUtils {
      *
      * @param url 请求url(非空)
      */
-    public Map<String, Object> traceMap(final String url) {
-        return delegate.traceMap(url);
+    public HashMapProxy traceMap(final String url) {
+        return new HashMapProxy(delegate.traceMap(url));
     }
 
     // CONNECT请求
@@ -952,11 +953,11 @@ public class HttpUtils {
      * @param params  Url Query Parameter(可选)
      * @param headers 请求头(可选)
      */
-    public Map<String, Object> connectMap(final String url, Object body, Map<String, Object> params, Map<String, Object> headers) {
+    public HashMapProxy connectMap(final String url, Object body, Map<String, Object> params, Map<String, Object> headers) {
         body = InteropScriptToJavaUtils.Instance.deepToJavaObject(body);
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
         headers = InteropScriptToJavaUtils.Instance.convertMap(headers);
-        return delegate.connectMap(url, body, convertMap(params), convertMap(headers));
+        return new HashMapProxy(delegate.connectMap(url, body, convertMap(params), convertMap(headers)));
     }
 
     /**
@@ -966,10 +967,10 @@ public class HttpUtils {
      * @param body   Json Body(非空)
      * @param params Url Query Parameter(可选)
      */
-    public Map<String, Object> connectMap(final String url, Object body, Map<String, Object> params) {
+    public HashMapProxy connectMap(final String url, Object body, Map<String, Object> params) {
         body = InteropScriptToJavaUtils.Instance.deepToJavaObject(body);
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
-        return delegate.connectMap(url, body, convertMap(params));
+        return new HashMapProxy(delegate.connectMap(url, body, convertMap(params)));
     }
 
     /**
@@ -978,9 +979,9 @@ public class HttpUtils {
      * @param url  请求url(非空)
      * @param body Json Body(非空)
      */
-    public Map<String, Object> connectMap(final String url, Object body) {
+    public HashMapProxy connectMap(final String url, Object body) {
         body = InteropScriptToJavaUtils.Instance.deepToJavaObject(body);
-        return delegate.connectMap(url, body);
+        return new HashMapProxy(delegate.connectMap(url, body));
     }
 
     /**
@@ -989,9 +990,9 @@ public class HttpUtils {
      * @param url    请求url(非空)
      * @param params Url Query Parameter(可选)
      */
-    public Map<String, Object> connectMap(final String url, Map<String, Object> params) {
+    public HashMapProxy connectMap(final String url, Map<String, Object> params) {
         params = InteropScriptToJavaUtils.Instance.convertMap(params);
-        return delegate.connectMap(url, convertMap(params));
+        return new HashMapProxy(delegate.connectMap(url, convertMap(params)));
     }
 
     /**
@@ -999,8 +1000,8 @@ public class HttpUtils {
      *
      * @param url 请求url(非空)
      */
-    public Map<String, Object> connectMap(final String url) {
-        return delegate.connectMap(url);
+    public HashMapProxy connectMap(final String url) {
+        return new HashMapProxy(delegate.connectMap(url));
     }
 
     // 自定义请求
