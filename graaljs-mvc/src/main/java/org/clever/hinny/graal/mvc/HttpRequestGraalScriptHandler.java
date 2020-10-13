@@ -38,6 +38,8 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
      */
     private final ObjectProvider<ConversionService> conversionService;
 
+    protected boolean initialized = false;
+
     public HttpRequestGraalScriptHandler(
             LinkedHashMap<String, String> supportPrefix,
             Set<String> supportSuffix,
@@ -46,21 +48,24 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
             ObjectProvider<ConversionService> conversionService) {
         super(supportPrefix, supportSuffix, engineInstancePool, exceptionResolver);
         this.conversionService = conversionService;
-        init();
     }
 
     public HttpRequestGraalScriptHandler(EngineInstancePool<Context, Value> engineInstancePool, ObjectProvider<ConversionService> conversionService) {
         super(engineInstancePool);
         this.conversionService = conversionService;
-        init();
     }
 
     private void init() {
-        if (conversionService instanceof GenericConversionService) {
-            GenericConversionService genericConversionService = (GenericConversionService) conversionService;
+        if (initialized) {
+            return;
+        }
+        ConversionService conversion = conversionService.getIfAvailable();
+        if (conversion instanceof GenericConversionService) {
+            GenericConversionService genericConversionService = (GenericConversionService) conversion;
             genericConversionService.addConverter(String.class, Date.class, StringToDateConverter.Instance);
             genericConversionService.addConverter(Integer.class, Date.class, IntegerToDateConverter.Instance);
             genericConversionService.addConverter(int.class, Date.class, IntegerToDateConverter.Instance);
+            initialized = true;
         }
     }
 
@@ -75,6 +80,7 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
 
     @Override
     protected TupleTow<Object, Boolean> doHandle(HttpServletRequest request, HttpServletResponse response, TupleTow<ScriptObject<Value>, String> handlerScript) {
+        init();
         HttpContext httpContext = new HttpContext(request, response, conversionService.getIfAvailable());
         final ScriptObject<Value> scriptObject = handlerScript.getValue1();
         final String method = handlerScript.getValue2();
