@@ -8,6 +8,7 @@ import org.clever.hinny.api.folder.Folder;
 import org.clever.hinny.api.pool.EngineInstancePool;
 import org.clever.hinny.api.utils.JacksonMapper;
 import org.clever.hinny.graal.mvc.http.HttpContext;
+import org.clever.hinny.graaljs.jackson.JacksonMapperSupport;
 import org.clever.hinny.mvc.ExceptionResolver;
 import org.clever.hinny.mvc.HttpRequestScriptHandler;
 import org.clever.hinny.mvc.support.IntegerToDateConverter;
@@ -33,6 +34,10 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
      * 脚本文件后缀
      */
     private static final String ScriptSuffix = ".js";
+    /**
+     * 返回数据序列化实现
+     */
+    private static final JacksonMapper Jackson_Mapper = JacksonMapperSupport.getHttpApiJacksonMapper();
     /**
      * MVC请求数据装换
      */
@@ -146,7 +151,8 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
 
     @Override
     protected String serializeRes(Object res) {
-        return JacksonMapper.getInstance().toJson(res);
+        return Jackson_Mapper.toJson(res);
+        // return JacksonMapper.getInstance().toJson(res);
     }
 
     @Override
