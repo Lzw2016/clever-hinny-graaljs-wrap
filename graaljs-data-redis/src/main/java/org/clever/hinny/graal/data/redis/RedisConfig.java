@@ -3,6 +3,8 @@ package org.clever.hinny.graal.data.redis;
 import lombok.Data;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 
+import java.io.Serializable;
+import java.time.Duration;
 import java.util.List;
 
 /**
@@ -10,7 +12,7 @@ import java.util.List;
  * 创建时间：2020/11/11 17:23 <br/>
  */
 @Data
-public class RedisConfig {
+public class RedisConfig implements Serializable {
     /**
      * 数据库索引
      */
@@ -62,7 +64,7 @@ public class RedisConfig {
     private LettuceConfig lettuce;
 
     @Data
-    public static class SentinelConfig {
+    public static class SentinelConfig implements Serializable {
         /**
          * Redis服务器的名称
          */
@@ -75,7 +77,7 @@ public class RedisConfig {
     }
 
     @Data
-    public static class ClusterConfig {
+    public static class ClusterConfig implements Serializable {
         /**
          * 群集节点的“初始”列表，要求至少有一个条目
          */
@@ -88,7 +90,7 @@ public class RedisConfig {
     }
 
     @Data
-    public static class PoolConfig {
+    public static class PoolConfig implements Serializable {
 
         /**
          * 池中“空闲”连接的最大数量。使用负值表示空闲连接的数量不受限制
@@ -117,7 +119,7 @@ public class RedisConfig {
     }
 
     @Data
-    public static class JedisConfig {
+    public static class JedisConfig implements Serializable {
         /**
          * 连接池配置
          */
@@ -125,7 +127,7 @@ public class RedisConfig {
     }
 
     @Data
-    public static class LettuceConfig {
+    public static class LettuceConfig implements Serializable {
         /**
          * 关机超时
          */
@@ -136,9 +138,54 @@ public class RedisConfig {
         private PoolConfig pool;
     }
 
+    protected RedisProperties.Pool getPool(PoolConfig poolConfig) {
+        if (poolConfig == null) {
+            return null;
+        }
+        RedisProperties.Pool pool = new RedisProperties.Pool();
+        pool.setMaxIdle(poolConfig.getMaxIdle());
+        pool.setMinIdle(poolConfig.getMinIdle());
+        pool.setMaxActive(poolConfig.getMaxActive());
+        if (poolConfig.getMaxWaitMillis() != null) {
+            pool.setMaxWait(Duration.ofMillis(poolConfig.getMaxWaitMillis()));
+        }
+        if (poolConfig.getTimeBetweenEvictionRunsMillis() != null) {
+            pool.setTimeBetweenEvictionRuns(Duration.ofMillis(poolConfig.getTimeBetweenEvictionRunsMillis()));
+        }
+        return pool;
+    }
+
     public RedisProperties getRedisProperties() {
         RedisProperties redisProperties = new RedisProperties();
-
+        redisProperties.setDatabase(database);
+        redisProperties.setHost(host);
+        redisProperties.setPassword(password);
+        redisProperties.setPort(port);
+        redisProperties.setSsl(ssl);
+        if (timeoutMillis != null) {
+            redisProperties.setTimeout(Duration.ofMillis(timeoutMillis));
+        }
+        if (sentinel != null) {
+            RedisProperties.Sentinel sentinelTmp = new RedisProperties.Sentinel();
+            redisProperties.setSentinel(sentinelTmp);
+            sentinelTmp.setMaster(sentinel.getMaster());
+            sentinelTmp.setNodes(sentinel.getNodes());
+        }
+        if (cluster != null) {
+            RedisProperties.Cluster clusterTmp = new RedisProperties.Cluster();
+            redisProperties.setCluster(clusterTmp);
+            clusterTmp.setMaxRedirects(cluster.getMaxRedirects());
+            clusterTmp.setNodes(cluster.getNodes());
+        }
+        if (jedis != null) {
+            RedisProperties.Jedis jedisTmp = redisProperties.getJedis();
+            jedisTmp.setPool(getPool(jedis.getPool()));
+        }
+        if (lettuce != null) {
+            RedisProperties.Lettuce lettuceTmp = redisProperties.getLettuce();
+            lettuceTmp.setShutdownTimeout(Duration.ofMillis(lettuce.getShutdownTimeoutMillis()));
+            lettuceTmp.setPool(getPool(lettuce.getPool()));
+        }
         return redisProperties;
     }
 }
