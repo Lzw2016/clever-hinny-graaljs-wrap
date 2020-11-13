@@ -1,6 +1,8 @@
 package org.clever.hinny.graal.data.redis;
 
 import org.clever.hinny.data.common.AbstractDataSource;
+import org.clever.hinny.data.redis.RedisDataSourceStatus;
+import org.clever.hinny.data.redis.RedisInfo;
 
 /**
  * 作者：lizw <br/>
@@ -63,6 +65,13 @@ public class RedisDataSource extends AbstractDataSource {
     // 其它 操作
     // --------------------------------------------------------------------------------------------
 
+    public RedisInfo getInfo() {
+        return delegate.getInfo();
+    }
+
+    public RedisDataSourceStatus getStatus() {
+        return delegate.getStatus();
+    }
     // --------------------------------------------------------------------------------------------
     //  内部函数
     // --------------------------------------------------------------------------------------------
