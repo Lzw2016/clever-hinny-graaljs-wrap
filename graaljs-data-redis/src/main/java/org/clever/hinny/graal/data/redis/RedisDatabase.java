@@ -174,8 +174,8 @@ public class RedisDatabase extends AbstractRedisDatabase {
      * @param name 数据源名称
      */
     public RedisDataSourceStatus getStatus(String name) {
-        RedisDataSource jdbcDataSource = getDataSource(name);
-        return jdbcDataSource == null ? null : jdbcDataSource.getStatus();
+        RedisDataSource redisDataSource = getDataSource(name);
+        return redisDataSource == null ? null : redisDataSource.getStatus();
     }
 
     /**
