@@ -188,8 +188,9 @@ public class RedisDataSource extends AbstractDataSource {
      *
      * @param key key
      */
-    public DataType kType(String key) {
-        return delegate.kType(key);
+    public String kType(String key) {
+        DataType dataType = delegate.kType(key);
+        return dataType.code();
     }
 
     // --------------------------------------------------------------------------------------------
