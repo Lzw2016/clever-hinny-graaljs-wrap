@@ -1,8 +1,10 @@
 package org.clever.hinny.graal.data.jdbc;
 
 import lombok.SneakyThrows;
+import org.clever.hinny.data.jdbc.mybatis.MyBatisMapperSql;
 import org.clever.hinny.data.jdbc.support.JdbcDataSourceStatus;
 import org.clever.hinny.data.jdbc.support.JdbcInfo;
+import org.clever.hinny.graaljs.utils.InteropScriptToJavaUtils;
 import org.springframework.util.Assert;
 
 import java.util.*;
@@ -93,20 +95,22 @@ public class MyBatisJdbcDatabase extends AbstractJdbcDatabase {
         DATASOURCE_MAP.put(name, new MyBatisJdbcDataSource(myBatisJdbcDataSource));
     }
 
-//    /**
-//     * 添加数据源
-//     *
-//     * @param name   数据源名称
-//     * @param config 数据源配置
-//     */
-//    public MyBatisJdbcDataSource add(String name, Map<String, Object> config) {
-//        Assert.isTrue(!DATASOURCE_MAP.containsKey(name), "数据源已经存在");
-//        config = InteropScriptToJavaUtils.Instance.convertMap(config);
-//        JdbcConfig jdbcConfig = getJdbcConfig(config);
-//        org.clever.hinny.data.jdbc.JdbcDataSource jdbcDataSource = new org.clever.hinny.data.jdbc.JdbcDataSource(jdbcConfig.getHikariConfig());
-//        add(name, jdbcDataSource);
-//        return DATASOURCE_MAP.get(name);
-//    }
+    /**
+     * 添加数据源
+     *
+     * @param name      数据源名称
+     * @param config    数据源配置
+     * @param mapperSql mapper sql资源
+     */
+    public MyBatisJdbcDataSource add(String name, Map<String, Object> config, MyBatisMapperSql mapperSql) {
+        Assert.isTrue(!DATASOURCE_MAP.containsKey(name), "数据源已经存在");
+        config = InteropScriptToJavaUtils.Instance.convertMap(config);
+        JdbcConfig jdbcConfig = getJdbcConfig(config);
+        org.clever.hinny.data.jdbc.JdbcDataSource jdbcDataSource = new org.clever.hinny.data.jdbc.JdbcDataSource(jdbcConfig.getHikariConfig());
+        org.clever.hinny.data.jdbc.MyBatisJdbcDataSource myBatisJdbcDataSource = new org.clever.hinny.data.jdbc.MyBatisJdbcDataSource(jdbcDataSource, mapperSql);
+        add(name, myBatisJdbcDataSource);
+        return DATASOURCE_MAP.get(name);
+    }
 
     /**
      * 删除数据源
