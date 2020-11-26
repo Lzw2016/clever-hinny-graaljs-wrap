@@ -11,6 +11,7 @@ import org.clever.hinny.graal.mvc.http.HttpContext;
 import org.clever.hinny.graaljs.jackson.JacksonMapperSupport;
 import org.clever.hinny.mvc.ExceptionResolver;
 import org.clever.hinny.mvc.HttpRequestScriptHandler;
+import org.clever.hinny.mvc.ScriptHandlerCorsConfig;
 import org.clever.hinny.mvc.support.IntegerToDateConverter;
 import org.clever.hinny.mvc.support.StringToDateConverter;
 import org.clever.hinny.mvc.support.TupleTow;
@@ -48,10 +49,11 @@ public class HttpRequestGraalScriptHandler extends HttpRequestScriptHandler<Cont
     public HttpRequestGraalScriptHandler(
             LinkedHashMap<String, String> supportPrefix,
             Set<String> supportSuffix,
+            ScriptHandlerCorsConfig corsConfig,
             EngineInstancePool<Context, Value> engineInstancePool,
             ExceptionResolver exceptionResolver,
             ObjectProvider<ConversionService> conversionService) {
-        super(supportPrefix, supportSuffix, engineInstancePool, exceptionResolver);
+        super(supportPrefix, supportSuffix, corsConfig, engineInstancePool, exceptionResolver);
         this.conversionService = conversionService;
     }
 
