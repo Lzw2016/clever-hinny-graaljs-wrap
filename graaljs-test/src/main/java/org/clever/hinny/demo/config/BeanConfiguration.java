@@ -1,7 +1,6 @@
 package org.clever.hinny.demo.config;
 
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.SqlExplainInterceptor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -68,20 +67,6 @@ public class BeanConfiguration {
 //    public ISqlInjector sqlInjector() {
 //        return new LogicSqlInjector();
 //    }
-
-    /**
-     * SQL执行效率插件
-     */
-    @SuppressWarnings("UnnecessaryLocalVariable")
-    @Bean
-    @Profile({"dev", "test"})
-    public PerformanceInterceptor performanceInterceptor() {
-        PerformanceInterceptor performanceInterceptor = new PerformanceInterceptor();
-        // performanceInterceptor.setFormat(true);
-        // performanceInterceptor.setMaxTime();
-        // performanceInterceptor.setWriteInLog();
-        return performanceInterceptor;
-    }
 
     /**
      * 执行分析插件<br />
