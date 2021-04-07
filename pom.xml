@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.clever</groupId>
         <artifactId>clever-parent</artifactId>
-        <version>2.1.16.1.RELEASE</version>
+        <version>2.1.18.7.RELEASE</version>
         <relativePath/>
     </parent>
 
@@ -41,11 +41,11 @@
         </repository>
         <repository>
             <id>nexus-snapshots</id>
-            <url>http://nexus.msvc.top:8081/repository/maven-snapshots/</url>
+            <url>http://nexus.msvc.top/repository/maven-snapshots/</url>
         </repository>
         <repository>
             <id>nexus-releases</id>
-            <url>http://nexus.msvc.top:8081/repository/maven-releases/</url>
+            <url>http://nexus.msvc.top/repository/maven-releases/</url>
         </repository>
     </repositories>
 
@@ -68,7 +68,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <clever-hinny.version>1.0.0-SNAPSHOT</clever-hinny.version>
         <clever-hinny-java.version>1.0.0-SNAPSHOT</clever-hinny-java.version>
-        <graalvm.version>20.2.0</graalvm.version>
+        <graalvm.version>20.3.1.2</graalvm.version>
     </properties>
 
     <dependencyManagement>
